@@ -8,6 +8,9 @@ softdepend: [Vault]
 ##  Original Author     ##
 author: syamn
 commands:
+    repairall:
+      usage: /repairall - to see the help
+      description: See plugin help.
     sakuracmd:
       usage: /sakuracmd - to see the help
       aliases: [sakuracmd]
