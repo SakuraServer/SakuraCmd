@@ -1,0 +1,18 @@
+##  Plugin Information  ##
+name: SakuraCmd
+version: version-number-unknown
+main: net.syamn.sakuracmd.SakuraCmd
+description: Minecraft SakuraCmd server plugin
+website: http://sakura-server.net/
+softdepend: [Vault]
+##  Original Author     ##
+author: syamn
+commands:
+    sakuracmd:
+      usage: /sakuracmd - to see the help
+      aliases: [sakuracmd]
+      description: To see the plugin help.
+permissions:
+    sakuracmd.admin:
+        default: op
+        description: Give to admins

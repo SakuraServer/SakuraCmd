@@ -1,0 +1,14 @@
+# SakuraCmd Configuration File!
+# @author syamn <admin@sakura-server.net>
+# github: https://github.com/SakuraServer/SakuraCmd
+
+#==================#
+#   Debug Config   #
+#==================#
+Debug: false
+
+#==================#
+#   DO NOT TOUCH   #
+#==================#
+# Do not touch this option! It is a check if you are running the recent configuration version
+ConfigVersion: 1
