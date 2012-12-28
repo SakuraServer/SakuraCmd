@@ -9,6 +9,7 @@ import java.util.Set;
 
 import net.syamn.sakuracmd.commands.items.RepairAll;
 import net.syamn.sakuracmd.commands.items.RepairItem;
+import net.syamn.sakuracmd.commands.tp.TpHere;
 
 /**
  * CommandRegister (CommandRegister.java)
@@ -21,6 +22,9 @@ public class CommandRegister {
         // Item Commands
         cmds.add(new RepairItem());
         cmds.add(new RepairAll());
+        
+        // Teleport Commands
+        cmds.add(new TpHere());
         
         return cmds;
     }

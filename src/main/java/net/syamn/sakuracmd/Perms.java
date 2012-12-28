@@ -16,6 +16,9 @@ public enum Perms {
     REPAIRITEM("item.repairitem"),
     REPAIRALL("item.repairall"),
 
+    // Tp Commands
+    TPHERE ("tp.here"),
+    
     // Free Permissions
 
     // Spec Permissions
