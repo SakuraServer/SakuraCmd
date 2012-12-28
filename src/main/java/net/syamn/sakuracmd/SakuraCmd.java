@@ -10,6 +10,7 @@ import java.util.List;
 import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.syamn.sakuracmd.commands.CommandHandler;
+import net.syamn.sakuracmd.commands.CommandRegister;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Metrics;
 
@@ -76,7 +77,7 @@ public class SakuraCmd extends JavaPlugin{
 
         // commands
         commandHandler = new CommandHandler(this);
-        registerCommands();
+        CommandRegister.registerCommands(commandHandler);
 
         // database
         //database = new Database(this);
@@ -102,14 +103,6 @@ public class SakuraCmd extends JavaPlugin{
         // メッセージ表示
         PluginDescriptionFile pdfFile = this.getDescription();
         LogUtil.info("[" + pdfFile.getName() + "] version " + pdfFile.getVersion() + " is disabled!");
-    }
-
-    
-    /**
-     * コマンドを登録
-     */
-    private void registerCommands(){
-        
     }
     
     @Override

@@ -10,6 +10,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.utils.LogUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.command.Command;
@@ -61,6 +62,10 @@ public class CommandHandler implements TabExecutor{
     }
     
     public void registerCommand(final BaseCommand bc){
-        
+        if (bc.name != null){
+            commands.put(bc.name, bc);
+        }else{
+            LogUtil.warning("Invalid command not registered! " + bc.getClass().getName());
+        }
     }
 }
