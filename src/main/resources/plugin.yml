@@ -14,6 +14,9 @@ commands:
     repairitem:
       usage: /repairitem - to see the help
       description: See plugin help.
+    tp:
+      usage: /tp - to see the help
+      description: See plugin help.
     tphere:
       usage: /tphere - to see the help
       description: See plugin help.

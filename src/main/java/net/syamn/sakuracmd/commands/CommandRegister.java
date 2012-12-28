@@ -7,9 +7,8 @@ package net.syamn.sakuracmd.commands;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.syamn.sakuracmd.commands.items.RepairAll;
-import net.syamn.sakuracmd.commands.items.RepairItem;
-import net.syamn.sakuracmd.commands.tp.TpHere;
+import net.syamn.sakuracmd.commands.items.*;
+import net.syamn.sakuracmd.commands.tp.*;
 
 /**
  * CommandRegister (CommandRegister.java)
@@ -25,6 +24,7 @@ public class CommandRegister {
         
         // Teleport Commands
         cmds.add(new TpHere());
+        cmds.add(new Tp());
         
         return cmds;
     }
