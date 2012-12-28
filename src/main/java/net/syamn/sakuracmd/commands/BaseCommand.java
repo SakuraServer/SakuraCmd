@@ -7,6 +7,7 @@ package net.syamn.sakuracmd.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.syamn.sakuracmd.Perms;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -31,6 +32,7 @@ public abstract class BaseCommand {
     public boolean bePlayer = true;
     public int argLength = 0;
     public String usage;
+    public Perms perm = null;
     
     public boolean run(SakuraCmd plugin, CommandSender sender, String cmd, String[] preArgs) {
         if (name == null) {
@@ -72,7 +74,7 @@ public abstract class BaseCommand {
         }
         
         // 権限チェック
-        if (!permission(sender)) {
+        if ((perm != null && !perm.has(sender)) || !permission(sender)) {
             Util.message(sender, "&cYou don't have permission to use this!");
             return true;
         }
@@ -105,7 +107,9 @@ public abstract class BaseCommand {
      * 
      * @return trueなら権限あり、falseなら権限なし
      */
-    public abstract boolean permission(CommandSender sender);
+    public boolean permission(CommandSender sender){
+        return true;
+    }
     
     /**
      * コマンドの使い方を送信する

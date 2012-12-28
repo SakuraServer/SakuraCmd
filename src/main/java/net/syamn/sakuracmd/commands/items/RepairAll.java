@@ -20,6 +20,7 @@ public class RepairAll extends BaseCommand{
     public RepairAll(){
         bePlayer = true;
         name = "repairall";
+        perm = Perms.REPAIRALL;
         argLength = 0;
         usage = "repair your all items";
     }
@@ -39,9 +40,5 @@ public class RepairAll extends BaseCommand{
         }
         
         Util.message(target, "&aあなたの全アイテムが修復されました");
-    }
-    
-    public boolean permission(CommandSender sender){
-        return Perms.REPAIRALL.has(sender);
     }
 }
