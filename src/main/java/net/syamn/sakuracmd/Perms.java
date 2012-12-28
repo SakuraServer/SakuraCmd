@@ -13,6 +13,7 @@ import org.bukkit.permissions.Permissible;
 public enum Perms {
     /* 権限ノード */
     // Item Commands
+    REPAIRITEM("item.repairitem"),
     REPAIRALL("item.repairall"),
 
     // Free Permissions

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.syamn.sakuracmd.commands.items.RepairAll;
+import net.syamn.sakuracmd.commands.items.RepairItem;
 
 /**
  * CommandRegister (CommandRegister.java)
@@ -18,6 +19,7 @@ public class CommandRegister {
         Set<BaseCommand> cmds = new HashSet<BaseCommand>();
         
         // Item Commands
+        cmds.add(new RepairItem());
         cmds.add(new RepairAll());
         
         return cmds;
