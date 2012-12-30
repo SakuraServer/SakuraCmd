@@ -1,8 +1,12 @@
 /**
  * SakuraCmd - Package: net.syamn.sakuracmd.commands.items
- * Created: 2012/12/29 8:01:37
+ * Created: 2012/12/29 6:11:48
  */
 package net.syamn.sakuracmd.commands.items;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import net.syamn.sakuracmd.Perms;
 import net.syamn.sakuracmd.commands.BaseCommand;
@@ -10,21 +14,17 @@ import net.syamn.utils.ItemUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 /**
- * RepairItem (RepairItem.java)
+ * RepairAllCommand (RepairAllCommand.java)
  * @author syam(syamn)
  */
-public class RepairItem extends BaseCommand{
-    public RepairItem(){
+public class RepairAllCommand extends BaseCommand{
+    public RepairAllCommand(){
         bePlayer = false;
-        name = "repairitem";
+        name = "repairall";
         perm = Perms.REPAIRALL;
         argLength = 0;
-        usage = "[player] <- repair your item";
+        usage = "[player] <- repair your all items";
     }
     
     public void execute() throws CommandException{
@@ -37,18 +37,20 @@ public class RepairItem extends BaseCommand{
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         
-        final ItemStack item = target.getItemInHand();
-        final String iname = (item == null) ? "null" : item.getType().name();
-        
-        if (item != null && ItemUtil.repairable(item.getTypeId())){
-            item.setDurability((short) 0);
-        }else{
-            throw new CommandException("&cアイテム " + iname + " は修復できません！");
+        for (final ItemStack item : target.getInventory().getContents()){
+            if (item != null && ItemUtil.repairable(item.getTypeId())){ // TODO add repairable check
+                item.setDurability((short) 0);
+            }
+        }
+        for (final ItemStack item : target.getInventory().getArmorContents()){
+            if (item != null){
+                item.setDurability((short) 0);
+            }
         }
         
         if (!sender.equals(target)){
-            Util.message(sender, "&a" + target.getName() + " のアイテム " + iname + " が修復されました");
+            Util.message(sender, "&a" + target.getName() + " の全アイテムが修復されました");
         }
-        Util.message(target, "&aあなたのアイテム " + iname + " が修復されました");
+        Util.message(target, "&aあなたの全アイテムが修復されました");
     }
 }

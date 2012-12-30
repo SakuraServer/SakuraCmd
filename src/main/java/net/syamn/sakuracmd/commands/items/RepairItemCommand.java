@@ -1,12 +1,8 @@
 /**
  * SakuraCmd - Package: net.syamn.sakuracmd.commands.items
- * Created: 2012/12/29 6:11:48
+ * Created: 2012/12/29 8:01:37
  */
 package net.syamn.sakuracmd.commands.items;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import net.syamn.sakuracmd.Perms;
 import net.syamn.sakuracmd.commands.BaseCommand;
@@ -14,17 +10,21 @@ import net.syamn.utils.ItemUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
 /**
- * RepairAll (RepairAll.java)
+ * RepairItemCommand (RepairItemCommand.java)
  * @author syam(syamn)
  */
-public class RepairAll extends BaseCommand{
-    public RepairAll(){
+public class RepairItemCommand extends BaseCommand{
+    public RepairItemCommand(){
         bePlayer = false;
-        name = "repairall";
+        name = "repairitem";
         perm = Perms.REPAIRALL;
         argLength = 0;
-        usage = "[player] <- repair your all items";
+        usage = "[player] <- repair your item";
     }
     
     public void execute() throws CommandException{
@@ -37,20 +37,18 @@ public class RepairAll extends BaseCommand{
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         
-        for (final ItemStack item : target.getInventory().getContents()){
-            if (item != null && ItemUtil.repairable(item.getTypeId())){ // TODO add repairable check
-                item.setDurability((short) 0);
-            }
-        }
-        for (final ItemStack item : target.getInventory().getArmorContents()){
-            if (item != null){
-                item.setDurability((short) 0);
-            }
+        final ItemStack item = target.getItemInHand();
+        final String iname = (item == null) ? "null" : item.getType().name();
+        
+        if (item != null && ItemUtil.repairable(item.getTypeId())){
+            item.setDurability((short) 0);
+        }else{
+            throw new CommandException("&cアイテム " + iname + " は修復できません！");
         }
         
         if (!sender.equals(target)){
-            Util.message(sender, "&a" + target.getName() + " の全アイテムが修復されました");
+            Util.message(sender, "&a" + target.getName() + " のアイテム " + iname + " が修復されました");
         }
-        Util.message(target, "&aあなたの全アイテムが修復されました");
+        Util.message(target, "&aあなたのアイテム " + iname + " が修復されました");
     }
 }

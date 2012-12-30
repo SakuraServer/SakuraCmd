@@ -14,11 +14,11 @@ import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
 /**
- * Lockdown (Lockdown.java)
+ * LockdownCommand (LockdownCommand.java)
  * @author syam(syamn)
  */
-public class Lockdown extends BaseCommand{
-    public Lockdown(){
+public class LockdownCommand extends BaseCommand{
+    public LockdownCommand(){
         bePlayer = false;
         name = "lockdown";
         perm = Perms.LOCKDOWN;

@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.syamn.sakuracmd.commands.items.*;
-import net.syamn.sakuracmd.commands.server.Lockdown;
+import net.syamn.sakuracmd.commands.server.LockdownCommand;
 import net.syamn.sakuracmd.commands.tp.*;
 
 /**
@@ -20,15 +20,15 @@ public class CommandRegister {
         Set<BaseCommand> cmds = new HashSet<BaseCommand>();
         
         // Item Commands
-        cmds.add(new RepairItem());
-        cmds.add(new RepairAll());
+        cmds.add(new RepairItemCommand());
+        cmds.add(new RepairAllCommand());
         
         // Teleport Commands
-        cmds.add(new TpHere());
-        cmds.add(new Tp());
+        cmds.add(new TpHereCommand());
+        cmds.add(new TpCommand());
         
         // Server Commands
-        cmds.add(new Lockdown());
+        cmds.add(new LockdownCommand());
         
         return cmds;
     }

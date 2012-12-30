@@ -1,6 +1,6 @@
 /**
  * SakuraCmd - Package: net.syamn.sakuracmd.commands.tp
- * Created: 2012/12/29 8:17:40
+ * Created: 2012/12/29 8:30:44
  */
 package net.syamn.sakuracmd.commands.tp;
 
@@ -14,14 +14,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 /**
- * TpHere (TpHere.java)
+ * TpCommand (TpCommand.java)
  * @author syam(syamn)
  */
-public class TpHere extends BaseCommand{
-    public TpHere(){
+public class TpCommand extends BaseCommand{
+    public TpCommand(){
         bePlayer = true;
-        name = "tphere";
-        perm = Perms.TPHERE;
+        name = "tp";
+        perm = Perms.TP;
         argLength = 1;
         usage = "[player] <- tp ";
     }
@@ -32,9 +32,8 @@ public class TpHere extends BaseCommand{
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         
-        target.teleport(player, TeleportCause.COMMAND);
+        player.teleport(target, TeleportCause.COMMAND);
         
-        Util.message(target, "&aプレイヤー " + sender.getName() + " があなたをテレポートしました");
-        Util.message(sender, "&aプレイヤー " + target.getName() + " をあなたにテレポートしました");
+        Util.message(sender, "&aプレイヤー " + target.getName() + " にテレポートしました！");
     }
 }
