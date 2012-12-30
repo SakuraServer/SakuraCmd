@@ -236,8 +236,8 @@
       <!-- SakuraUtils Dependency -->
       <dependency>
           <groupId>net.syamn</groupId>
-          <artifactId>syamn-lib</artifactId>
-          <version>1.0.1</version>
+          <artifactId>SakuraLib</artifactId>
+          <version>1.4.6-0.1</version>
       </dependency>
   </dependencies>
 
