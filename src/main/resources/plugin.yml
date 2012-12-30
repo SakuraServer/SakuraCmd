@@ -20,6 +20,9 @@ commands:
     tphere:
       usage: /tphere - to see the help
       description: See plugin help.
+    lockdown:
+      usage: /lockdown - to see the help
+      description: See plugin help.
     sakuracmd:
       usage: /sakuracmd - to see the help
       aliases: [sakuracmd]

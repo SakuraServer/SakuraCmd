@@ -20,6 +20,11 @@ public enum Perms {
     TP ("tp.tp"),
     TPHERE ("tp.here"),
     
+    // Server Commands
+    LOCKDOWN ("server.lockdown"),
+    LOCKDOWN_BYPASS ("server.lockdown.bypass"),
+    
+    
     // Free Permissions
 
     // Spec Permissions

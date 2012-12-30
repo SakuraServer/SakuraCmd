@@ -11,6 +11,7 @@ import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.syamn.sakuracmd.commands.CommandHandler;
 import net.syamn.sakuracmd.commands.CommandRegister;
+import net.syamn.sakuracmd.manager.ServerManager;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Metrics;
 
@@ -34,6 +35,9 @@ public class SakuraCmd extends JavaPlugin{
 
     // ** Commands **
     private CommandHandler commandHandler;
+    
+    // ** Managers **
+    private ServerManager serverMan;
 
     // ** Private Classes **
     private ConfigurationManager config;
@@ -72,8 +76,11 @@ public class SakuraCmd extends JavaPlugin{
             return;
         }
 
+        // Managers
+        serverMan = new ServerManager(this);
+        
         // Regist Listeners
-        // pm.registerEvents(serverListener, this);
+        pm.registerEvents(new ServerListener(), this);
 
         // commands
         commandHandler = new CommandHandler(this);
@@ -153,19 +160,15 @@ public class SakuraCmd extends JavaPlugin{
             // Vaultが見つからなかった
             log.warning(logPrefix
                     + "Vault plugin was NOT found! Disabled Vault integration.");
-            return false;
-        }
-    }*/
-
-    /**
-     * データベースを返す
-     * @return Database
-     */
-    /*
-    public static Database getDatabases(){
-        return database;
-    }
     */
+    
+    /**
+     * サーバマネージャを返す
+     * @return
+     */
+    public ServerManager getServerManager(){
+        return this.serverMan;
+    }
 
     /**
      * Metricsセットアップ
