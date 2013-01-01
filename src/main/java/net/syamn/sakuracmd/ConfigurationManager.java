@@ -87,6 +87,10 @@ public class ConfigurationManager {
     }
     
     /* ***** Begin Configuration Getters ************************** */
+    // General
+    public int getAfkCheckIntervalInSec(){
+        return conf.getInt("AfkCheckIntervalInSec", 30);
+    }    
     
     // Debug
     public boolean isDebug(){

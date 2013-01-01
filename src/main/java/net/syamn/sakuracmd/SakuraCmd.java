@@ -12,6 +12,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.syamn.sakuracmd.commands.CommandHandler;
 import net.syamn.sakuracmd.commands.CommandRegister;
 import net.syamn.sakuracmd.manager.ServerManager;
+import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Metrics;
 
@@ -91,7 +92,8 @@ public class SakuraCmd extends JavaPlugin{
         //database.createStructure();
 
         // task start
-        //taskManager.setSchedule(true, null);
+        getServer().getScheduler().runTaskTimerAsynchronously(
+                this, AFKWorker.getInstance().getAfkChecker(), 0, getConfigs().getAfkCheckIntervalInSec() * 20);
 
         // メッセージ表示
         PluginDescriptionFile pdfFile = this.getDescription();
@@ -106,6 +108,9 @@ public class SakuraCmd extends JavaPlugin{
     @Override
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
+        
+        // dispose all components
+        AFKWorker.dispose();
 
         // メッセージ表示
         PluginDescriptionFile pdfFile = this.getDescription();

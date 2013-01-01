@@ -2,6 +2,11 @@
 # @author syamn <admin@sakura-server.net>
 # github: https://github.com/SakuraServer/SakuraCmd
 
+#====================#
+#   General Config   #
+#====================#
+AfkCheckIntervalInSec: 30
+
 #==================#
 #   Debug Config   #
 #==================#
