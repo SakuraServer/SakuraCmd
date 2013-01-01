@@ -14,6 +14,9 @@ public class SakuraPlayer {
     private Player player;
     private PlayerData data;
     
+    /* *** Status ******* */
+    private boolean isAfk = false;
+    
     public SakuraPlayer(final Player player){
         this.player = player;
         this.data = new PlayerData(player.getName());
@@ -24,6 +27,7 @@ public class SakuraPlayer {
     }
     
     public SakuraPlayer setPlayer(final Player player){
+        initStatus();
         this.player = player;
         // Validate player instance
         if (!player.getName().equalsIgnoreCase(this.data.getPlayerName())){
@@ -34,5 +38,17 @@ public class SakuraPlayer {
     
     public PlayerData getData(){
         return data;
+    }
+    
+    public void initStatus(){
+        this.isAfk = false;
+    }
+    
+    /* *** Status getter/setter */
+    public boolean isAfk(){
+        return this.isAfk;
+    }
+    public void setAfk(final boolean afk){
+        this.isAfk = afk;
     }
 }

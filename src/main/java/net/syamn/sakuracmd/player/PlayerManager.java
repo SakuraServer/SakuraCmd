@@ -6,7 +6,6 @@ package net.syamn.sakuracmd.player;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 /**
@@ -50,7 +49,11 @@ public class PlayerManager {
         return PlayerData.getDataIfExists(playerName);
     }
     
-    public static PlayerData getData(final OfflinePlayer player){
-        return getData(player.getName());
+    public static PlayerData getDataIfOnline(final String playerName){
+        final SakuraPlayer sp = players.get(playerName);
+        if (sp != null && sp.getPlayer() != null && sp.getPlayer().isOnline()){
+            return sp.getData();
+        }
+        return null;
     }
 }

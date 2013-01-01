@@ -22,6 +22,13 @@ public class PlayerData{
     private YamlConfiguration conf;
     private File file;
     private boolean saved = true;
+    
+    /* Transient status */
+    // --> moved to SakuraPlayer
+    
+    /* Saves values*/
+    
+    /* ************************** */
 
     public PlayerData(final String playerName){
         this.playerName = playerName;
@@ -74,4 +81,6 @@ public class PlayerData{
         final File file = new File(fileName);
         return (file.exists()) ? new PlayerData(playerName, file) : null;
     }
+
+
 }
