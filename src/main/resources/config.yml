@@ -12,7 +12,7 @@ AfkCheckIntervalInSec: 30
 #========================#
 #   Permission Control   #
 #========================#
-# Supported controller: PermissionsEx
+# Supported controller: PermissionsEx, SuperPerms
 Permission: "PermissionsEx"
 
 #==================#

@@ -7,7 +7,9 @@ package net.syamn.sakuracmd.permission;
 import java.util.Set;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.exception.NotSupportedException;
 import net.syamn.sakuracmd.permission.plugin.PermissionsEx;
+import net.syamn.sakuracmd.permission.plugin.SuperPermission;
 import net.syamn.utils.LogUtil;
 
 import org.bukkit.entity.Player;
@@ -21,7 +23,7 @@ import org.bukkit.plugin.Plugin;
 public class PermissionManager {
     private static PermissionManager instance = null;
     private static PermissionType permType;
-    private static IPermissionPlugin permPlugin;
+    private static IPermissionPlugin permPlugin = null;
     
     /**
      * Get Instance
@@ -47,7 +49,6 @@ public class PermissionManager {
             if (testPex == null) testPex = plugin.getServer().getPluginManager().getPlugin("permissionsex");
             if (testPex == null){
                 LogUtil.warning("Selected PermissionsEx for permission control, but NOT found this plugin!");
-                return;
             }
             
             try{
@@ -55,31 +56,46 @@ public class PermissionManager {
             }catch(Exception ex){
                 ex.printStackTrace();
             }
-        }else{
+        }
+        else if ("superperms".equalsIgnoreCase(selected)){
+            setSuperPerms();
+        }
+        else{
             found = false;
         }
         
+        if (found && permPlugin == null){
+            setSuperPerms();
+        }
+        
+        // デフォルトではSuperPermsを使用
         if (!found){
             LogUtil.warning("Valid permissions name not selected!");
-        }else{
-            LogUtil.info("Using " + permType.name() + " for permission control.");
+            setSuperPerms();
         }
+        
+        LogUtil.info("Using " + permType.name() + " for permission control.");
     }
     
     public PermissionType getPermType(){
         return permType;
     }
     
-    public static boolean setPEX(final ru.tehkode.permissions.PermissionManager pex){
+    private static void setPEX(final ru.tehkode.permissions.PermissionManager pex){
         if (!PermissionType.PEX.equals(permType)){
             permType = PermissionType.PEX;
             permPlugin = new PermissionsEx(pex);
             LogUtil.info("Successfully linked with PermissionsEx!");
-            return true;
-        }else{
-            return false;
         }
     }
+    private static void setSuperPerms(){
+        if (!PermissionType.SUPERPERMS.equals(permType)){
+            permType = PermissionType.SUPERPERMS;
+            permPlugin = new SuperPermission();
+            LogUtil.info("Successfully linked with SuperPerms!");
+        }
+    }
+    
     
     
     /* ********** */
@@ -90,13 +106,13 @@ public class PermissionManager {
         return permPlugin.getSuffix(player);
     }
     
-    public Set<Player> getPlayers(final String groupName){
+    public Set<Player> getPlayers(final String groupName) throws NotSupportedException{
         return permPlugin.getPlayers(groupName);
     }
-    public static String getGroupName(final Player player){
+    public static String getGroupName(final Player player) throws NotSupportedException{
         return permPlugin.getGroupName(player);
     }
-    public static boolean isInGroup(final Player player, final String groupName){
+    public static boolean isInGroup(final Player player, final String groupName) throws NotSupportedException{
         return permPlugin.isInGroup(player, groupName);
     }
     

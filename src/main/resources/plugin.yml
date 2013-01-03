@@ -4,7 +4,7 @@ version: version-number-unknown
 main: net.syamn.sakuracmd.SakuraCmd
 description: Minecraft SakuraCmd server plugin
 website: http://sakura-server.net/
-softdepend: [Vault]
+softdepend: [PermissionsEx, Vault]
 ##  Original Author     ##
 author: syamn
 commands:

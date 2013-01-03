@@ -52,8 +52,8 @@ public class SakuraCmd extends JavaPlugin{
     private static SakuraCmd instance;
 
     // ** Hookup Plugins **
-    private static Vault vault = null;
-    private static Economy economy = null;
+    //private static Vault vault = null;
+    //private static Economy economy = null;
 
     /**
      * プラグイン起動処理
