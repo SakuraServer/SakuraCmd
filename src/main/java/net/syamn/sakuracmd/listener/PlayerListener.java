@@ -19,8 +19,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import com.avaje.ebeaninternal.server.persist.dml.UpdatePlan;
-
 /**
  * PlayerListener (PlayerListener.java)
  * @author syam(syamn)

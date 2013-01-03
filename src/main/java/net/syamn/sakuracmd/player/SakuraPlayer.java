@@ -6,9 +6,10 @@ package net.syamn.sakuracmd.player;
 
 import net.syamn.sakuracmd.ConfigurationManager;
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.utils.Util;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.entity.Player;
 
 /**
@@ -47,10 +48,31 @@ public class SakuraPlayer {
         }
         
         if (config.getUseNamePrefix()){
-            throw new NotImplementedException();//TODO
+            final String prefix = getPrefix();
+            String suffix = PermissionManager.getSuffix(player);
+            suffix = (suffix == null) ? "" : Util.coloring(suffix);
+            
+            if (config.getUseDisplayname()){
+                return prefix + player.getDisplayName() + suffix;
+            }else{
+                return prefix + player.getName() + suffix;
+            }
         }else{
             return (config.getUseDisplayname()) ? player.getDisplayName() : player.getName();
         }
+    }
+    
+    public String getPrefix(){
+        String prefix = PermissionManager.getPrefix(player);
+        if (prefix == null) prefix = "";
+        
+        String status = "";
+        
+        if (AFKWorker.getInstance().isAfk(player)){
+            status += AFKWorker.afkPrefix;
+        }
+        
+        return Util.coloring(status + prefix);
     }
     
     public PlayerData getData(){

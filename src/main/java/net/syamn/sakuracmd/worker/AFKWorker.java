@@ -16,7 +16,7 @@ import org.bukkit.entity.Player;
  * @author syam(syamn)
  */
 public class AFKWorker {
-    private final static String afkPrefix = "&e[AFK]";
+    public final static String afkPrefix = "&e[AFK]";
     private int afkTime = 5 * 60 * 1000;
     private final ConcurrentHashMap<Player, Long> playerTimeStamp = new ConcurrentHashMap<Player, Long>();
     private final ConcurrentHashMap<Player, Long> afkPlayers = new ConcurrentHashMap<Player, Long>();
