@@ -4,6 +4,8 @@
  */
 package net.syamn.sakuracmd.player;
 
+import net.syamn.sakuracmd.worker.AFKWorker;
+
 import org.bukkit.entity.Player;
 
 /**
@@ -15,8 +17,6 @@ public class SakuraPlayer {
     private PlayerData data;
     
     /* *** Status ******* */
-    private boolean isAfk = false;
-    
     public SakuraPlayer(final Player player){
         this.player = player;
         this.data = new PlayerData(player.getName());
@@ -41,14 +41,11 @@ public class SakuraPlayer {
     }
     
     public void initStatus(){
-        this.isAfk = false;
+        //this.isAfk = false;
     }
     
     /* *** Status getter/setter */
     public boolean isAfk(){
-        return this.isAfk;
-    }
-    public void setAfk(final boolean afk){
-        this.isAfk = afk;
+        return AFKWorker.getInstance().isAfk(this.player);
     }
 }
