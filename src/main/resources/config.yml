@@ -7,6 +7,7 @@
 #====================#
 UseNamePrefix: true
 UseDisplayName: true
+AfkTimeInSec: 300
 AfkCheckIntervalInSec: 30
 
 #========================#

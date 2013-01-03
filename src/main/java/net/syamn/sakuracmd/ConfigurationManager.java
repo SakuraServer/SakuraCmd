@@ -94,6 +94,9 @@ public class ConfigurationManager {
     public boolean getUseDisplayname(){
         return conf.getBoolean("UseDisplayName", true);
     }
+    public int getAfkTimeInSec(){
+        return conf.getInt("AfkTimeInSec", 300); // 3 mins
+    }
     public int getAfkCheckIntervalInSec(){
         return conf.getInt("AfkCheckIntervalInSec", 30);
     }

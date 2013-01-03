@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.worker;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.Util;
 
@@ -21,7 +22,6 @@ public class AFKWorker {
     private int afkTime = 5 * 60 * 1000;
     private final ConcurrentHashMap<Player, Long> playerTimeStamp = new ConcurrentHashMap<Player, Long>();
     private final ConcurrentHashMap<Player, Long> afkPlayers = new ConcurrentHashMap<Player, Long>();
-    
     
     private final AfkChecker afkChecker;
     private static AFKWorker instance = new AFKWorker();
@@ -91,6 +91,8 @@ public class AFKWorker {
         @Override
         public void run(){
             final long now = System.currentTimeMillis();
+            final int afkTime = SakuraCmd.getInstance().getConfigs().getAfkTimeInSec() * 1000;
+            
             for (final Player player : Bukkit.getOnlinePlayers()){
                 final Long last = playerTimeStamp.get(player);
                 if (last != null && !afkPlayers.containsKey(player) && (now - last) >= afkTime){
