@@ -79,6 +79,13 @@ public class AFKWorker {
         return afkPlayers.containsKey(player);
     }
     
+    public void updatePlayer(final Player player){
+        updateTimeStamp(player);
+        if (isAfk(player)){
+            setOnline(player);
+        }
+    }
+    
     private class AfkChecker implements Runnable{
         @Override
         public void run(){

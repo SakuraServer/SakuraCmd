@@ -7,14 +7,19 @@ package net.syamn.sakuracmd.listener;
 import net.syamn.sakuracmd.Perms;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.worker.AFKWorker;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
+import org.bukkit.event.player.PlayerMoveEvent;
+
+import com.avaje.ebeaninternal.server.persist.dml.UpdatePlan;
 
 /**
  * PlayerListener (PlayerListener.java)
@@ -26,9 +31,27 @@ public class PlayerListener implements Listener{
         this.plugin = plugin;
     }
     
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerInteract(final PlayerInteractEvent event){
+        final Player player = event.getPlayer();
+        AFKWorker.getInstance().updatePlayer(player);
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerMove(final PlayerMoveEvent event){
+        AFKWorker.getInstance().updatePlayer(event.getPlayer());
+    }
+    
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event){
         final Player player = event.getPlayer();
+        
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+            @Override
+            public void run(){
+                AFKWorker.getInstance().updateTimeStamp(player);
+            }
+        });
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
