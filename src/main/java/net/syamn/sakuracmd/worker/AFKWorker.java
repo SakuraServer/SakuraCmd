@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.worker;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
@@ -62,7 +63,7 @@ public class AFKWorker {
         setAfk(player, null);
     }
     public void setAfk(final Player player, final String message){
-        String afkMsg = player.getDisplayName() + " &fは&e離席中(AFK)&fです...";
+        String afkMsg = PlayerManager.getPlayer(player.getName()).getName() + " &fは&e離席中(AFK)&fです...";
         if (message != null && !message.isEmpty()) afkMsg += ": " + message;
         Util.broadcastMessage(afkMsg);
         
@@ -70,7 +71,7 @@ public class AFKWorker {
         player.setSleepingIgnored(true);
     }
     public void setOnline(final Player player){
-        Util.broadcastMessage(afkPrefix + "&f" + player.getDisplayName() + " &fは&aオンライン&fです");
+        Util.broadcastMessage(afkPrefix + "&f" + PlayerManager.getPlayer(player.getName()).getName() + " &fは&aオンライン&fです");
         
         afkPlayers.remove(player);
         player.setSleepingIgnored(false);
