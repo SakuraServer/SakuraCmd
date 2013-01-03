@@ -4,8 +4,8 @@
  */
 package net.syamn.sakuracmd.listener;
 
-import net.syamn.sakuracmd.Perms;
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.permissions.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
 

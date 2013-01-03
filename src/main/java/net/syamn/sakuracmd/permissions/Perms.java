@@ -2,7 +2,7 @@
  * SakuraCmd - Package: net.syamn.sakuracmd
  * Created: 2012/12/28 13:39:58
  */
-package net.syamn.sakuracmd;
+package net.syamn.sakuracmd.permissions;
 
 import org.bukkit.permissions.Permissible;
 

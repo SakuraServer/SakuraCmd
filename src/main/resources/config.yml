@@ -5,6 +5,8 @@
 #====================#
 #   General Config   #
 #====================#
+UseNamePrefix: true
+UseDisplayName: true
 AfkCheckIntervalInSec: 30
 
 #==================#

@@ -88,9 +88,15 @@ public class ConfigurationManager {
     
     /* ***** Begin Configuration Getters ************************** */
     // General
+    public boolean getUseNamePrefix(){
+        return conf.getBoolean("UseNamePrefix", true);
+    }
+    public boolean getUseDisplayname(){
+        return conf.getBoolean("UseDisplayName", true);
+    }
     public int getAfkCheckIntervalInSec(){
         return conf.getInt("AfkCheckIntervalInSec", 30);
-    }    
+    }
     
     // Debug
     public boolean isDebug(){

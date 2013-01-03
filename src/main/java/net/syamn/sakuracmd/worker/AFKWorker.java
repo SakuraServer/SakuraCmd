@@ -70,7 +70,7 @@ public class AFKWorker {
         player.setSleepingIgnored(true);
     }
     public void setOnline(final Player player){
-        Util.broadcastMessage(afkPrefix + player.getDisplayName() + " &fは&aオンライン&fです");
+        Util.broadcastMessage(afkPrefix + "&f" + player.getDisplayName() + " &fは&aオンライン&fです");
         
         afkPlayers.remove(player);
         player.setSleepingIgnored(false);

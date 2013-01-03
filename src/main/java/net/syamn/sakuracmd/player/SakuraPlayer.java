@@ -4,8 +4,11 @@
  */
 package net.syamn.sakuracmd.player;
 
+import net.syamn.sakuracmd.ConfigurationManager;
+import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.worker.AFKWorker;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.entity.Player;
 
 /**
@@ -13,6 +16,8 @@ import org.bukkit.entity.Player;
  * @author syam(syamn)
  */
 public class SakuraPlayer {
+    private final ConfigurationManager config;
+    
     private Player player;
     private PlayerData data;
     
@@ -20,12 +25,12 @@ public class SakuraPlayer {
     public SakuraPlayer(final Player player){
         this.player = player;
         this.data = new PlayerData(player.getName());
+        
+        this.config = SakuraCmd.getInstance().getConfigs();
     }
-    
     public Player getPlayer(){
         return this.player;
     }
-    
     public SakuraPlayer setPlayer(final Player player){
         initStatus();
         this.player = player;
@@ -34,6 +39,18 @@ public class SakuraPlayer {
             throw new IllegalStateException("Wrong player instance! Player: " + player.getName() + " Data: " + this.data.getPlayerName());
         }
         return this;
+    }
+    
+    public String getName(){
+        if (player == null){
+            throw new IllegalStateException("Null Player!");
+        }
+        
+        if (config.getUseNamePrefix()){
+            throw new NotImplementedException();//TODO
+        }else{
+            return (config.getUseDisplayname()) ? player.getDisplayName() : player.getName();
+        }
     }
     
     public PlayerData getData(){

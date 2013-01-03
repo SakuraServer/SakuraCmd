@@ -7,9 +7,9 @@ package net.syamn.sakuracmd.commands.server;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import net.syamn.sakuracmd.Perms;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.manager.ServerManager;
+import net.syamn.sakuracmd.permissions.Perms;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
@@ -38,6 +38,7 @@ public class LockdownCommand extends BaseCommand{
                         if (!Perms.LOCKDOWN_BYPASS.has(player)){
                             player.kickPlayer("サーバがロックダウンされました！");
                         }
+                        Util.broadcastMessage("&aこのサーバはロックダウンされました！");
                     }
                 }
             }, 5 * 20L);
