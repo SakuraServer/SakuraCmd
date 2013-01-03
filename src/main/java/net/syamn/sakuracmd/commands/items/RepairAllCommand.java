@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
-import net.syamn.sakuracmd.permissions.Perms;
+import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.utils.ItemUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;

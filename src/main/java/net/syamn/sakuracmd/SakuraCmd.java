@@ -12,6 +12,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.syamn.sakuracmd.commands.CommandHandler;
 import net.syamn.sakuracmd.commands.CommandRegister;
 import net.syamn.sakuracmd.manager.ServerManager;
+import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Metrics;
@@ -77,6 +78,9 @@ public class SakuraCmd extends JavaPlugin{
             return;
         }
 
+        // init permission
+        PermissionManager.setupPermissions(this);
+        
         // Managers
         serverMan = new ServerManager(this);
         

@@ -2,7 +2,7 @@
  * SakuraCmd - Package: net.syamn.sakuracmd
  * Created: 2012/12/28 13:39:58
  */
-package net.syamn.sakuracmd.permissions;
+package net.syamn.sakuracmd.permission;
 
 import org.bukkit.permissions.Permissible;
 
@@ -60,6 +60,11 @@ public enum Perms {
     public boolean has(final Permissible perm) {
         if (perm == null)
             return false;
-        return perm.hasPermission(node); // only support SuperPerms
+        //return perm.hasPermission(node); // only support SuperPerms
+        return PermissionManager.hasPerm(perm, this);
+    }
+    
+    public String getNode(){
+        return this.node;
     }
 }

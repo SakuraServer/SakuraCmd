@@ -98,6 +98,11 @@ public class ConfigurationManager {
         return conf.getInt("AfkCheckIntervalInSec", 30);
     }
     
+    // Permissions
+    public String getPermissionCtrl(){
+        return conf.getString("Permission", "PerimssionsEx");
+    }
+    
     // Debug
     public boolean isDebug(){
         return conf.getBoolean("Debug", false);

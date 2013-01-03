@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.syamn.sakuracmd.SakuraCmd;
-import net.syamn.sakuracmd.permissions.Perms;
+import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
