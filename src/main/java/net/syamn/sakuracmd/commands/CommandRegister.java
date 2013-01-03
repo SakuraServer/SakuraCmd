@@ -8,7 +8,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.syamn.sakuracmd.commands.items.*;
-import net.syamn.sakuracmd.commands.server.LockdownCommand;
+import net.syamn.sakuracmd.commands.player.*;
+import net.syamn.sakuracmd.commands.server.*;
 import net.syamn.sakuracmd.commands.tp.*;
 
 /**
@@ -29,6 +30,9 @@ public class CommandRegister {
         
         // Server Commands
         cmds.add(new LockdownCommand());
+        
+        // Player Commands
+        cmds.add(new AFKCommand());
         
         return cmds;
     }

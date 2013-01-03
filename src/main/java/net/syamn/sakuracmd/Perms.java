@@ -24,6 +24,8 @@ public enum Perms {
     LOCKDOWN ("server.lockdown"),
     LOCKDOWN_BYPASS ("server.lockdown.bypass"),
     
+    // Player Commands
+    AFK ("player.afk"),
     
     // Free Permissions
 
