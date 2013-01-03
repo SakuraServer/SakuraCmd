@@ -72,7 +72,7 @@ public class SakuraPlayer {
             status += AFKWorker.afkPrefix;
         }
         
-        return Util.coloring(status + prefix);
+        return Util.coloring(status + prefix + "&f");
     }
     
     public PlayerData getData(){

@@ -19,7 +19,7 @@ public class PlayerData{
     private final static String dataDir = "userData";
     
     private final String playerName;
-    private YamlConfiguration conf;
+    private YamlConfiguration conf = new YamlConfiguration();
     private File file;
     private boolean saved = true;
     

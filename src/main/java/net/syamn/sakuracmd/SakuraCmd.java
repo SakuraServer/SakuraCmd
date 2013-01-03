@@ -11,6 +11,7 @@ import net.milkbowl.vault.Vault;
 import net.milkbowl.vault.economy.Economy;
 import net.syamn.sakuracmd.commands.CommandHandler;
 import net.syamn.sakuracmd.commands.CommandRegister;
+import net.syamn.sakuracmd.listener.PlayerListener;
 import net.syamn.sakuracmd.manager.ServerManager;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
@@ -85,7 +86,7 @@ public class SakuraCmd extends JavaPlugin{
         serverMan = new ServerManager(this);
         
         // Regist Listeners
-        pm.registerEvents(new ServerListener(), this);
+        pm.registerEvents(new PlayerListener(this), this);
 
         // commands
         commandHandler = new CommandHandler(this);
