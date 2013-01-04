@@ -64,6 +64,10 @@ public class AFKWorker {
         setAfk(player, null);
     }
     public void setAfk(final Player player, final String message){
+        if (InvisibleWorker.getInstance().isInvisible(player)){
+            return;
+        }
+        
         String afkMsg = PlayerManager.getPlayer(player.getName()).getName() + " &fは&e離席中(AFK)&fです...";
         if (message != null && !message.isEmpty()) afkMsg += ": " + message;
         Util.broadcastMessage(afkMsg);
@@ -72,6 +76,10 @@ public class AFKWorker {
         player.setSleepingIgnored(true);
     }
     public void setOnline(final Player player){
+        if (InvisibleWorker.getInstance().isInvisible(player)){
+            return;
+        }
+        
         Util.broadcastMessage("&f" + PlayerManager.getPlayer(player.getName()).getName() + " &fは&aオンライン&fです");
         
         afkPlayers.remove(player);

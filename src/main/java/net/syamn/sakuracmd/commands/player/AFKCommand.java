@@ -7,6 +7,7 @@ package net.syamn.sakuracmd.commands.player;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.exception.CommandException;
 
@@ -24,6 +25,10 @@ public class AFKCommand extends BaseCommand{
     }
     
     public void execute() throws CommandException{
+        if (InvisibleWorker.getInstance().isInvisible(player)){
+            throw new CommandException("&cあなたは透明モードが有効になっています！");
+        }
+        
         AFKWorker worker = AFKWorker.getInstance();
         if (worker.isAfk(player)){
             worker.setOnline(player);
