@@ -32,12 +32,6 @@ public class SCHelper {
      * プラスグインの初期化時と有効化時に呼ばれる
      */
     private void init(){
-        AFKWorker.getInstance();
-        this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
-                this.plugin, AFKWorker.getInstance().getAfkChecker(), 0, config.getAfkCheckIntervalInSec() * 20);
-        
-        InvisibleWorker.createInstance();
-        
         // loadconfig
         try {
             config.loadConfig(true);
@@ -46,8 +40,15 @@ public class SCHelper {
             ex.printStackTrace();
         }
         
-        PermissionManager.setupPermissions(plugin); // init permission
+        // worker
+        AFKWorker.getInstance();
+        this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
+                this.plugin, AFKWorker.getInstance().getAfkChecker(), 0, config.getAfkCheckIntervalInSec() * 20);
         
+        InvisibleWorker.createInstance();
+        
+       
+        PermissionManager.setupPermissions(plugin); // init permission
     }
     
     public void setMainPlugin(final SakuraCmd plugin){

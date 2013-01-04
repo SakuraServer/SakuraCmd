@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.worker;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.syamn.sakuracmd.permission.Perms;
@@ -20,7 +21,8 @@ import org.bukkit.entity.Player;
 public class InvisibleWorker {
     protected static InvisibleWorker instance = null;
     public final static String invPrefix = "&7[INV]";
-    private final ConcurrentHashMap<Player, Object> invisiblePlayers = new ConcurrentHashMap<Player, Object>();
+    //private final ConcurrentHashMap<Player, Object> invisiblePlayers = new ConcurrentHashMap<Player, Object>();
+    private final Set<Player> invisiblePlayers = Collections.newSetFromMap(new ConcurrentHashMap<Player, Boolean>());
     
     public static InvisibleWorker getInstance(){
         return instance;
@@ -33,7 +35,7 @@ public class InvisibleWorker {
     }
     
     public Collection<Player> getAllInvisiblePlayers(){
-        return Collections.unmodifiableCollection(invisiblePlayers.keySet());
+        return Collections.unmodifiableCollection(invisiblePlayers);
     }
     
     public void onPlayerQuit(final Player player){
@@ -41,11 +43,11 @@ public class InvisibleWorker {
     }
     
     public void vanish(final Player player, final boolean onJoin){
-        if (invisiblePlayers.containsKey(player)){
+        if (invisiblePlayers.contains(player)){
             return;
         }
         
-        invisiblePlayers.put(player, null);
+        invisiblePlayers.add(player);
         //TODO do stuff for dynmap
         
         for (final Player p : Bukkit.getOnlinePlayers()){
@@ -57,7 +59,7 @@ public class InvisibleWorker {
         }
     }
     public void sendInvisibleOnJoin(final Player joined){
-        for (final Player inv : invisiblePlayers.keySet()){
+        for (final Player inv : invisiblePlayers){
             invisible(inv, joined);
         }
     }
@@ -87,6 +89,6 @@ public class InvisibleWorker {
     
     public boolean isInvisible(final Player player){
         if (player == null) return false;
-        return invisiblePlayers.containsKey(player);
+        return invisiblePlayers.contains(player);
     }
 }
