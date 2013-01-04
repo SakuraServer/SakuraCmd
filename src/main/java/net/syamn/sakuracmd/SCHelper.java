@@ -4,7 +4,11 @@
  */
 package net.syamn.sakuracmd;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import net.syamn.sakuracmd.permission.PermissionManager;
+import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.LogUtil;
@@ -46,9 +50,14 @@ public class SCHelper {
                 this.plugin, AFKWorker.getInstance().getAfkChecker(), 0, config.getAfkCheckIntervalInSec() * 20);
         
         InvisibleWorker.createInstance();
-        
        
         PermissionManager.setupPermissions(plugin); // init permission
+        
+        // Mapping already online players
+        PlayerManager.clearAll();
+        for (final Player player : Bukkit.getOnlinePlayers()){
+            PlayerManager.addPlayer(player);
+        }
     }
     
     public void setMainPlugin(final SakuraCmd plugin){
