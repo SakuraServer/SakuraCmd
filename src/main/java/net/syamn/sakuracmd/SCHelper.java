@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.LogUtil;
@@ -52,6 +53,14 @@ public class SCHelper {
        
         PermissionManager.setupPermissions(plugin); // init permission
         
+        // dynmap
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
+            @Override
+            public void run(){
+                DynmapHandler.createInstance();
+            }
+        }, 20L);
+        
         // Mapping already online players
         PlayerManager.clearAll();
         for (final Player player : Bukkit.getOnlinePlayers()){
@@ -77,6 +86,11 @@ public class SCHelper {
     public synchronized void reload(){
         AFKWorker.dispose();
         InvisibleWorker.dispose();
+        
+        if (DynmapHandler.getInstance() != null){
+            DynmapHandler.getInstance().deactivate();
+        }
+        DynmapHandler.dispose();
         
         System.gc();
         init();

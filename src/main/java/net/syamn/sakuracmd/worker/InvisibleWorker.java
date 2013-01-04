@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -48,7 +49,7 @@ public class InvisibleWorker {
         }
         
         invisiblePlayers.add(player);
-        //TODO do stuff for dynmap
+        DynmapHandler.getInstance().setPlayerVisiblity(player, false);
         
         for (final Player p : Bukkit.getOnlinePlayers()){
             invisible(player, p);
@@ -65,7 +66,7 @@ public class InvisibleWorker {
     }
     public void reappear(final Player player){
         invisiblePlayers.remove(player);
-        //TODO do stuff for dynmap
+        DynmapHandler.getInstance().setPlayerVisiblity(player, true);
         
         for (final Player p : Bukkit.getOnlinePlayers()){
             uninvisible(player, p);
