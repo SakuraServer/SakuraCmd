@@ -33,6 +33,7 @@ public class CommandRegister {
         
         // Player Commands
         cmds.add(new AFKCommand());
+        cmds.add(new InvisibleCommand());
         
         return cmds;
     }

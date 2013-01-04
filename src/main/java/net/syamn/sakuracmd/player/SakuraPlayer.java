@@ -9,6 +9,7 @@ import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
 
 import org.bukkit.entity.Player;
@@ -69,6 +70,9 @@ public class SakuraPlayer {
         
         String status = "";
         
+        if (InvisibleWorker.getInstance().isInvisible(player)){
+            status += InvisibleWorker.invPrefix;
+        }
         if (AFKWorker.getInstance().isAfk(player)){
             status += AFKWorker.afkPrefix;
         }
@@ -87,5 +91,8 @@ public class SakuraPlayer {
     /* *** Status getter/setter */
     public boolean isAfk(){
         return AFKWorker.getInstance().isAfk(this.player);
+    }
+    public boolean isInvisible(){
+        return InvisibleWorker.getInstance().isInvisible(this.player);
     }
 }

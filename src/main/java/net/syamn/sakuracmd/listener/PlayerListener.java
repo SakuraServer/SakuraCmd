@@ -8,6 +8,7 @@ import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.sakuracmd.worker.InvisibleWorker;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +19,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * PlayerListener (PlayerListener.java)
@@ -44,6 +46,8 @@ public class PlayerListener implements Listener{
     public void onPlayerJoin(final PlayerJoinEvent event){
         final Player player = event.getPlayer();
         
+        InvisibleWorker.getInstance().sendInvisibleOnJoin(player);
+        
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run(){
@@ -65,5 +69,15 @@ public class PlayerListener implements Listener{
         
         // Add to players list
         PlayerManager.addPlayer(event.getPlayer());
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onPlayerQuit(final PlayerQuitEvent event){
+        final Player player = event.getPlayer();
+        
+        if (InvisibleWorker.getInstance().isInvisible(player)){
+            InvisibleWorker.getInstance().onPlayerQuit(player);
+            event.setQuitMessage(null); // hide message of vanished player
+        }
     }
 }

@@ -26,6 +26,9 @@ commands:
     afk:
       usage: /afk - to see the help
       description: See plugin help.
+    invisible:
+      usage: /invisible - to see the help
+      description: See plugin help.
     sakuracmd:
       usage: /sakuracmd - to see the help
       aliases: [sakuracmd]

@@ -6,6 +6,7 @@ package net.syamn.sakuracmd;
 
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.LogUtil;
 
 /**
@@ -34,6 +35,8 @@ public class SCHelper {
         AFKWorker.getInstance();
         this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
                 this.plugin, AFKWorker.getInstance().getAfkChecker(), 0, config.getAfkCheckIntervalInSec() * 20);
+        
+        InvisibleWorker.createInstance();
         
         // loadconfig
         try {
@@ -64,6 +67,7 @@ public class SCHelper {
      */
     public synchronized void reload(){
         AFKWorker.dispose();
+        InvisibleWorker.dispose();
         
         System.gc();
         init();
