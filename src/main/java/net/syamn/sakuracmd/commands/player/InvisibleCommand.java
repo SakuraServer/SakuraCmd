@@ -37,11 +37,19 @@ public class InvisibleCommand extends BaseCommand{
         }
         
         InvisibleWorker worker = InvisibleWorker.getInstance();
-        worker.vanish(target, false);
         
-        if (!sender.equals(target)){
-            Util.message(sender, "&c" + target.getName() + " を透明モードにしました");
+        if (worker.isInvisible(target)){
+            worker.reappear(target);
+            if (!sender.equals(target)){
+                Util.message(sender, "&a" + target.getName() + " の透明モードを解除しました");
+            }
+            Util.message(target, "&aあなたの透明モードは解除されました");
+        }else{
+            worker.vanish(target, false);
+            if (!sender.equals(target)){
+                Util.message(sender, "&c" + target.getName() + " を透明モードにしました");
+            }
+            Util.message(target, "&cあなたは透明モードになりました");
         }
-        Util.message(target, "&cあなたは透明モードになりました");
     }
 }
