@@ -48,7 +48,6 @@ public class SCHelper {
         AFKWorker.getInstance();
         this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
                 this.plugin, AFKWorker.getInstance().getAfkChecker(), 0, config.getAfkCheckIntervalInSec() * 20);
-        
         InvisibleWorker.createInstance();
        
         PermissionManager.setupPermissions(plugin); // init permission

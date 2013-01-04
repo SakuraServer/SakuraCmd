@@ -238,13 +238,21 @@
           <version>1.4.6-0.1</version>
       </dependency>
       
-      <!-- PermissionsEx Dependency -->
+      <!-- PermissionsEx Dependency (lib) -->
       <dependency>
           <groupId>ru.tehkode</groupId>
           <artifactId>PermissionsEx</artifactId>
           <version>1.19.4</version>
           <scope>system</scope>
           <systemPath>${project.basedir}/lib/PermissionsEx-1.19.4.jar</systemPath>
+      </dependency>
+      <!-- Dynmap Dependency (lib) -->
+      <dependency>
+          <groupId>org.dynmap</groupId>
+          <artifactId>dynmap</artifactId>
+          <version>1.3</version>
+          <scope>system</scope>
+          <systemPath>${project.basedir}/lib/dynmap-1.3-1467.jar</systemPath>
       </dependency>
   </dependencies>
 

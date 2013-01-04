@@ -19,7 +19,7 @@ import org.bukkit.entity.Player;
  * @author syam(syamn)
  */
 public class InvisibleWorker {
-    protected static InvisibleWorker instance = null;
+    private static InvisibleWorker instance = null;
     public final static String invPrefix = "&7[INV]";
     //private final ConcurrentHashMap<Player, Object> invisiblePlayers = new ConcurrentHashMap<Player, Object>();
     private final Set<Player> invisiblePlayers = Collections.newSetFromMap(new ConcurrentHashMap<Player, Boolean>());
