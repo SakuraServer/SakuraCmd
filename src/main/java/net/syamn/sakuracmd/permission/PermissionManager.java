@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.permission;
 
 import java.util.Set;
 
+import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.exception.NotSupportedException;
 import net.syamn.sakuracmd.permission.plugin.PermissionsEx;
@@ -41,7 +42,7 @@ public class PermissionManager {
     }
     
     public static void setupPermissions(final SakuraCmd plugin){
-        final String selected = plugin.getConfigs().getPermissionCtrl();
+        final String selected = SCHelper.getInstance().getConfig().getPermissionCtrl();
         boolean found = true;
         
         if ("permissionsex".equalsIgnoreCase(selected) || "pex".equalsIgnoreCase(selected)){

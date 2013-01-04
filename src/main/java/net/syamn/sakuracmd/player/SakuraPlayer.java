@@ -5,6 +5,7 @@
 package net.syamn.sakuracmd.player;
 
 import net.syamn.sakuracmd.ConfigurationManager;
+import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
@@ -27,7 +28,7 @@ public class SakuraPlayer {
         this.player = player;
         this.data = new PlayerData(player.getName());
         
-        this.config = SakuraCmd.getInstance().getConfigs();
+        this.config = SCHelper.getInstance().getConfig();
     }
     public Player getPlayer(){
         return this.player;

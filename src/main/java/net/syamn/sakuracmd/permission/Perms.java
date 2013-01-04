@@ -26,10 +26,12 @@ public enum Perms {
     
     // Player Commands
     AFK ("player.afk"),
+    INVISIBLE ("player.invisible"),
     
     // Free Permissions
 
     // Spec Permissions
+    INV_CANSEE ("spec.cansee"),
 
     // Admin Commands
     RELOAD("admin.reload"),

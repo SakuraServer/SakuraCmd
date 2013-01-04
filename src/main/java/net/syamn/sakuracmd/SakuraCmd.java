@@ -43,7 +43,8 @@ public class SakuraCmd extends JavaPlugin{
     private ServerManager serverMan;
 
     // ** Private Classes **
-    private ConfigurationManager config;
+    private SCHelper worker;
+    
 
     // ** Static **
     //private static Database database;
@@ -62,43 +63,20 @@ public class SakuraCmd extends JavaPlugin{
     public void onEnable() {
         instance = this;
         LogUtil.init(this);
-
-        PluginManager pm = getServer().getPluginManager();
-        config = new ConfigurationManager(this);
-
-        // loadconfig
-        try {
-            config.loadConfig(true);
-        } catch (Exception ex) {
-            LogUtil.warning(logPrefix + "an error occured while trying to load the config file.");
-            ex.printStackTrace();
-        }
-
-        // プラグインを無効にした場合進まないようにする
-        if (!pm.isPluginEnabled(this)) {
-            return;
-        }
-
-        // init permission
-        PermissionManager.setupPermissions(this);
         
+        worker = SCHelper.getInstance();
+        worker.setMainPlugin(this);
+
         // Managers
         serverMan = new ServerManager(this);
         
         // Regist Listeners
+        PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerListener(this), this);
 
         // commands
         commandHandler = new CommandHandler(this);
         CommandRegister.registerCommands(commandHandler);
-
-        // database
-        //database = new Database(this);
-        //database.createStructure();
-
-        // task start
-        getServer().getScheduler().runTaskTimerAsynchronously(
-                this, AFKWorker.getInstance().getAfkChecker(), 0, getConfigs().getAfkCheckIntervalInSec() * 20);
 
         // メッセージ表示
         PluginDescriptionFile pdfFile = this.getDescription();
@@ -193,25 +171,13 @@ public class SakuraCmd extends JavaPlugin{
         }
     }
 
-    /**
-     * デバッグログ
-     *
-     * @param msg
-     */
-    public void debug(final String msg) {
-        if (config.isDebug()) {
-            LogUtil.info(logPrefix + "[DEBUG]" + msg);
-        }
-    }
-
     /* getter */
     /**
-     * 設定マネージャを返す
-     *
-     * @return ConfigurationManager
+     * SCHelperインスタンスを返す
+     * @return SCHelper
      */
-    public ConfigurationManager getConfigs() {
-        return config;
+    public SCHelper getWorker(){
+        return this.worker;
     }
 
     /**
