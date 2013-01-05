@@ -95,4 +95,28 @@ public class SakuraPlayer {
     public boolean isInvisible(){
         return InvisibleWorker.getInstance().isInvisible(this.player);
     }
+    
+    @Override
+    public boolean equals(final Object obj){
+        if (this == obj){
+            return true;
+        }
+        if (obj == null){
+            return false;
+        }
+        if (!(obj instanceof SakuraPlayer)){
+            return false;
+        }
+        final SakuraPlayer sp = (SakuraPlayer) obj;
+        
+        if (this.player == null){
+            if (sp.player != null){
+                return false;
+            }
+        }else if(sp == null || !this.player.getName().equals(sp.getName())){
+            return false;
+        }
+        
+        return true;
+    }
 }
