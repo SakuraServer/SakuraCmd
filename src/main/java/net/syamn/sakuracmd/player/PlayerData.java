@@ -5,6 +5,7 @@
 package net.syamn.sakuracmd.player;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import net.syamn.sakuracmd.SakuraCmd;
 
@@ -21,6 +22,7 @@ public class PlayerData{
     private final String playerName;
     private YamlConfiguration conf = new YamlConfiguration();
     private File file;
+    private ArrayList<Power> powers = new ArrayList<Power>();
     private boolean saved = true;
     
     /* Transient status */
@@ -81,6 +83,19 @@ public class PlayerData{
         final File file = new File(fileName);
         return (file.exists()) ? new PlayerData(playerName, file) : null;
     }
-
-
+    
+    /* Getter/Setter */
+    public boolean hasPower(final Power power){
+        return powers.contains(power);
+    }
+    public void addPower(final Power power/*, final int level*/){
+        if (!hasPower(power)){
+            powers.add(power);
+            saved = false;
+        }
+    }
+    public void removePower(final Power power){
+        powers.remove(power);
+        saved = false;
+    }
 }

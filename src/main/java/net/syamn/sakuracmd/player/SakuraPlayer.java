@@ -96,6 +96,17 @@ public class SakuraPlayer {
         return InvisibleWorker.getInstance().isInvisible(this.player);
     }
     
+    // Powers
+    public boolean hasPower(final Power power){
+        return this.data.hasPower(power);
+    }
+    public void addPower(final Power power){
+        this.data.addPower(power);
+    }
+    public void removePower(final Power power){
+        this.data.addPower(power);
+    }
+    
     @Override
     public boolean equals(final Object obj){
         if (this == obj){

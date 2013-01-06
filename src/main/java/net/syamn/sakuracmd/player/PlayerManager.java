@@ -36,6 +36,9 @@ public class PlayerManager {
         players.clear();
     }
     
+    public static SakuraPlayer getPlayer(final Player player){
+        return getPlayer(player.getName());
+    }
     public static SakuraPlayer getPlayer(final String playerName){
         return players.get(playerName);
     }

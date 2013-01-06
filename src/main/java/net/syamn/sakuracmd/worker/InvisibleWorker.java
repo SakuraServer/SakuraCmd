@@ -10,6 +10,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.player.Power;
+import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 
 import org.bukkit.Bukkit;
@@ -48,6 +51,7 @@ public class InvisibleWorker {
             return;
         }
         
+        PlayerManager.getPlayer(player).addPower(Power.INVISIBLE);
         invisiblePlayers.add(player);
         DynmapHandler.getInstance().setPlayerVisiblity(player, false);
         
@@ -65,6 +69,7 @@ public class InvisibleWorker {
         }
     }
     public void reappear(final Player player){
+        PlayerManager.getPlayer(player).removePower(Power.INVISIBLE);
         invisiblePlayers.remove(player);
         DynmapHandler.getInstance().setPlayerVisiblity(player, true);
         
