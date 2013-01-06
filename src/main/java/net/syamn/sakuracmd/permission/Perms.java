@@ -27,6 +27,7 @@ public enum Perms {
     // Player Commands
     AFK ("player.afk"),
     INVISIBLE ("player.invisible"),
+    GOD ("player.god"),
     
     // Free Permissions
 

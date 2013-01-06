@@ -34,6 +34,7 @@ public class CommandRegister {
         // Player Commands
         cmds.add(new AFKCommand());
         cmds.add(new InvisibleCommand());
+        cmds.add(new GodCommand());
         
         return cmds;
     }

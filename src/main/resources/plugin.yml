@@ -29,9 +29,12 @@ commands:
     invisible:
       usage: /invisible - to see the help
       description: See plugin help.
+    god:
+      usage: /god - to see the help
+      aliases: [g]
+      description: See plugin help.
     sakuracmd:
       usage: /sakuracmd - to see the help
-      aliases: [sakuracmd]
       description: To see the plugin help.
 permissions:
     sakuracmd.admin:

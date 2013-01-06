@@ -7,6 +7,8 @@ package net.syamn.sakuracmd.listener;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.player.Power;
+import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 
@@ -14,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
@@ -40,6 +43,20 @@ public class PlayerListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event){
         AFKWorker.getInstance().updatePlayer(event.getPlayer());
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerDamage(final EntityDamageEvent event){
+        if (!(event.getEntity() instanceof Player)){
+            return;
+        }
+        
+        final Player player = (Player) event.getEntity();
+        final SakuraPlayer sp = PlayerManager.getPlayer(player);
+        if (sp.hasPower(Power.GODMODE)){
+            event.setDamage(0);
+            event.setCancelled(true);
+        }
     }
     
     @EventHandler(priority = EventPriority.NORMAL)
