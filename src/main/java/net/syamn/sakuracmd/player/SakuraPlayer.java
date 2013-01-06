@@ -104,7 +104,7 @@ public class SakuraPlayer {
         this.data.addPower(power);
     }
     public void removePower(final Power power){
-        this.data.addPower(power);
+        this.data.removePower(power);
     }
     
     @Override
