@@ -15,6 +15,8 @@ import net.syamn.sakuracmd.listener.EntityListener;
 import net.syamn.sakuracmd.listener.PlayerListener;
 import net.syamn.sakuracmd.manager.ServerManager;
 import net.syamn.sakuracmd.permission.PermissionManager;
+import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Metrics;
@@ -82,7 +84,7 @@ public class SakuraCmd extends JavaPlugin{
 
         // メッセージ表示
         PluginDescriptionFile pdfFile = this.getDescription();
-        LogUtil.info("[" + pdfFile.getName() + "] version " + pdfFile.getVersion() + " is enabled!");
+        LogUtil.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
 
         setupMetrics(); // mcstats
     }
@@ -96,10 +98,20 @@ public class SakuraCmd extends JavaPlugin{
         
         // dispose all components
         AFKWorker.dispose();
+        SCHelper.dispose();
+        
+        // Save player profiles
+        PlayerManager.saveAll();
+        
+        // disable dynmap hook
+        if (DynmapHandler.getInstance().isActivated()){
+            DynmapHandler.getInstance().deactivate();
+        }
+        DynmapHandler.dispose();
 
         // メッセージ表示
         PluginDescriptionFile pdfFile = this.getDescription();
-        LogUtil.info("[" + pdfFile.getName() + "] version " + pdfFile.getVersion() + " is disabled!");
+        LogUtil.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is disabled!");
     }
     
     @Override

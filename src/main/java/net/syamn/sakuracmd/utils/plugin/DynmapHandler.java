@@ -75,11 +75,11 @@ public class DynmapHandler {
         PluginManager pm = plugin.getServer().getPluginManager();
         dynmap = pm.getPlugin("dynmap");
         if (dynmap == null){
-            LogUtil.warning(SakuraCmd.logPrefix + "Cannot find dynmap!");
+            LogUtil.warning("Cannot find dynmap!");
         }
         
         if (!dynmap.isEnabled()){
-            LogUtil.warning(SakuraCmd.logPrefix + "Dynmap is not enabled!");
+            LogUtil.warning("Dynmap is not enabled!");
         }
         
         // get api
@@ -88,7 +88,7 @@ public class DynmapHandler {
         // get marker API
         markerapi = api.getMarkerAPI();
         if (markerapi == null){
-            Log.warning(SakuraCmd.logPrefix + "Cannot loading Dynmap marker API!");
+            Log.warning("Cannot loading Dynmap marker API!");
             return;
         }
         
@@ -96,7 +96,7 @@ public class DynmapHandler {
         
         // Activated!
         activated = true;
-        LogUtil.info(SakuraCmd.logPrefix + "Hooked to dynmap!");
+        LogUtil.info("Hooked to dynmap!");
     }
     /**
      * 無効化

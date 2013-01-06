@@ -75,7 +75,7 @@ public class PlayerData{
         }
         return true;
     }
-    private boolean save(final boolean force){
+    public boolean save(final boolean force){
         if (!saved || force){
             try{
                 // save powers
