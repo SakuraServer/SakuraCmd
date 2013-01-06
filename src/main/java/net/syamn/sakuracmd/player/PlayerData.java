@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import net.syamn.sakuracmd.SakuraCmd;
 
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
@@ -56,6 +57,18 @@ public class PlayerData{
         try {
             conf = new YamlConfiguration();
             conf.load(file);
+            
+            // load powers
+            ConfigurationSection csp = conf.getConfigurationSection("powers");
+            powers.clear();
+            if (csp != null){
+                for (final Power p : Power.values()){
+                    if (csp.getBoolean(p.toString(), false)){
+                        this.powers.add(p);
+                    }
+                }
+            }
+            
         }catch (Exception ex){
             ex.printStackTrace();
             return false;
@@ -65,6 +78,12 @@ public class PlayerData{
     private boolean save(final boolean force){
         if (!saved || force){
             try{
+                // save powers
+                ConfigurationSection csp = conf.createSection("powers");
+                for (final Power p : Power.values()){
+                    csp.set(p.toString(), this.hasPower(p));
+                }
+                
                 conf.save(file);
             }catch (Exception ex){
                 ex.printStackTrace();
