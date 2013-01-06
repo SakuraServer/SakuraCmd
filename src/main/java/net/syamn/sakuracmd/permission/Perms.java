@@ -29,7 +29,8 @@ public enum Perms {
     INVISIBLE ("player.invisible"),
     GOD ("player.god"),
     
-    // Free Permissions
+    // World Commands
+    WEATHER ("world.weather"),
 
     // Spec Permissions
     INV_CANSEE ("spec.cansee"),

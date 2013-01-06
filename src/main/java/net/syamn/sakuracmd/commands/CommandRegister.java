@@ -11,6 +11,7 @@ import net.syamn.sakuracmd.commands.items.*;
 import net.syamn.sakuracmd.commands.player.*;
 import net.syamn.sakuracmd.commands.server.*;
 import net.syamn.sakuracmd.commands.tp.*;
+import net.syamn.sakuracmd.commands.world.WeatherCommand;
 
 /**
  * CommandRegister (CommandRegister.java)
@@ -35,6 +36,9 @@ public class CommandRegister {
         cmds.add(new AFKCommand());
         cmds.add(new InvisibleCommand());
         cmds.add(new GodCommand());
+        
+        // World Commands
+        cmds.add(new WeatherCommand());
         
         return cmds;
     }

@@ -33,6 +33,9 @@ commands:
       usage: /god - to see the help
       aliases: [g]
       description: See plugin help.
+    weather:
+      usage: /weather - to see the help
+      description: See plugin help.
     sakuracmd:
       usage: /sakuracmd - to see the help
       description: To see the plugin help.
