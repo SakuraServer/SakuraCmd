@@ -11,6 +11,7 @@ import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
+import net.syamn.utils.Util;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -62,9 +63,18 @@ public class PlayerListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event){
         final Player player = event.getPlayer();
+        final SakuraPlayer sp = PlayerManager.getPlayer(player);
         
         InvisibleWorker.getInstance().sendInvisibleOnJoin(player);
         
+        // Auto vanish player if player has Invisible power
+        if (sp.hasPower(Power.INVISIBLE)){
+            InvisibleWorker.getInstance().vanish(player, true);
+            Util.message(player, "&bあなたは透明モードが有効になっています！");
+            event.setJoinMessage(null);
+        }
+        
+        // Run async
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override
             public void run(){
