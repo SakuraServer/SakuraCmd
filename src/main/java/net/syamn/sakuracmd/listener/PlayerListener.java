@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.listener;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerData;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
@@ -79,7 +80,10 @@ public class PlayerListener implements Listener{
             @Override
             public void run(){
                 AFKWorker.getInstance().updateTimeStamp(player);
-                sp.getData().updateLastConnection();
+                
+                PlayerData data = sp.getData();
+                data.updateLastConnection();
+                data.setLastIP(player.getAddress().getAddress().getHostAddress());
             }
         });
     }

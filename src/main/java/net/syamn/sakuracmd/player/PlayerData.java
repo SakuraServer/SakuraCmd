@@ -32,6 +32,7 @@ public class PlayerData{
     // infos:
     private long lastConnection;
     private long lastDisconnect;
+    private String lastIP;
     // powers:
     private ArrayList<Power> powers = new ArrayList<Power>();
     
@@ -64,8 +65,9 @@ public class PlayerData{
             
             // load infos
             ConfigurationSection csi = conf.getConfigurationSection("infos");
-            this.lastConnection = conf.getLong("lastConnection", 0L);
-            this.lastDisconnect = conf.getLong("lastDisconnect", 0L);
+            this.lastConnection = csi.getLong("lastConnection", 0L);
+            this.lastDisconnect = csi.getLong("lastDisconnect", 0L);
+            this.lastIP = csi.getString("last-ip", "");
             
             // load powers
             ConfigurationSection csp = conf.getConfigurationSection("powers");
@@ -92,6 +94,7 @@ public class PlayerData{
                 ConfigurationSection csi = conf.createSection("infos");
                 csi.set("lastConnection", lastConnection);
                 csi.set("lastDisconnect", lastDisconnect);
+                csi.set("last-ip", lastIP);
                 
                 // save powers
                 ConfigurationSection csp = conf.createSection("powers");
@@ -119,6 +122,7 @@ public class PlayerData{
     }
     
     /* Getter/Setter */
+    // power
     public boolean hasPower(final Power power){
         return powers.contains(power);
     }
@@ -132,6 +136,8 @@ public class PlayerData{
         powers.remove(power);
         saved = false;
     }
+    
+    // lastConnection
     public void updateLastConnection(){
         lastConnection = System.currentTimeMillis();
         saved = false;
@@ -139,11 +145,22 @@ public class PlayerData{
     public long getLastConnection(){
         return lastConnection;
     }
+    
+    // lastDisconnect
     public void updateLastDisconnect(){
         lastDisconnect = System.currentTimeMillis();
         saved = false;
     }
     public long getLastDisconnect(){
         return lastDisconnect;
+    }
+    
+    // last-ip
+    public void setLastIP(final String ip){
+        this.lastIP = ip;
+        saved = false;
+    }
+    public String getLastIP(){
+        return this.lastIP;
     }
 }
