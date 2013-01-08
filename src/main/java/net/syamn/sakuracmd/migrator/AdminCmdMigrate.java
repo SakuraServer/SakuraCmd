@@ -77,8 +77,9 @@ public class AdminCmdMigrate implements IMigrate{
         BufferedReader br = null;
         PrintWriter pw = null;
         
+        List<String> failed = new ArrayList<String>();
         List<String> names = new ArrayList<String>();
-        List<File> efiles = new ArrayList<File>(files.length);
+        YamlConfiguration conf = null;
         try{
             for (final File file : files){
                 if (file.isDirectory()){
@@ -92,14 +93,15 @@ public class AdminCmdMigrate implements IMigrate{
                     continue; // skip already exists
                 }
                 
+                // Copy file
                 try{
                     br = new BufferedReader(new FileReader(file));
                     pw = new PrintWriter(new BufferedWriter(new FileWriter(toFile)));
                     
                     String line;
                     while ((line = br.readLine()) != null){
-                        if (line.indexOf("!!") != -1){
-                            continue;
+                        if (line.indexOf("!!") != -1){ 
+                            continue; //while, skip serialized line
                         }
                         pw.println(line);
                     }
@@ -108,10 +110,33 @@ public class AdminCmdMigrate implements IMigrate{
                     br.close();
                 }catch (Exception ex){
                     LogUtil.warning("Convert Failed(" + file.getName() + "): " + ex.getMessage());
+                    failed.add(file.getName());
                     continue; // skip directory
                 }
                 
-                efiles.add(toFile);
+                // Update YAML (toFile)
+                try {
+                    conf = new YamlConfiguration();
+                    conf.load(toFile);
+                    
+                    // remove infos section
+                    conf.set("infos.lastLoc", null);
+                    conf.set("infos.presentation", null);
+                    conf.set("infos.firstTime", null);
+                    conf.set("infos.immunityLvl", null);
+                    conf.set("infos.totalTime", null);
+                    
+                    // remove home, kitsUse
+                    conf.set("home", null);
+                    conf.set("kitsUse", null);
+                    conf.set("powers", null);
+                    
+                    conf.save(toFile);
+                }catch(Exception ex){
+                    LogUtil.warning("Checking Failed(" + toFile.getName() + "): " + ex.getMessage());
+                    failed.add(toFile.getName());
+                    continue;
+                }
                 
                 count++;
                 names.add(file.getName());
@@ -129,45 +154,10 @@ public class AdminCmdMigrate implements IMigrate{
                 try { pw.close(); } catch (Exception ignore) {}
             }
         }
-        LogUtil.info("Converted " + count + " player data file(s)!");
-        LogUtil.info("Checking all files..");
-        
-        YamlConfiguration conf = null;
-        count = 0;
-        names.clear();
-        for (final File file : efiles){
-            try {
-                conf = new YamlConfiguration();
-                conf.load(file);
-                
-                boolean flag = false;
-                if (conf.contains("home")){
-                    conf.set("home", null);
-                    flag = true;
-                }
-                if (conf.contains("kitsUse")){
-                    conf.set("kitsUse", null);
-                    flag = true;
-                }
-                
-                if (flag){
-                    conf.save(file);
-                    count++;
-                    names.add(file.getName());
-                    if (count % 10 == 0){
-                        LogUtil.info("Updated.. " + StrUtil.join(names, " "));
-                        names.clear();
-                    }
-                }
-            }catch(Exception ex){
-                LogUtil.warning("Checking Failed(" + file.getName() + "): " + ex.getMessage());
-                continue;
-            }
+        if (failed.size() > 0){
+            LogUtil.info("Migrate failed files (" + failed.size() + "): " + StrUtil.join(failed, " "));
         }
-        LogUtil.info("Updated.. " + StrUtil.join(names, " "));
-        LogUtil.info("Checking update successfully! " + count + " file(s) affected!");
-        
-        LogUtil.info("Migrate complete! Total " + efiles.size() +" player data file(s)!");
+        LogUtil.info("Migrate complete! Total " + count +" player data file(s)!");
     }
 
     @Override
