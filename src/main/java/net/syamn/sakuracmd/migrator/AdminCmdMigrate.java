@@ -7,8 +7,10 @@ package net.syamn.sakuracmd.migrator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,8 @@ import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
  * AdminCmdMigrate (AdminCmdMigrate.java)
@@ -74,6 +78,7 @@ public class AdminCmdMigrate implements IMigrate{
         PrintWriter pw = null;
         
         List<String> names = new ArrayList<String>();
+        List<File> efiles = new ArrayList<File>(files.length);
         try{
             for (final File file : files){
                 if (file.isDirectory()){
@@ -106,6 +111,8 @@ public class AdminCmdMigrate implements IMigrate{
                     continue; // skip directory
                 }
                 
+                efiles.add(toFile);
+                
                 count++;
                 names.add(file.getName());
                 if (count % 10 == 0){
@@ -122,8 +129,45 @@ public class AdminCmdMigrate implements IMigrate{
                 try { pw.close(); } catch (Exception ignore) {}
             }
         }
+        LogUtil.info("Converted " + count + " player data file(s)!");
+        LogUtil.info("Checking all files..");
         
-        LogUtil.info("Migrated " + count + " player data file(s)!");
+        YamlConfiguration conf = null;
+        count = 0;
+        names.clear();
+        for (final File file : efiles){
+            try {
+                conf = new YamlConfiguration();
+                conf.load(file);
+                
+                boolean flag = false;
+                if (conf.contains("home")){
+                    conf.set("home", null);
+                    flag = true;
+                }
+                if (conf.contains("kitsUse")){
+                    conf.set("kitsUse", null);
+                    flag = true;
+                }
+                
+                if (flag){
+                    conf.save(file);
+                    count++;
+                    names.add(file.getName());
+                    if (count % 10 == 0){
+                        LogUtil.info("Updated.. " + StrUtil.join(names, " "));
+                        names.clear();
+                    }
+                }
+            }catch(Exception ex){
+                LogUtil.warning("Checking Failed(" + file.getName() + "): " + ex.getMessage());
+                continue;
+            }
+        }
+        LogUtil.info("Updated.. " + StrUtil.join(names, " "));
+        LogUtil.info("Checking update successfully! " + count + " file(s) affected!");
+        
+        LogUtil.info("Migrate complete! Total " + efiles.size() +" player data file(s)!");
     }
 
     @Override
