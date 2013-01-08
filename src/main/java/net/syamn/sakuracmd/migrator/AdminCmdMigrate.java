@@ -7,20 +7,17 @@ package net.syamn.sakuracmd.migrator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.command.CommandSender;
-
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.utils.LogUtil;
-import net.syamn.utils.Util;
-import net.syamn.utils.file.FileStructure;
+import net.syamn.utils.StrUtil;
+
+import org.bukkit.command.CommandSender;
 
 /**
  * AdminCmdMigrate (AdminCmdMigrate.java)
@@ -75,6 +72,8 @@ public class AdminCmdMigrate implements IMigrate{
         File toFile;
         BufferedReader br = null;
         PrintWriter pw = null;
+        
+        List<String> names = new ArrayList<String>();
         try{
             for (final File file : files){
                 if (file.isDirectory()){
@@ -84,6 +83,7 @@ public class AdminCmdMigrate implements IMigrate{
                 
                 toFile = new File(toDir, file.getName());
                 if (toFile.exists()){
+                    LogUtil.warning("Skipping exist file: " + file.getPath());
                     continue; // skip already exists
                 }
                 
@@ -105,8 +105,15 @@ public class AdminCmdMigrate implements IMigrate{
                     LogUtil.warning("Convert Failed(" + file.getName() + "): " + ex.getMessage());
                     continue; // skip directory
                 }
+                
                 count++;
+                names.add(file.getName());
+                if (count % 10 == 0){
+                    LogUtil.info("Converted.. " + StrUtil.join(names, " "));
+                    names.clear();
+                }
             }
+            LogUtil.info("Converted.. " + StrUtil.join(names, " "));
         }finally{
             if (br != null){
                 try { br.close(); } catch (Exception ignore) {}
@@ -117,60 +124,6 @@ public class AdminCmdMigrate implements IMigrate{
         }
         
         LogUtil.info("Migrated " + count + " player data file(s)!");
-        
-        // copy files
-        /*
-        LogUtil.info("Coping player data file(s)..");
-        int count = 0;
-        File toFile;
-        List<File> cfiles = new ArrayList<File>(files.length);
-        for (final File file : files){
-            if (file.isDirectory()){
-                LogUtil.warning("Skipping directory: " + file.getPath());
-                continue; // skip directory
-            }
-            
-            toFile = new File(toDir, file.getName());
-            if (toFile.exists()){
-                continue; // skip already exists
-            }
-            
-            try{
-                FileStructure.copyTransfer(file.getPath(), toFile.getPath());
-            }catch (Exception ex){
-                LogUtil.warning("File copyTransfer failed (" + file.getName() + "): " + ex.getMessage());
-                continue;
-            }
-            
-            cfiles.add(toFile);
-            count++;
-        }
-        LogUtil.info("Copied " + count + " player data file(s)!");
-        
-        // convert files
-        LogUtil.info("Converting player data file(s)..");
-        count = 0;
-        List<String> lines;
-        
-        BufferedReader br;
-        PrintWriter pw;
-        try{
-            for (final File file : cfiles){
-                try{
-                    br = new BufferedReader(new FileReader(file));
-                    
-                    String line;
-                    while ((line = br.readLine()) != null){
-                        if (line.length() == 0){
-                    }
-                }catch (IOException ignore){
-                    
-                }
-            }
-        }finally{
-            
-        }
-        */
     }
 
     @Override

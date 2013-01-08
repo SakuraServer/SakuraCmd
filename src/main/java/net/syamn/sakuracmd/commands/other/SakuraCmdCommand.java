@@ -68,8 +68,8 @@ public class SakuraCmdCommand extends BaseCommand{
                 throw new CommandException("&cマイグレート対象のプラグイン名を指定してください!");
             }
             if (args.get(0).equalsIgnoreCase("admincmd")){
-                new AdminCmdMigrate(plugin, sender);
                 Util.message(sender, "&aマイグレートを開始しました。コンソールを確認してください。");
+                new AdminCmdMigrate(plugin, sender);
             }else{
                 throw new CommandException("&cそのプラグインからのマイグレートは未対応です！");
             }
