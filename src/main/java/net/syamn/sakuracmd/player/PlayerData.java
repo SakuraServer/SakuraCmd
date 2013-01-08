@@ -23,13 +23,17 @@ public class PlayerData{
     private final String playerName;
     private YamlConfiguration conf = new YamlConfiguration();
     private File file;
-    private ArrayList<Power> powers = new ArrayList<Power>();
     private boolean saved = true;
     
     /* Transient status */
     // --> moved to SakuraPlayer
     
     /* Saves values*/
+    // infos:
+    private long lastConnection;
+    private long lastDisconnect;
+    // powers:
+    private ArrayList<Power> powers = new ArrayList<Power>();
     
     /* ************************** */
 
@@ -58,6 +62,11 @@ public class PlayerData{
             conf = new YamlConfiguration();
             conf.load(file);
             
+            // load infos
+            ConfigurationSection csi = conf.getConfigurationSection("infos");
+            this.lastConnection = conf.getLong("lastConnection", 0L);
+            this.lastDisconnect = conf.getLong("lastDisconnect", 0L);
+            
             // load powers
             ConfigurationSection csp = conf.getConfigurationSection("powers");
             powers.clear();
@@ -75,9 +84,15 @@ public class PlayerData{
         }
         return true;
     }
+    
     public boolean save(final boolean force){
         if (!saved || force){
             try{
+                // save infos
+                ConfigurationSection csi = conf.createSection("infos");
+                csi.set("lastConnection", lastConnection);
+                csi.set("lastDisconnect", lastDisconnect);
+                
                 // save powers
                 ConfigurationSection csp = conf.createSection("powers");
                 for (final Power p : Power.values()){
@@ -116,5 +131,19 @@ public class PlayerData{
     public void removePower(final Power power){
         powers.remove(power);
         saved = false;
+    }
+    public void updateLastConnection(){
+        lastConnection = System.currentTimeMillis();
+        saved = false;
+    }
+    public long getLastConnection(){
+        return lastConnection;
+    }
+    public void updateLastDisconnect(){
+        lastDisconnect = System.currentTimeMillis();
+        saved = false;
+    }
+    public long getLastDisconnect(){
+        return lastDisconnect;
     }
 }

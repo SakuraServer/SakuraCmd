@@ -79,6 +79,7 @@ public class PlayerListener implements Listener{
             @Override
             public void run(){
                 AFKWorker.getInstance().updateTimeStamp(player);
+                sp.getData().updateLastConnection();
             }
         });
     }
@@ -106,5 +107,7 @@ public class PlayerListener implements Listener{
             InvisibleWorker.getInstance().onPlayerQuit(player);
             event.setQuitMessage(null); // hide message of vanished player
         }
+        
+        PlayerManager.getPlayer(player).getData().updateLastDisconnect();
     }
 }
