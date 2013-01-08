@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.commands.other;
 
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
+import net.syamn.sakuracmd.migrator.AdminCmdMigrate;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.LogUtil;
@@ -56,6 +57,23 @@ public class SakuraCmdCommand extends BaseCommand{
             PlayerManager.saveAll(true);
             Util.message(sender, "&aPlayer data force saved!");
             return; // save
+        }
+        
+        // migrate
+        if (func.equalsIgnoreCase("migrate")){
+            if (!sender.isOp()){
+                throw new CommandException("&cマイグレート実行にはOP権限が必要です！");
+            }
+            if (args.size() < 1){
+                throw new CommandException("&cマイグレート対象のプラグイン名を指定してください!");
+            }
+            if (args.get(0).equalsIgnoreCase("admincmd")){
+                new AdminCmdMigrate(plugin, sender);
+                Util.message(sender, "&aマイグレートを開始しました。コンソールを確認してください。");
+            }else{
+                throw new CommandException("&cそのプラグインからのマイグレートは未対応です！");
+            }
+            return; // migrate
         }
         
         throw new CommandException("&c引数が不正です！");
