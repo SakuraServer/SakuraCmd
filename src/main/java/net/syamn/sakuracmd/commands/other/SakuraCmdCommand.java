@@ -7,6 +7,7 @@ package net.syamn.sakuracmd.commands.other;
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -30,7 +31,10 @@ public class SakuraCmdCommand extends BaseCommand{
         }
         final String func = args.remove(0);
         
+        // reload
         if (func.equalsIgnoreCase("reload")){
+            PlayerManager.saveAll();
+            Util.message(sender, "&aPlayer data saved!");
             if (args.size() > 0 && args.get(0).equalsIgnoreCase("all")){
                 SCHelper.getInstance().reload();
                 Util.message(sender, "&aSakuraCmd plugin reloaded!");
@@ -46,5 +50,14 @@ public class SakuraCmdCommand extends BaseCommand{
             }
             return; // reload
         }
+        
+        // save
+        if (func.equalsIgnoreCase("save")){
+            PlayerManager.saveAll(true);
+            Util.message(sender, "&aPlayer data force saved!");
+            return; // save
+        }
+        
+        throw new CommandException("引数が不正です！");
     }
 }
