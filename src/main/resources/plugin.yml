@@ -39,6 +39,10 @@ commands:
     whois:
       usage: /whois - to see the help
       description: See plugin help.
+    confirm:
+      usage: /confirm - to see the help
+      aliases: [sakuraconfirm]
+      description: To see the plugin help.
     sakuracmd:
       usage: /sakuracmd - to see the help
       aliases: [sakuracommand]

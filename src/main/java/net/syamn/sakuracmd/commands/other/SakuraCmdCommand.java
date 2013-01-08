@@ -4,6 +4,9 @@
  */
 package net.syamn.sakuracmd.commands.other;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.migrator.AdminCmdMigrate;
@@ -12,12 +15,15 @@ import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
+import net.syamn.utils.queue.ConfirmQueue;
+import net.syamn.utils.queue.Queueable;
+import net.syamn.utils.queue.QueuedCommand;
 
 /**
  * SakuraCmdCommand (SakuraCmdCommand.java)
  * @author syam(syamn)
  */
-public class SakuraCmdCommand extends BaseCommand{
+public class SakuraCmdCommand extends BaseCommand implements Queueable{
     public SakuraCmdCommand(){
         bePlayer = false;
         name = "sakuracmd";
@@ -67,15 +73,37 @@ public class SakuraCmdCommand extends BaseCommand{
             if (args.size() < 1){
                 throw new CommandException("&cマイグレート対象のプラグイン名を指定してください!");
             }
+            
+            ArrayList<Object> queueArgs = new ArrayList<Object>(2);
+            queueArgs.add("migrate");
+            queueArgs.add(args.get(0));
+            
             if (args.get(0).equalsIgnoreCase("admincmd")){
-                Util.message(sender, "&aマイグレートを開始しました。コンソールを確認してください。");
-                new AdminCmdMigrate(plugin, sender);
+                ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 10);
+                Util.message(sender, "&4AdminCmdプラグインからのプレイヤーデータ移行を行います！");
+                Util.message(sender, "&4本当に実行しますか？ &a/confirm&4 コマンドで続行します。");
+                return;
             }else{
                 throw new CommandException("&cそのプラグインからのマイグレートは未対応です！");
             }
-            return; // migrate
+            //return; // migrate
         }
         
         throw new CommandException("&c引数が不正です！");
+    }
+    
+    @Override
+    public void executeQueue(QueuedCommand queued) {
+        List<Object> queueArgs = queued.getArgs();
+        if (queueArgs.size() == 2){
+            if (queueArgs.get(0).equals("migrate")){
+                if(((String) queueArgs.get(1)).equalsIgnoreCase("admincmd")){
+                    Util.message(sender, "&aマイグレートを開始しました。コンソールを確認してください。");
+                    new AdminCmdMigrate(plugin, sender);
+                    return;
+                }
+            }
+        }
+        
     }
 }

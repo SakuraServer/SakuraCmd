@@ -8,11 +8,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.syamn.sakuracmd.commands.items.*;
-import net.syamn.sakuracmd.commands.other.SakuraCmdCommand;
+import net.syamn.sakuracmd.commands.other.*;
 import net.syamn.sakuracmd.commands.player.*;
 import net.syamn.sakuracmd.commands.server.*;
 import net.syamn.sakuracmd.commands.tp.*;
-import net.syamn.sakuracmd.commands.world.WeatherCommand;
+import net.syamn.sakuracmd.commands.world.*;
 
 /**
  * CommandRegister (CommandRegister.java)
@@ -44,6 +44,7 @@ public class CommandRegister {
         
         // Other Commands
         cmds.add(new SakuraCmdCommand());
+        cmds.add(new ConfirmCommand());
         
         return cmds;
     }
