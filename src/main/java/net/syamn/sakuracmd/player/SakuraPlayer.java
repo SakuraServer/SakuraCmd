@@ -4,10 +4,10 @@
  */
 package net.syamn.sakuracmd.player;
 
-import net.syamn.sakuracmd.ConfigurationManager;
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.PermissionManager;
+import net.syamn.sakuracmd.storage.ConfigurationManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;

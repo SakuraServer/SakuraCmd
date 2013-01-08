@@ -32,12 +32,11 @@ public enum Perms {
     // World Commands
     WEATHER ("world.weather"),
 
-    // Spec Permissions
+    // Other / Admin Commands
+    SAKURACMD ("admin.sakuracmd"),
+    
+     // Spec Permissions
     INV_CANSEE ("spec.cansee"),
-
-    // Admin Commands
-    RELOAD("admin.reload"),
-
     ;
 
     // ノードヘッダー

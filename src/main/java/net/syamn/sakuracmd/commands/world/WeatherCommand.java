@@ -61,6 +61,7 @@ public class WeatherCommand extends BaseCommand{
                 secs = Integer.parseInt(args.get(1));
             }
         }
+      
         
         // set weather
         if (weather.equals(Weather.CLEAR)){

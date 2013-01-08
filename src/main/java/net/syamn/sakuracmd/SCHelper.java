@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.storage.ConfigurationManager;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;

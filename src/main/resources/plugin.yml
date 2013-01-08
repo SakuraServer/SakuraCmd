@@ -38,6 +38,7 @@ commands:
       description: See plugin help.
     sakuracmd:
       usage: /sakuracmd - to see the help
+      aliases: [sakuracommand]
       description: To see the plugin help.
 permissions:
     sakuracmd.admin:
