@@ -14,6 +14,7 @@ import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.LogUtil;
+import net.syamn.utils.queue.ConfirmQueue;
 
 /**
  * SCHelper (SCHelper.java)
@@ -62,6 +63,9 @@ public class SCHelper {
             }
         }, 20L);
         
+        // queue, create instance
+        ConfirmQueue.getInstance();
+        
         // Mapping already online players
         PlayerManager.clearAll();
         for (final Player player : Bukkit.getOnlinePlayers()){
@@ -92,6 +96,7 @@ public class SCHelper {
             DynmapHandler.getInstance().deactivate();
         }
         DynmapHandler.dispose();
+        ConfirmQueue.dispose();
         
         System.gc();
         init();
