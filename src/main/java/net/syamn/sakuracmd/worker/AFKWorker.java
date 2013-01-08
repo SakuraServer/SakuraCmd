@@ -7,7 +7,6 @@ package net.syamn.sakuracmd.worker;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.syamn.sakuracmd.SCHelper;
-import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.Util;
 
@@ -19,8 +18,6 @@ import org.bukkit.entity.Player;
  * @author syam(syamn)
  */
 public class AFKWorker {
-    public final static String afkPrefix = "&e[AFK]";
-    private int afkTime = 5 * 60 * 1000;
     private final ConcurrentHashMap<Player, Long> playerTimeStamp = new ConcurrentHashMap<Player, Long>();
     private final ConcurrentHashMap<Player, Long> afkPlayers = new ConcurrentHashMap<Player, Long>();
     

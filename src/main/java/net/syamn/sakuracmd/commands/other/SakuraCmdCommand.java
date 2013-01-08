@@ -12,6 +12,7 @@ import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.migrator.AdminCmdMigrate;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -48,12 +49,16 @@ public class SakuraCmdCommand extends BaseCommand implements Queueable{
             }else{
                 try {
                     SCHelper.getInstance().getConfig().loadConfig(false);
+                    I18n.setCurrentLanguage(SCHelper.getInstance().getConfig().getLanguage());
                 } catch (Exception ex) {
+                    if (isPlayer){
+                        Util.message(sender, "&cError occred while reloading configuration! Check server console!");
+                    }
                     LogUtil.warning("an error occured while trying to load the config file.");
                     ex.printStackTrace();
                     return;
                 }
-                Util.message(sender, "&aSakuraCmd configuration reloaded!");
+                Util.message(sender, "&aSakuraCmd configuration & locale messages reloaded!");
             }
             return; // reload
         }

@@ -1,0 +1,4 @@
+# SakuraCmd default language (ja-jp) file!
+prefix:
+    afk: "&e[AFK]"
+    invisible: "&7[INV]"

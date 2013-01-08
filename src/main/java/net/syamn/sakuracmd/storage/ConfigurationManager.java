@@ -102,6 +102,11 @@ public class ConfigurationManager {
         return conf.getInt("AfkCheckIntervalInSec", 30);
     }
     
+    // Message
+    public String getLanguage(){
+        return conf.getString("language", "ja-jp");
+    }
+    
     // Permissions
     public String getPermissionCtrl(){
         return conf.getString("Permission", "PerimssionsEx");

@@ -4,8 +4,9 @@
  */
 package net.syamn.sakuracmd.player;
 
+import static net.syamn.sakuracmd.storage.I18n._;
+
 import net.syamn.sakuracmd.SCHelper;
-import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
 import net.syamn.sakuracmd.worker.AFKWorker;
@@ -71,10 +72,10 @@ public class SakuraPlayer {
         String status = "";
         
         if (InvisibleWorker.getInstance().isInvisible(player)){
-            status += InvisibleWorker.invPrefix;
+            status += _("prefix.invisible");
         }
         if (AFKWorker.getInstance().isAfk(player)){
-            status += AFKWorker.afkPrefix;
+            status += _("prefix.afk");
         }
         
         return Util.coloring(status + prefix);

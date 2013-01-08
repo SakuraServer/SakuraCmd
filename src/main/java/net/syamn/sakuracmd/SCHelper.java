@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
+import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
@@ -100,6 +101,13 @@ public class SCHelper {
         
         System.gc();
         init();
+        
+        try {
+            I18n.setCurrentLanguage(config.getLanguage());
+        } catch (Exception ex) {
+            LogUtil.warning("An error occured while trying to load the language file!");
+            ex.printStackTrace();
+        }
     }
     
     /**

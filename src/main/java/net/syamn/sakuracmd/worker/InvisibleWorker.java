@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
-import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 
 import org.bukkit.Bukkit;
@@ -24,7 +23,6 @@ import org.bukkit.entity.Player;
  */
 public class InvisibleWorker {
     private static InvisibleWorker instance = null;
-    public final static String invPrefix = "&7[INV]";
     //private final ConcurrentHashMap<Player, Object> invisiblePlayers = new ConcurrentHashMap<Player, Object>();
     private final Set<Player> invisiblePlayers = Collections.newSetFromMap(new ConcurrentHashMap<Player, Boolean>());
     

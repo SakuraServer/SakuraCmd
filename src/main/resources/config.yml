@@ -10,6 +10,11 @@ UseDisplayName: true
 AfkTimeInSec: 300
 AfkCheckIntervalInSec: 30
 
+#====================#
+#   Message Config   #
+#====================#
+language: ja-jp
+
 #========================#
 #   Permission Control   #
 #========================#

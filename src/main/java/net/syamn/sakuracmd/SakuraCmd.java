@@ -7,15 +7,13 @@ package net.syamn.sakuracmd;
 import java.io.IOException;
 import java.util.List;
 
-import net.milkbowl.vault.Vault;
-import net.milkbowl.vault.economy.Economy;
 import net.syamn.sakuracmd.commands.CommandHandler;
 import net.syamn.sakuracmd.commands.CommandRegister;
 import net.syamn.sakuracmd.listener.EntityListener;
 import net.syamn.sakuracmd.listener.PlayerListener;
 import net.syamn.sakuracmd.manager.ServerManager;
-import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.utils.LogUtil;
@@ -69,6 +67,10 @@ public class SakuraCmd extends JavaPlugin{
         
         worker = SCHelper.getInstance();
         worker.setMainPlugin(this);
+        
+        // I18n Init
+        LogUtil.info("Loading language file: " + worker.getConfig().getLanguage());
+        I18n.init(worker.getConfig().getLanguage());
 
         // Managers
         serverMan = new ServerManager(this);
