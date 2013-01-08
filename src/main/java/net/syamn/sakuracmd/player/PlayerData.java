@@ -30,9 +30,9 @@ public class PlayerData{
     
     /* Saves values*/
     // infos:
-    private long lastConnection;
-    private long lastDisconnect;
-    private String lastIP;
+    private long lastConnection = 0L;
+    private long lastDisconnect = 0L;
+    private String lastIP = "";
     // powers:
     private ArrayList<Power> powers = new ArrayList<Power>();
     
@@ -65,9 +65,11 @@ public class PlayerData{
             
             // load infos
             ConfigurationSection csi = conf.getConfigurationSection("infos");
-            this.lastConnection = csi.getLong("lastConnection", 0L);
-            this.lastDisconnect = csi.getLong("lastDisconnect", 0L);
-            this.lastIP = csi.getString("last-ip", "");
+            if (csi != null){
+                this.lastConnection = csi.getLong("lastConnection", 0L);
+                this.lastDisconnect = csi.getLong("lastDisconnect", 0L);
+                this.lastIP = csi.getString("last-ip", "");
+            }
             
             // load powers
             ConfigurationSection csp = conf.getConfigurationSection("powers");

@@ -27,7 +27,7 @@ public class SakuraCmdCommand extends BaseCommand{
     
     public void execute() throws CommandException{
         if (args.size() < 1){
-            throw new CommandException("引数が足りません！");
+            throw new CommandException("&c引数が足りません！");
         }
         final String func = args.remove(0);
         
@@ -58,6 +58,6 @@ public class SakuraCmdCommand extends BaseCommand{
             return; // save
         }
         
-        throw new CommandException("引数が不正です！");
+        throw new CommandException("&c引数が不正です！");
     }
 }
