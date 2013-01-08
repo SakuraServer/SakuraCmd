@@ -28,6 +28,7 @@ public enum Perms {
     AFK ("player.afk"),
     INVISIBLE ("player.invisible"),
     GOD ("player.god"),
+    WHOIS ("player.whois"),
     
     // World Commands
     WEATHER ("world.weather"),

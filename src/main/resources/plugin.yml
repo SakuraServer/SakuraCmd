@@ -36,6 +36,9 @@ commands:
     weather:
       usage: /weather - to see the help
       description: See plugin help.
+    whois:
+      usage: /whois - to see the help
+      description: See plugin help.
     sakuracmd:
       usage: /sakuracmd - to see the help
       aliases: [sakuracommand]

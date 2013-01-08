@@ -37,6 +37,7 @@ public class CommandRegister {
         cmds.add(new AFKCommand());
         cmds.add(new InvisibleCommand());
         cmds.add(new GodCommand());
+        cmds.add(new WhoisCommand());
         
         // World Commands
         cmds.add(new WeatherCommand());

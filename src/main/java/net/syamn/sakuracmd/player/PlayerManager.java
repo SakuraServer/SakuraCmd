@@ -52,6 +52,10 @@ public class PlayerManager {
         return PlayerData.getDataIfExists(playerName);
     }
     
+    public static PlayerData getData(final Player player){
+        return getData(player.getName());
+    }
+    
     public static PlayerData getDataIfOnline(final String playerName){
         final SakuraPlayer sp = players.get(playerName);
         if (sp != null && sp.getPlayer() != null && sp.getPlayer().isOnline()){
