@@ -2,10 +2,11 @@
  * SakuraCmd - Package: net.syamn.sakuracmd
  * Created: 2012/12/28 13:39:51
  */
-package net.syamn.sakuracmd;
+package net.syamn.sakuracmd.storage;
 
 import java.io.File;
 
+import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.file.FileStructure;
 
