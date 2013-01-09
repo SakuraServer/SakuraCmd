@@ -38,6 +38,7 @@ public enum Perms {
     
      // Spec Permissions
     INV_CANSEE ("spec.cansee"),
+    HIDE_GEOIP ("spec.hidegeoip"),
     ;
 
     // ノードヘッダー

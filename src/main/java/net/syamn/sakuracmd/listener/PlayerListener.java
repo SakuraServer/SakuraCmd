@@ -85,7 +85,7 @@ public class PlayerListener implements Listener{
         }
         
         // Use GeoIP if enabled
-        if (SCHelper.getInstance().getConfig().getUseGeoIP()){
+        if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(player)){
             msg = event.getJoinMessage();
             if (msg != null){
                 String geoStr = GeoIP.getInstance().getGeoIpString(player, SCHelper.getInstance().getConfig().getUseSimpleFormatOnJoin());
