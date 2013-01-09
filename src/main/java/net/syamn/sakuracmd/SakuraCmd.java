@@ -98,19 +98,15 @@ public class SakuraCmd extends JavaPlugin{
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
         
-        // dispose all components
-        AFKWorker.dispose();
+        // call disableAll, dispose all components
+        worker.disableAll();
+        
+        // dispose main worker
         SCHelper.dispose();
         
         // Save player profiles
         PlayerManager.saveAll();
         
-        // disable dynmap hook
-        if (DynmapHandler.getInstance().isActivated()){
-            DynmapHandler.getInstance().deactivate();
-        }
-        DynmapHandler.dispose();
-
         // メッセージ表示
         PluginDescriptionFile pdfFile = this.getDescription();
         LogUtil.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is disabled!");

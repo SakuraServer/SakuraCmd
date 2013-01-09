@@ -35,6 +35,7 @@ public class SCHelper {
     
     private SakuraCmd plugin;
     private ConfigurationManager config;
+    private int afkTaskID = -1;
     
     /**
      * プラスグインの初期化時と有効化時に呼ばれる
@@ -50,8 +51,8 @@ public class SCHelper {
         
         // worker
         AFKWorker.getInstance();
-        this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
-                this.plugin, AFKWorker.getInstance().getAfkChecker(), 0, config.getAfkCheckIntervalInSec() * 20);
+        afkTaskID = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
+                this.plugin, AFKWorker.getInstance().getAfkChecker(), 0, config.getAfkCheckIntervalInSec() * 20).getTaskId();
         InvisibleWorker.createInstance();
        
         PermissionManager.setupPermissions(plugin); // init permission
@@ -86,10 +87,11 @@ public class SCHelper {
         init();
     }
     
-    /**
-     * プラグインをリロードする
-     */
-    public synchronized void reload(){
+    public void disableAll(){
+        if (afkTaskID != -1){
+            plugin.getServer().getScheduler().cancelTask(afkTaskID);
+            afkTaskID = -1;
+        }
         AFKWorker.dispose();
         InvisibleWorker.dispose();
         
@@ -98,7 +100,13 @@ public class SCHelper {
         }
         DynmapHandler.dispose();
         ConfirmQueue.dispose();
-        
+    }
+    
+    /**
+     * プラグインをリロードする
+     */
+    public synchronized void reload(){
+        disableAll();
         System.gc();
         init();
         
