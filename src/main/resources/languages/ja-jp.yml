@@ -2,3 +2,6 @@
 prefix:
     afk: "&e[AFK]"
     invisible: "&7[INV]"
+joinMessage: &b *** &f"%PLAYER%&f"&bさんが&a接続&bしました！
+firstJoinMessage: &b *** &f"%PLAYER%&f"&bさんが初めて&a接続&bしました！
+quitMessage: &b *** &f"%PLAYER%&f"&bさんが&c切断&bしました！

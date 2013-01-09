@@ -4,12 +4,15 @@
  */
 package net.syamn.sakuracmd.listener;
 
+import static net.syamn.sakuracmd.storage.I18n._;
+
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerData;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
+import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
@@ -68,6 +71,10 @@ public class PlayerListener implements Listener{
         
         InvisibleWorker.getInstance().sendInvisibleOnJoin(player);
         
+        String msg = _(((player.hasPlayedBefore()) ? "joinMessage" : "firstJoinMessage"), I18n.PLAYER, sp.getName());
+        if (msg.length() < 1) msg = null;
+        event.setJoinMessage(msg);
+        
         // Auto vanish player if player has Invisible power
         if (sp.hasPower(Power.INVISIBLE)){
             InvisibleWorker.getInstance().vanish(player, true);
@@ -103,9 +110,14 @@ public class PlayerListener implements Listener{
         PlayerManager.addPlayer(event.getPlayer());
     }
     
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event){
         final Player player = event.getPlayer();
+        final SakuraPlayer sp = PlayerManager.getPlayer(player);
+        
+        String msg = _("quitMessage", I18n.PLAYER, sp.getName());
+        if (msg.length() < 1) msg = null;
+        event.setQuitMessage(msg);
         
         if (InvisibleWorker.getInstance().isInvisible(player)){
             InvisibleWorker.getInstance().onPlayerQuit(player);
