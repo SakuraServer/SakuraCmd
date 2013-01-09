@@ -72,10 +72,10 @@ public class SakuraPlayer {
         String status = "";
         
         if (InvisibleWorker.getInstance().isInvisible(player)){
-            status += _("prefix.invisible");
+            status += _("invisiblePrefix");
         }
         if (AFKWorker.getInstance().isAfk(player)){
-            status += _("prefix.afk");
+            status += _("afkPrefix");
         }
         
         return Util.coloring(status + prefix);
