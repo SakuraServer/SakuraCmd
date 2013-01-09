@@ -11,6 +11,12 @@ AfkTimeInSec: 300
 AfkCheckIntervalInSec: 30
 UseEconomy: true
 
+#==================#
+#   GeoIP Config   #
+#==================#
+UseGeoIP: true
+UseCityDB: true
+
 #====================#
 #   Message Config   #
 #====================#

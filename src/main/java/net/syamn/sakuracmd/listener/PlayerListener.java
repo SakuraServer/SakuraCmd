@@ -6,7 +6,9 @@ package net.syamn.sakuracmd.listener;
 
 import static net.syamn.sakuracmd.storage.I18n._;
 
+import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerData;
 import net.syamn.sakuracmd.player.PlayerManager;
@@ -80,6 +82,11 @@ public class PlayerListener implements Listener{
             InvisibleWorker.getInstance().vanish(player, true);
             Util.message(player, "&bあなたは透明モードが有効になっています！");
             event.setJoinMessage(null);
+        }
+        
+        // Use GeoIP if enabled
+        if (SCHelper.getInstance().getConfig().getUseGeoIP()){
+            GeoIP.getInstance().onPlayerJoin(player);
         }
         
         // Run async

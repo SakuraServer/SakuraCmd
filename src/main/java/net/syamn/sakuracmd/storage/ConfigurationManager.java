@@ -9,6 +9,7 @@ import java.io.File;
 import net.milkbowl.vault.economy.Economy;
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.SakuraLib;
 import net.syamn.utils.economy.EconomyUtil;
@@ -76,6 +77,11 @@ public class ConfigurationManager {
         }else{
             SCHelper.getInstance().setEnableEcon(false);
         }
+        
+        // setup geoIP
+        if (getUseGeoIP()){
+            new GeoIP(plugin).init();
+        }
     }
     
     /**
@@ -123,6 +129,14 @@ public class ConfigurationManager {
     }
     public boolean getUseEconomy(){
         return conf.getBoolean("UseEconomy", true);
+    }
+    
+    // GeoIP
+    public boolean getUseGeoIP(){
+        return conf.getBoolean("UseGeoIP", true);
+    }
+    public boolean getUseCityDB(){
+        return conf.getBoolean("UseCityDB", true);
     }
     
     // Message
