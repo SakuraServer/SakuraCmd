@@ -45,6 +45,7 @@ public class CommandRegister {
         // Other Commands
         cmds.add(new SakuraCmdCommand());
         cmds.add(new ConfirmCommand());
+        cmds.add(new MfmfCommand());
         
         return cmds;
     }

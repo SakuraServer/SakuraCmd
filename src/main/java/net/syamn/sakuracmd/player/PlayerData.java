@@ -33,6 +33,7 @@ public class PlayerData{
     private long lastConnection = 0L;
     private long lastDisconnect = 0L;
     private String lastIP = "";
+    private int mofCount = 0;
     // powers:
     private ArrayList<Power> powers = new ArrayList<Power>();
     
@@ -69,6 +70,7 @@ public class PlayerData{
                 this.lastConnection = csi.getLong("lastConnection", 0L);
                 this.lastDisconnect = csi.getLong("lastDisconnect", 0L);
                 this.lastIP = csi.getString("last-ip", "");
+                this.mofCount = csi.getInt("mofCount", 0);
             }
             
             // load powers
@@ -97,6 +99,7 @@ public class PlayerData{
                 csi.set("lastConnection", lastConnection);
                 csi.set("lastDisconnect", lastDisconnect);
                 csi.set("last-ip", lastIP);
+                csi.set("mofCount", mofCount);
                 
                 // save powers
                 ConfigurationSection csp = conf.createSection("powers");
@@ -164,5 +167,14 @@ public class PlayerData{
     }
     public String getLastIP(){
         return this.lastIP;
+    }
+    
+    // mofCount
+    public void addMofCount(){
+        this.mofCount++;
+        saved = false;
+    }
+    public int getMofCount(){
+        return this.mofCount;
     }
 }
