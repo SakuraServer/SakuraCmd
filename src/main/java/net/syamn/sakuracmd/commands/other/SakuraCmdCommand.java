@@ -10,6 +10,7 @@ import java.util.List;
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.migrator.AdminCmdMigrate;
+import net.syamn.sakuracmd.migrator.SakuraServerMigrate;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.I18n;
@@ -87,11 +88,16 @@ public class SakuraCmdCommand extends BaseCommand implements Queueable{
                 ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 10);
                 Util.message(sender, "&4AdminCmdプラグインからのプレイヤーデータ移行を行います！");
                 Util.message(sender, "&4本当に実行しますか？ &a/confirm&4 コマンドで続行します。");
-                return;
-            }else{
+            }
+            else if (args.get(0).equalsIgnoreCase("sakuraserver")){
+                ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 10);
+                Util.message(sender, "&4SakuraServerプラグインからのプレイヤーデータマージを行います！");
+                Util.message(sender, "&4本当に実行しますか？ &a/confirm&4 コマンドで続行します。");
+            }
+            else{
                 throw new CommandException("&cそのプラグインからのマイグレートは未対応です！");
             }
-            //return; // migrate
+            return; // migrate
         }
         
         throw new CommandException("&c引数が不正です！");
@@ -106,9 +112,12 @@ public class SakuraCmdCommand extends BaseCommand implements Queueable{
                     Util.message(sender, "&aマイグレートを開始しました。コンソールを確認してください。");
                     new AdminCmdMigrate(plugin, sender);
                     return;
+                }else if(((String) queueArgs.get(1)).equalsIgnoreCase("sakuraserver")){
+                    Util.message(sender, "&aマイグレートを開始しました。コンソールを確認してください。");
+                    new SakuraServerMigrate(plugin, sender);
+                    return;
                 }
             }
         }
-        
     }
 }
