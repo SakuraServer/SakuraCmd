@@ -9,6 +9,7 @@ UseNamePrefix: true
 UseDisplayName: true
 AfkTimeInSec: 300
 AfkCheckIntervalInSec: 30
+UseEconomy: true
 
 #====================#
 #   Message Config   #

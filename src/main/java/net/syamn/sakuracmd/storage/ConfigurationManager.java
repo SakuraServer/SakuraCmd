@@ -6,11 +6,15 @@ package net.syamn.sakuracmd.storage;
 
 import java.io.File;
 
+import net.milkbowl.vault.economy.Economy;
+import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.utils.LogUtil;
+import net.syamn.utils.SakuraLib;
 import net.syamn.utils.file.FileStructure;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 /**
  * ConfigurationManager (ConfigurationManager.java)
@@ -56,6 +60,20 @@ public class ConfigurationManager {
         conf = plugin.getConfig();
         
         checkver(conf.getInt("ConfigVersion", 1));
+        
+        // setup Vault economy
+        if (getUseEconomy()){
+            RegisteredServiceProvider<Economy> econProv = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+            if (econProv != null) {
+                SakuraLib.setEconomy(econProv.getProvider());
+                SCHelper.getInstance().setEnableEcon(true);
+            }else{
+                LogUtil.warning("Could not hook to economy plugin!");
+                SCHelper.getInstance().setEnableEcon(false);
+            }
+        }else{
+            SCHelper.getInstance().setEnableEcon(false);
+        }
     }
     
     /**
@@ -100,6 +118,9 @@ public class ConfigurationManager {
     }
     public int getAfkCheckIntervalInSec(){
         return conf.getInt("AfkCheckIntervalInSec", 30);
+    }
+    public boolean getUseEconomy(){
+        return conf.getBoolean("UseEconomy", true);
     }
     
     // Message

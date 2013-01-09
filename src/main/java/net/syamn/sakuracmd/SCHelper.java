@@ -36,6 +36,7 @@ public class SCHelper {
     private SakuraCmd plugin;
     private ConfigurationManager config;
     private int afkTaskID = -1;
+    private boolean isEnableEcon = false;
     
     /**
      * プラスグインの初期化時と有効化時に呼ばれる
@@ -116,6 +117,14 @@ public class SCHelper {
             LogUtil.warning("An error occured while trying to load the language file!");
             ex.printStackTrace();
         }
+    }
+    
+    // Economy getter/setter
+    public void setEnableEcon(final boolean enable){
+        this.isEnableEcon = enable;
+    }
+    public boolean isEnableEcon(){
+        return this.isEnableEcon;
     }
     
     /**
