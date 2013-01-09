@@ -103,7 +103,7 @@ public class PlayerListener implements Listener{
         
         // Check Lockdown isEnabled
         if (plugin.getServerManager().isLockdown() && !Perms. LOCKDOWN_BYPASS.has(event.getPlayer())){
-            event.disallow(Result.KICK_OTHER, "Server Locked by administration");
+            event.disallow(Result.KICK_OTHER, _("serverLocked"));
         }
         
         // Add to players list
