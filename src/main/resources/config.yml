@@ -16,6 +16,10 @@ UseEconomy: true
 #==================#
 UseGeoIP: true
 UseCityDB: true
+UseSimpleFormatOnJoin: true
+DownloadMissingDB: true
+CountryDB: "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz"
+CityDB: "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz"
 
 #====================#
 #   Message Config   #

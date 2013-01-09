@@ -7,6 +7,7 @@ package net.syamn.sakuracmd;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
@@ -101,6 +102,7 @@ public class SCHelper {
         }
         DynmapHandler.dispose();
         ConfirmQueue.dispose();
+        GeoIP.dispose();
     }
     
     /**

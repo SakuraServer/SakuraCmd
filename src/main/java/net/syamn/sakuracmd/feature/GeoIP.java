@@ -13,18 +13,20 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.zip.GZIPInputStream;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import com.maxmind.geoip.Location;
-import com.maxmind.geoip.LookupService;
-import com.maxmind.geoip.regionName;
 
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.storage.ConfigurationManager;
 import net.syamn.utils.LogUtil;
+
+import org.bukkit.entity.Player;
+
+import com.maxmind.geoip.Country;
+import com.maxmind.geoip.Location;
+import com.maxmind.geoip.LookupService;
+import com.maxmind.geoip.regionName;
 
 /**
  * GeoIpUtil (GeoIpUtil.java)
@@ -42,9 +44,6 @@ public class GeoIP {
         }
         instance = null;
     }
-    
-    private static final String dbUrlCountry = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz";
-    private static final String dbUrlCity = "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz";
     
     private SakuraCmd plugin;
     private File database;
@@ -68,12 +67,22 @@ public class GeoIP {
             parent.mkdirs();
         }
         
-        final boolean isCity = SCHelper.getInstance().getConfig().getUseCityDB();
+        final ConfigurationManager conf = SCHelper.getInstance().getConfig();
+        final boolean isCity = conf.getUseCityDB();
         database = new File(parent, (isCity) ? "GeoIPCity.dat" : "GeoIPCountry.dat");
         
         if (!database.exists()){
-            // auto download db if missing
-            downloadDatabase((isCity) ? dbUrlCity : dbUrlCountry, database);
+            if (conf.getDownloadMissingDB()){
+                // auto download db if missing
+                if (isCity){
+                    downloadDatabase(conf.getCityDBurl(), database);
+                }else{
+                    downloadDatabase(conf.getCountryDBurl(), database);
+                }
+            }else{
+                LogUtil.warning("Could not find GeoIP database!");
+                return;
+            }
         }
         
         try{
@@ -84,45 +93,63 @@ public class GeoIP {
     }
     
     /**
-     * プレイヤー接続時の処理
-     * @param joined
+     * プレイヤーのGeoIPメッセージを返す
      */
-    public void onPlayerJoin(final Player joined){
-        if (joined == null || joined.getAddress() == null || joined.getAddress().getAddress() == null){
-            return;
+    public String getGeoIpString(final InetAddress addr, final boolean simple){
+        // Only two-char CountryCode
+        if (simple){
+            return ls.getCountry(addr).getCode();
         }
-        final InetAddress addr = joined.getAddress().getAddress();
-        
-        final StringBuilder sb = new StringBuilder();
-        // Show City name
-        if (SCHelper.getInstance().getConfig().getUseCityDB()){
+        // Country name / city name
+        else if (SCHelper.getInstance().getConfig().getUseCityDB()){
+            final StringBuilder sb = new StringBuilder();
             final Location loc = ls.getLocation(addr);
-            if (loc == null) return;
-            
-            if (loc.city != null){
-                sb.append(loc.city).append(", ");
-            }
-            
-            final String region = regionName.regionNameByCode(loc.countryCode, loc.region);
-            if (region != null){
-                sb.append(region).append(", ");
+            if (loc == null) {
+                final Country country = ls.getCountry(addr);
+                return (country == null) ? null : country.getName();
             }
             
             sb.append(loc.countryName);
-        }
-        // Only countroies name
-        else{
-            sb.append(ls.getCountry(addr).getName());
-        }
-        
-        // send message to players
-        for (final Player player : plugin.getServer().getOnlinePlayers()){
-            if (!player.canSee(joined)){
-                continue; // skip vanished player
+            
+            final String region = regionName.regionNameByCode(loc.countryCode, loc.region);
+            if (region != null){
+                sb.append(", ").append(region);
             }
-            player.sendMessage("&6プレイヤー " + joined.getName() + " の接続元: " + sb.toString());
+            
+            if (loc.city != null){
+                sb.append(", ").append(loc.city);
+            }
+            
+            return sb.toString();
+        }
+        // Only country name
+        else{
+            return ls.getCountry(addr).getName();
         }
     }
+    public String getGeoIpString(final Player player, final boolean simple){
+        if (player == null || player.getAddress() == null || player.getAddress().getAddress() == null){
+            return null;
+        }
+        return getGeoIpString(player.getAddress().getAddress(), simple);
+    }
+    public String getGeoIpString(final Player player){
+        return getGeoIpString(player, false);
+    }
+    public String getGeoIpString(String addrStr){
+        if (addrStr == null){
+            return null;
+        }
+        if (addrStr.startsWith("/")){
+            addrStr = addrStr.substring(1);
+        }
+        try {
+            return getGeoIpString(InetAddress.getByName(addrStr), false);
+        } catch (UnknownHostException ignore) {
+            return null;
+        }
+    }
+    
     
     /**
      * LookupServiceを返す
@@ -150,7 +177,7 @@ public class GeoIP {
         InputStream input = null;
         OutputStream output = null;
         try{
-            LogUtil.info("Downloading GeoIP databases... : " + file.getName());
+            LogUtil.info("Downloading GeoIP databases...: " + file.getName());
             
             final URL dlUrl = new URL(url);
             final URLConnection conn = dlUrl.openConnection();

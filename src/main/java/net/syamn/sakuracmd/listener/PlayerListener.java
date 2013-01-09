@@ -86,7 +86,11 @@ public class PlayerListener implements Listener{
         
         // Use GeoIP if enabled
         if (SCHelper.getInstance().getConfig().getUseGeoIP()){
-            GeoIP.getInstance().onPlayerJoin(player);
+            msg = event.getJoinMessage();
+            if (msg != null){
+                String geoStr = GeoIP.getInstance().getGeoIpString(player, SCHelper.getInstance().getConfig().getUseSimpleFormatOnJoin());
+                event.setJoinMessage(msg + Util.coloring("&7") + " (" + geoStr + ")");
+            }
         }
         
         // Run async

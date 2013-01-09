@@ -138,6 +138,18 @@ public class ConfigurationManager {
     public boolean getUseCityDB(){
         return conf.getBoolean("UseCityDB", true);
     }
+    public boolean getUseSimpleFormatOnJoin(){
+        return conf.getBoolean("UseSimpleFormatOnJoin", true);
+    }
+    public boolean getDownloadMissingDB(){
+        return conf.getBoolean("DownloadMissingDB", true);
+    }
+    public String getCountryDBurl(){
+        return conf.getString("CountryDB", "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz");
+    }
+    public String getCityDBurl(){
+        return conf.getString("CityDB", "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz");
+    }
     
     // Message
     public String getLanguage(){
