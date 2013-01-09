@@ -96,6 +96,11 @@ public class GeoIP {
      * プレイヤーのGeoIPメッセージを返す
      */
     public String getGeoIpString(final InetAddress addr, final boolean simple){
+        // Check local/internal address
+        if (addr.isSiteLocalAddress() || addr.isLoopbackAddress()){
+            return "L";
+        }
+        
         // Only two-char CountryCode
         if (simple){
             return ls.getCountry(addr).getCode();

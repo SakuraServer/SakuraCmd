@@ -4,7 +4,9 @@
  */
 package net.syamn.sakuracmd.commands.player;
 
+import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
+import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerData;
 import net.syamn.sakuracmd.player.PlayerManager;
@@ -61,6 +63,12 @@ public class WhoisCommand extends BaseCommand{
         // Last IP
         str = data.getLastIP();
         send("&6Last IP  &f: &a" + ((str == null) ? "なし" : str));
+        
+        // Lookup IP
+        if (SCHelper.getInstance().getConfig().getUseGeoIP() && str != null){
+            str = GeoIP.getInstance().getGeoIpString(str);
+            send("&6IP Location &f: &a" + ((str == null) ? "不明" : str));
+        }
        
         // ****** online section *****
         if (target == null || !target.isOnline()){
