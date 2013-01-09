@@ -170,9 +170,10 @@ public class PlayerData{
     }
     
     // mofCount
-    public void addMofCount(){
+    public int addMofCount(){
         this.mofCount++;
         saved = false;
+        return mofCount;
     }
     public int getMofCount(){
         return this.mofCount;

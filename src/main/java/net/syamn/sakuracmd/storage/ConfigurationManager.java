@@ -11,6 +11,7 @@ import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.SakuraLib;
+import net.syamn.utils.economy.EconomyUtil;
 import net.syamn.utils.file.FileStructure;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -67,9 +68,10 @@ public class ConfigurationManager {
             if (econProv != null) {
                 SakuraLib.setEconomy(econProv.getProvider());
                 SCHelper.getInstance().setEnableEcon(true);
+                LogUtil.info("Enabled economy hookup! Using Vault (" + EconomyUtil.getEconomyName() + ") for economy plugin!");
             }else{
-                LogUtil.warning("Could not hook to economy plugin!");
                 SCHelper.getInstance().setEnableEcon(false);
+                LogUtil.warning("Could not hook to economy plugin!");
             }
         }else{
             SCHelper.getInstance().setEnableEcon(false);
