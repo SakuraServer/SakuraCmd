@@ -39,6 +39,7 @@ public enum Perms {
      // Spec Permissions
     INV_CANSEE ("spec.cansee"),
     HIDE_GEOIP ("spec.hidegeoip"),
+    TRUST ("spec.trust"),
     
     // Tab color
     TAB_RED ("tab.red"),

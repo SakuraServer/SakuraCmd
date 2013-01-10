@@ -20,6 +20,7 @@ import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -108,6 +109,17 @@ public class PlayerListener implements Listener{
                 data.setLastIP(player.getAddress().getAddress().getHostAddress());
             }
         });
+        
+        // First join
+        if (!player.hasPlayedBefore()) {
+            final int unique = plugin.getServer().getOfflinePlayers().length;
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                @Override
+                public void run() {
+                    Util.broadcastMessage("&6現在のユニークビジター数: " + unique + " プレイヤー");
+                }
+            }, 5L); // 0.25s after
+        }
     }
     
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -130,6 +142,7 @@ public class PlayerListener implements Listener{
         final Player player = event.getPlayer();
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         
+        // Messages
         String msg = _("quitMessage", I18n.PLAYER, sp.getName());
         if (msg.length() < 1) msg = null;
         event.setQuitMessage(msg);
@@ -137,6 +150,11 @@ public class PlayerListener implements Listener{
         if (InvisibleWorker.getInstance().isInvisible(player)){
             InvisibleWorker.getInstance().onPlayerQuit(player);
             event.setQuitMessage(null); // hide message of vanished player
+        }
+        
+        // Set survival as current gamemode for safety
+        if (!player.getGameMode().equals(GameMode.SURVIVAL) && !Perms.TRUST.has(player)){
+            player.setGameMode(GameMode.SURVIVAL);
         }
         
         PlayerManager.getPlayer(player).getData().updateLastDisconnect();
