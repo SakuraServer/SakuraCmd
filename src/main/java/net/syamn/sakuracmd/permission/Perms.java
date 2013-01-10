@@ -41,6 +41,14 @@ public enum Perms {
     HIDE_GEOIP ("spec.hidegeoip"),
     TRUST ("spec.trust"),
     
+    // Feature
+    RIDE_PLAYER ("feature.ride"),
+    RIDE_ALLENTITY ("feature.ride.all"),
+    ICE_TO_WATER ("feature.icetowater"),
+    
+    // Bypass permissions
+    BYPASS_CREATIVE_ITEM("bypass.creativeitem"),
+    
     // Tab color
     TAB_RED ("tab.red"),
     TAB_PURPLE ("tab.purple"),

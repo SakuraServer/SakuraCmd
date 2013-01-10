@@ -9,8 +9,12 @@ import java.util.List;
 
 import net.syamn.sakuracmd.commands.CommandHandler;
 import net.syamn.sakuracmd.commands.CommandRegister;
+import net.syamn.sakuracmd.listener.BlockListener;
+import net.syamn.sakuracmd.listener.CreativeListener;
 import net.syamn.sakuracmd.listener.EntityListener;
+import net.syamn.sakuracmd.listener.InventoryListener;
 import net.syamn.sakuracmd.listener.PlayerListener;
+import net.syamn.sakuracmd.listener.feature.PassengerListener;
 import net.syamn.sakuracmd.manager.ServerManager;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.I18n;
@@ -78,7 +82,13 @@ public class SakuraCmd extends JavaPlugin{
         // Regist Listeners
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerListener(this), this);
+        pm.registerEvents(new BlockListener(this), this);
         pm.registerEvents(new EntityListener(this), this);
+        pm.registerEvents(new InventoryListener(this), this);
+        pm.registerEvents(new CreativeListener(this), this);
+        // features
+        pm.registerEvents(new PassengerListener(this), this);
+        
 
         // commands
         commandHandler = new CommandHandler(this);
