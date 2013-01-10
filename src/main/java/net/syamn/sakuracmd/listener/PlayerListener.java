@@ -15,6 +15,7 @@ import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.storage.I18n;
+import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
@@ -92,6 +93,9 @@ public class PlayerListener implements Listener{
                 event.setJoinMessage(msg + Util.coloring("&7") + " (" + geoStr + ")");
             }
         }
+        
+        // Change TabColor
+        SakuraCmdUtil.changeTabColor(player);
         
         // Run async
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {

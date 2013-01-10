@@ -39,6 +39,13 @@ public enum Perms {
      // Spec Permissions
     INV_CANSEE ("spec.cansee"),
     HIDE_GEOIP ("spec.hidegeoip"),
+    
+    // Tab color
+    TAB_RED ("tab.red"),
+    TAB_PURPLE ("tab.purple"),
+    TAB_AQUA ("tab.aqua"),
+    TAB_NONE ("tab.none"),
+    TAB_GRAY ("tab.gray"),
     ;
 
     // ノードヘッダー
