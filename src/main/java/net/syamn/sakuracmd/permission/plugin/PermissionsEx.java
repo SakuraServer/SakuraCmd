@@ -7,6 +7,9 @@ package net.syamn.sakuracmd.permission.plugin;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.syamn.sakuracmd.permission.IPermissionPlugin;
+import net.syamn.sakuracmd.permission.Perms;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
@@ -14,9 +17,6 @@ import org.bukkit.permissions.Permissible;
 import ru.tehkode.permissions.PermissionGroup;
 import ru.tehkode.permissions.PermissionManager;
 import ru.tehkode.permissions.PermissionUser;
-
-import net.syamn.sakuracmd.permission.IPermissionPlugin;
-import net.syamn.sakuracmd.permission.Perms;
 
 /**
  * PermissionsEx (PermissionsEx.java)

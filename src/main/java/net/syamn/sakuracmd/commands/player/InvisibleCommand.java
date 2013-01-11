@@ -4,14 +4,14 @@
  */
 package net.syamn.sakuracmd.commands.player;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 /**
  * InvisibleCommand (InvisibleCommand.java)

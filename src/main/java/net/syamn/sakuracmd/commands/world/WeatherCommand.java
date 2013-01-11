@@ -5,7 +5,6 @@
 package net.syamn.sakuracmd.commands.world;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
-import net.syamn.sakuracmd.manager.ServerManager;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
@@ -13,7 +12,6 @@ import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 /**
  * WeatherCommand (WeatherCommand.java)

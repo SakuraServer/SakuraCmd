@@ -4,11 +4,11 @@
  */
 package net.syamn.sakuracmd.commands.other;
 
-import org.bukkit.command.CommandSender;
-
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.utils.exception.CommandException;
 import net.syamn.utils.queue.ConfirmQueue;
+
+import org.bukkit.command.CommandSender;
 
 /**
  * ConfirmCommand (ConfirmCommand.java)

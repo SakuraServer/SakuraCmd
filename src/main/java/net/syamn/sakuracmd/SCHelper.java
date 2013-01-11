@@ -4,9 +4,6 @@
  */
 package net.syamn.sakuracmd;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
@@ -17,6 +14,9 @@ import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.queue.ConfirmQueue;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 /**
  * SCHelper (SCHelper.java)

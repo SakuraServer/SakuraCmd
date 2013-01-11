@@ -4,6 +4,9 @@
  */
 package net.syamn.sakuracmd.utils.plugin;
 
+import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.utils.LogUtil;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -15,9 +18,6 @@ import org.bukkit.plugin.PluginManager;
 import org.dynmap.DynmapAPI;
 import org.dynmap.Log;
 import org.dynmap.markers.MarkerAPI;
-
-import net.syamn.sakuracmd.SakuraCmd;
-import net.syamn.utils.LogUtil;
 
 /**
  * DynmapHandler (DynmapHandler.java)

@@ -5,6 +5,7 @@
 package net.syamn.sakuracmd.worker;
 
 import static net.syamn.sakuracmd.storage.I18n._;
+
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.syamn.sakuracmd.SCHelper;

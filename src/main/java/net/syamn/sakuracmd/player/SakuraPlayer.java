@@ -5,7 +5,6 @@
 package net.syamn.sakuracmd.player;
 
 import static net.syamn.sakuracmd.storage.I18n._;
-
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;

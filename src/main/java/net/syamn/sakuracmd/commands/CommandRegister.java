@@ -7,12 +7,20 @@ package net.syamn.sakuracmd.commands;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.syamn.sakuracmd.commands.items.*;
-import net.syamn.sakuracmd.commands.other.*;
-import net.syamn.sakuracmd.commands.player.*;
-import net.syamn.sakuracmd.commands.server.*;
-import net.syamn.sakuracmd.commands.tp.*;
-import net.syamn.sakuracmd.commands.world.*;
+import net.syamn.sakuracmd.commands.items.RepairAllCommand;
+import net.syamn.sakuracmd.commands.items.RepairItemCommand;
+import net.syamn.sakuracmd.commands.other.ColorsCommand;
+import net.syamn.sakuracmd.commands.other.ConfirmCommand;
+import net.syamn.sakuracmd.commands.other.MfmfCommand;
+import net.syamn.sakuracmd.commands.other.SakuraCmdCommand;
+import net.syamn.sakuracmd.commands.player.AFKCommand;
+import net.syamn.sakuracmd.commands.player.GodCommand;
+import net.syamn.sakuracmd.commands.player.InvisibleCommand;
+import net.syamn.sakuracmd.commands.player.WhoisCommand;
+import net.syamn.sakuracmd.commands.server.LockdownCommand;
+import net.syamn.sakuracmd.commands.tp.TpCommand;
+import net.syamn.sakuracmd.commands.tp.TpHereCommand;
+import net.syamn.sakuracmd.commands.world.WeatherCommand;
 
 /**
  * CommandRegister (CommandRegister.java)
