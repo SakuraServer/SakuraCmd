@@ -10,6 +10,7 @@ import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
 import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
+import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.LogUtil;
@@ -66,6 +67,11 @@ public class SCHelper {
                 DynmapHandler.createInstance();
             }
         }, 20L);
+        
+        // coloring tab list
+        for (final Player p  : plugin.getServer().getOnlinePlayers()){
+            SakuraCmdUtil.changeTabColor(p);
+        }
         
         // queue, create instance
         ConfirmQueue.getInstance();
