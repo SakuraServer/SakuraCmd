@@ -192,14 +192,22 @@ public class PlayerListener implements Listener{
         
         // Auto vanish player if player has Invisible power
         if (sp.hasPower(Power.INVISIBLE)){
-            InvisibleWorker.getInstance().vanish(player, true);
-            Util.message(player, "&bあなたは透明モードが有効になっています！");
-            event.setJoinMessage(null);
+            if (Perms.INVISIBLE.has(player)){
+                InvisibleWorker.getInstance().vanish(player, true);
+                Util.message(player, "&bあなたは透明モードが有効になっています！");
+                event.setJoinMessage(null);
+            }else{
+                sp.removePower(Power.INVISIBLE);
+            }
         }
         // restore fly power
         if (sp.hasPower(Power.FLY)){
-            SakuraCmdUtil.changeFlyMode(player, true);
-            Util.message(player, "&bあなたは飛行モードが有効になっています！");
+            if (Perms.FLY.has(player)){
+                SakuraCmdUtil.changeFlyMode(player, true);
+                Util.message(player, "&bあなたは飛行モードが有効になっています！");
+            }else{
+                sp.removePower(Power.FLY);
+            }
         }
         
         // Use GeoIP if enabled
