@@ -14,6 +14,7 @@ import net.syamn.sakuracmd.commands.other.ConfirmCommand;
 import net.syamn.sakuracmd.commands.other.MfmfCommand;
 import net.syamn.sakuracmd.commands.other.SakuraCmdCommand;
 import net.syamn.sakuracmd.commands.player.AFKCommand;
+import net.syamn.sakuracmd.commands.player.GamemodeCommand;
 import net.syamn.sakuracmd.commands.player.GodCommand;
 import net.syamn.sakuracmd.commands.player.InvisibleCommand;
 import net.syamn.sakuracmd.commands.player.WhoisCommand;
@@ -46,6 +47,7 @@ public class CommandRegister {
         cmds.add(new InvisibleCommand());
         cmds.add(new GodCommand());
         cmds.add(new WhoisCommand());
+        cmds.add(new GamemodeCommand());
         
         // World Commands
         cmds.add(new WeatherCommand());

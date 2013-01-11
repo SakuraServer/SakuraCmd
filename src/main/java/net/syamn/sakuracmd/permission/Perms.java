@@ -29,6 +29,8 @@ public enum Perms {
     INVISIBLE ("player.invisible"),
     GOD ("player.god"),
     WHOIS ("player.whois"),
+    GAMEMODE ("player.gamemode"),
+    GAMEMODE_OTHER ("player.gamemode.other"),
     
     // World Commands
     WEATHER ("world.weather"),
@@ -47,7 +49,7 @@ public enum Perms {
     ICE_TO_WATER ("feature.icetowater"),
     
     // Bypass permissions
-    BYPASS_CREATIVE_ITEM("bypass.creativeitem"),
+    BYPASS_CREATIVE_ITEM ("bypass.creativeitem"),
     
     // Tab color
     TAB_RED ("tab.red"),
