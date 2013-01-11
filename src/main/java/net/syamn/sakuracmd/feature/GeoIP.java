@@ -98,12 +98,18 @@ public class GeoIP {
     public String getGeoIpString(final InetAddress addr, final boolean simple){
         // Check local/internal address
         if (addr.isSiteLocalAddress() || addr.isLoopbackAddress()){
-            return "L";
+            return "Local";
         }
         
         // Only two-char CountryCode
         if (simple){
-            return ls.getCountry(addr).getCode();
+            if (SCHelper.getInstance().getConfig().getUseCityDB()){
+                final Location loc = ls.getLocation(addr);
+                if (loc == null) return null;
+                return loc.countryCode;
+            }else{
+                return ls.getCountry(addr).getCode();
+            }
         }
         // Country name / city name
         else if (SCHelper.getInstance().getConfig().getUseCityDB()){
