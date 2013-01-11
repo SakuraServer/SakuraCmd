@@ -31,7 +31,6 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.craftbukkit.v1_4_6.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -107,6 +106,7 @@ public class PlayerListener implements Listener{
         
         Location diffLoc = toLoc.clone().subtract(fromLoc);
         Location checkLoc = toLoc.clone().add(diffLoc.clone().multiply(3.0D));
+        checkLoc.setY(toLoc.getY());
         Block up = checkLoc.getBlock();
         Block down = up.getRelative(BlockFace.UP, 1);
         
