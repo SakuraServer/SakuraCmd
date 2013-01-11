@@ -2,8 +2,9 @@
 joinMessage: '&b *** &f"%PLAYER%&f"&bさんが&a接続&bしました！'
 firstJoinMessage: '&b *** &f"%PLAYER%&f"&bさんが初めて&a接続&bしました！'
 quitMessage: '&b *** &f"%PLAYER%&f"&bさんが&c切断&bしました！'
+welcomeMessage: '&a -= Welcome to &cSakuraServer&a! =-
 afkPrefix: '&e[AFK]'
 afkOn: '%PLAYER% &fは&e離席中(AFK)&fです...'
 afkOff: '%PLAYER% &fは&aオンライン&fです'
 invisiblePrefix: '&7[INV]'
-serverLocked: 'Server Locked by administration'
+serverLocked: 'Server Locked by adminisxtration'

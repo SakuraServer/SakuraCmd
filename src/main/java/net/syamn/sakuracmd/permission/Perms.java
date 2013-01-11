@@ -55,6 +55,9 @@ public enum Perms {
     TAB_AQUA ("tab.aqua"),
     TAB_NONE ("tab.none"),
     TAB_GRAY ("tab.gray"),
+    
+    // Rei's Minimap
+    REIS_DEFAULT ("reisminimap.default"),
     ;
 
     // ノードヘッダー

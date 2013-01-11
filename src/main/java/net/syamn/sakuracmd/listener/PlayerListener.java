@@ -6,7 +6,6 @@ package net.syamn.sakuracmd.listener;
 
 import static net.syamn.sakuracmd.storage.I18n._;
 
-import net.minecraft.server.v1_4_6.Packet62NamedSoundEffect;
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.feature.GeoIP;
@@ -178,6 +177,15 @@ public class PlayerListener implements Listener{
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         
         InvisibleWorker.getInstance().sendInvisibleOnJoin(player);
+        
+        // send welcome message
+        String welcome = _("welcomeMessage", I18n.PLAYER, sp.getName());
+        if (welcome != null && !welcome.isEmpty()){
+            if (Perms.REIS_DEFAULT.has(player)){
+                welcome = "&0&0&2&3&6&e&f" + welcome; // allows default rei's minimap radar etc
+            }
+            Util.message(player, welcome);
+        }
         
         String msg = _(((player.hasPlayedBefore()) ? "joinMessage" : "firstJoinMessage"), I18n.PLAYER, sp.getName());
         if (msg.length() < 1) msg = null;
