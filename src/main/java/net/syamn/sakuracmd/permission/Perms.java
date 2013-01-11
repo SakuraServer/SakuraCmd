@@ -31,6 +31,8 @@ public enum Perms {
     WHOIS ("player.whois"),
     GAMEMODE ("player.gamemode"),
     GAMEMODE_OTHER ("player.gamemode.other"),
+    FLY ("player.fly"),
+    FLY_OTHER ("player.fly.other"),
     
     // World Commands
     WEATHER ("world.weather"),

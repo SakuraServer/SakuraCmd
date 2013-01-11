@@ -37,6 +37,9 @@ commands:
       usage: /gamemode - to see the help
       aliases: [gm]
       description: See plugin help.
+    fly:
+      usage: /fly - to see the help
+      description: See plugin help.
     weather:
       usage: /weather - to see the help
       description: See plugin help.

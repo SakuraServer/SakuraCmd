@@ -14,6 +14,7 @@ public enum Power {
     INVISIBLE,
     GODMODE,
     NO_PICKUP,
+    FLY,
     ;
     
     @Override
