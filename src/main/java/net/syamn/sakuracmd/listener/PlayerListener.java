@@ -196,6 +196,11 @@ public class PlayerListener implements Listener{
             Util.message(player, "&bあなたは透明モードが有効になっています！");
             event.setJoinMessage(null);
         }
+        // restore fly power
+        if (sp.hasPower(Power.FLY)){
+            SakuraCmdUtil.changeFlyMode(player, true);
+            Util.message(player, "&bあなたは飛行モードが有効になっています！");
+        }
         
         // Use GeoIP if enabled
         if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(player)){
