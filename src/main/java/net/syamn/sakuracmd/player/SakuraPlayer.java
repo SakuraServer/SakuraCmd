@@ -7,7 +7,9 @@ package net.syamn.sakuracmd.player;
 import static net.syamn.sakuracmd.storage.I18n._;
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.permission.PermissionManager;
+import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
+import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
@@ -86,6 +88,27 @@ public class SakuraPlayer {
     
     public void initStatus(){
         //this.isAfk = false;
+    }
+    
+    public void restorePowers(){
+        removePowerNotPerms(Power.INVISIBLE, Perms.INVISIBLE);
+        removePowerNotPerms(Power.FLY, Perms.FLY);
+        removePowerNotPerms(Power.GODMODE, Perms.GOD);
+        
+        // Invisible power
+        if (hasPower(Power.INVISIBLE)){
+            InvisibleWorker.getInstance().vanish(player, true);
+        }
+        // Fly power
+        if (hasPower(Power.FLY)){
+            SakuraCmdUtil.changeFlyMode(player, true);
+        }
+    }
+    
+    private void removePowerNotPerms(final Power power, final Perms perms){
+        if (getPlayer() != null && hasPower(power) && !perms.has(getPlayer())){
+            removePower(power);
+        }
     }
     
     /* *** Status getter/setter */
