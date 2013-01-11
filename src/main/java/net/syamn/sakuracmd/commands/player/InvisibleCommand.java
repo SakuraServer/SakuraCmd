@@ -4,8 +4,14 @@
  */
 package net.syamn.sakuracmd.commands.player;
 
+import static net.syamn.sakuracmd.storage.I18n._;
+import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
+import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.player.SakuraPlayer;
+import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -35,17 +41,36 @@ public class InvisibleCommand extends BaseCommand{
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
+        final SakuraPlayer sp = PlayerManager.getPlayer(target);
         
         InvisibleWorker worker = InvisibleWorker.getInstance();
         
         if (worker.isInvisible(target)){
             worker.reappear(target);
+            
+            // send fake join message
+            String msg = _("joinMessage", I18n.PLAYER, sp.getName());
+            if (msg != null && !msg.isEmpty()) {
+                if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(player)){
+                    String geoStr = GeoIP.getInstance().getGeoIpString(player, SCHelper.getInstance().getConfig().getUseSimpleFormatOnJoin());
+                    msg = msg + Util.coloring("&7") + " (" + geoStr + ")";
+                }
+                Util.broadcastMessage(msg);
+            }
+             
             if (!sender.equals(target)){
                 Util.message(sender, "&a" + target.getName() + " の透明モードを解除しました");
             }
             Util.message(target, "&aあなたの透明モードは解除されました");
         }else{
             worker.vanish(target, false);
+            
+            // send fake quit message
+            String msg = _("quitMessage", I18n.PLAYER, sp.getName());
+            if (msg != null && !msg.isEmpty()) {
+                Util.broadcastMessage(msg);
+            }
+            
             if (!sender.equals(target)){
                 Util.message(sender, "&c" + target.getName() + " を透明モードにしました");
             }
