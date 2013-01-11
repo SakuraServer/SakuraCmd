@@ -51,7 +51,7 @@ public class FlyCommand extends BaseCommand{
             SakuraCmdUtil.changeFlyMode(target, false);
             
             if (!sender.equals(target)){
-                Util.message(sender, "&3" + sp.getName() + " の無敵モードを解除しました");
+                Util.message(sender, "&3" + sp.getName() + " &3の無敵モードを解除しました");
             }
             Util.message(target, "&3あなたの飛行モードは解除されました");
         }else{
@@ -60,7 +60,7 @@ public class FlyCommand extends BaseCommand{
             SakuraCmdUtil.changeFlyMode(target, true);
             
             if (!sender.equals(target)){
-                Util.message(sender, "&3" + sp.getName() + " を飛行モードにしました");
+                Util.message(sender, "&3" + sp.getName() + " &3を飛行モードにしました");
             }
             Util.message(target, "&3あなたは飛行モードになりました");
         }

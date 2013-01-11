@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.commands.items;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.ItemUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -47,7 +48,7 @@ public class RepairItemCommand extends BaseCommand{
         }
         
         if (!sender.equals(target)){
-            Util.message(sender, "&a" + target.getName() + " のアイテム " + iname + " が修復されました");
+            Util.message(sender, "&a" + PlayerManager.getPlayer(target).getName() + " &aのアイテム " + iname + " が修復されました");
         }
         Util.message(target, "&aあなたのアイテム " + iname + " が修復されました");
     }

@@ -6,6 +6,8 @@ package net.syamn.sakuracmd.commands.tp;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
@@ -31,9 +33,10 @@ public class TpCommand extends BaseCommand{
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
+        final SakuraPlayer sp = PlayerManager.getPlayer(target);
         
         player.teleport(target, TeleportCause.COMMAND);
         
-        Util.message(sender, "&aプレイヤー " + target.getName() + " にテレポートしました！");
+        Util.message(sender, "&aプレイヤー " + sp.getName() + "&a にテレポートしました！");
     }
 }

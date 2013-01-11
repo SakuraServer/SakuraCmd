@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.commands.other;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.utils.Util;
 import net.syamn.utils.economy.EconomyUtil;
 import net.syamn.utils.exception.CommandException;
@@ -43,6 +44,9 @@ public class MfmfCommand extends BaseCommand {
                 throw new CommandException("&c自分をもふもふできません！");
             }
             
+            final SakuraPlayer sp = PlayerManager.getPlayer(target);
+            final String senderName = (isPlayer) ? PlayerManager.getPlayer(target).getName() : sender.getName();
+            
             boolean paid = false;
             if (isPlayer){
                 paid = EconomyUtil.takeMoney(player, 150.0D); // -150 Coin
@@ -52,11 +56,11 @@ public class MfmfCommand extends BaseCommand {
                 EconomyUtil.addMoney(target, 100.0D); // +100 Coin
                 
                 final int total = PlayerManager.getPlayer(target).getData().addMofCount(); // mof count++
-                Util.message(target, " &6'" + sender.getName() + "'&aにもふもふされました！(+100Coin)(" + total + "回目)");
-                Util.message(sender, " &6'" + target.getName() + "'&aをもふもふしました！&c(-150Coin)");
+                Util.message(target, " &6'" + senderName + "'&aにもふもふされました！(+100Coin)(" + total + "回目)");
+                Util.message(sender, " &6'" + sp.getName() + "'&aをもふもふしました！&c(-150Coin)");
             }else{
-                Util.message(target, " &6'" + sender.getName() + "'&aにもふもふされました！");
-                Util.message(sender, " &6'" + target.getName() + "'&aをもふもふしました！");
+                Util.message(target, " &6'" + senderName + "'&aにもふもふされました！");
+                Util.message(sender, " &6'" + sp.getName() + "'&aをもふもふしました！");
             }
         }
     }

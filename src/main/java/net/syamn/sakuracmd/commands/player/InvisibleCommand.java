@@ -59,7 +59,7 @@ public class InvisibleCommand extends BaseCommand{
             }
              
             if (!sender.equals(target)){
-                Util.message(sender, "&a" + target.getName() + " の透明モードを解除しました");
+                Util.message(sender, "&a" + sp.getName() + " &aの透明モードを解除しました");
             }
             Util.message(target, "&aあなたの透明モードは解除されました");
         }else{
@@ -72,7 +72,7 @@ public class InvisibleCommand extends BaseCommand{
             }
             
             if (!sender.equals(target)){
-                Util.message(sender, "&c" + target.getName() + " を透明モードにしました");
+                Util.message(sender, "&c" + sp.getName() + " &cを透明モードにしました");
             }
             Util.message(target, "&cあなたは透明モードになりました");
         }

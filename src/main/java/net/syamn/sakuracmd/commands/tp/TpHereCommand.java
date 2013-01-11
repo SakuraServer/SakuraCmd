@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.commands.tp;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
@@ -34,7 +35,7 @@ public class TpHereCommand extends BaseCommand{
         
         target.teleport(player, TeleportCause.COMMAND);
         
-        Util.message(target, "&aプレイヤー " + sender.getName() + " があなたをテレポートしました");
-        Util.message(sender, "&aプレイヤー " + target.getName() + " をあなたにテレポートしました");
+        Util.message(target, "&aプレイヤー " + PlayerManager.getPlayer(player).getName() + " &aがあなたをテレポートしました");
+        Util.message(sender, "&aプレイヤー " + PlayerManager.getPlayer(target).getName() + " &aをあなたにテレポートしました");
     }
 }

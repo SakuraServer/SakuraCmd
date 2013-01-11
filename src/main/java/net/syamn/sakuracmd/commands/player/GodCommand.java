@@ -37,19 +37,18 @@ public class GodCommand extends BaseCommand{
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
-        
-        SakuraPlayer sp = PlayerManager.getPlayer(target);
+        final SakuraPlayer sp = PlayerManager.getPlayer(target);
         
         if (sp.hasPower(Power.GODMODE)){
             sp.removePower(Power.GODMODE);
             if (!sender.equals(target)){
-                Util.message(sender, "&3" + target.getName() + " の無敵モードを解除しました");
+                Util.message(sender, "&3" + sp.getName() + " &3の無敵モードを解除しました");
             }
             Util.message(target, "&3あなたの無敵モードは解除されました");
         }else{
             sp.addPower(Power.GODMODE);
             if (!sender.equals(target)){
-                Util.message(sender, "&3" + target.getName() + " を透明モードにしました");
+                Util.message(sender, "&3" + sp.getName() + " &3を透明モードにしました");
             }
             Util.message(target, "&3あなたは無敵モードになりました");
         }
