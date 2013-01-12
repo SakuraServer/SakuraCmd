@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.RandomStringUtils;
 
-import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.storage.Database;
@@ -47,8 +46,8 @@ public class RegisterCommand extends BaseCommand{
         }
         
         // generate random 4-chars regist key
-        // not use following letters: IL1 il O0
-        final String registKey = RandomStringUtils.random(4, "abcdefghjkmnpqrstuvwxABCDEFGHJKMNOPQRSTUVWXYZ23456789");
+        // not use following letters: IL1 il O0o
+        final String registKey = RandomStringUtils.random(4, "abcdefghjkmnpqrstuvwxABCDEFGHJKMNPQRSTUVWXYZ23456789");
         
         // expired time
         final int expired = TimeUtil.getCurrentUnixSec().intValue() + (60 * 30); // available for 30 minutes
