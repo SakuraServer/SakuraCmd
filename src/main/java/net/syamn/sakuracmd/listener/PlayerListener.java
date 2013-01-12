@@ -195,6 +195,7 @@ public class PlayerListener implements Listener{
         if (sp.hasPower(Power.INVISIBLE)){
             Util.message(player, "&bあなたは透明モードが有効になっています！");
             event.setJoinMessage(null);
+            SakuraCmdUtil.sendlog(player, sp.getName() + "&b が透明モードで&a接続&bしました");
         }
         
         // Use GeoIP if enabled
@@ -261,6 +262,7 @@ public class PlayerListener implements Listener{
         if (InvisibleWorker.getInstance().isInvisible(player)){
             InvisibleWorker.getInstance().onPlayerQuit(player);
             event.setQuitMessage(null); // hide message of vanished player
+            SakuraCmdUtil.sendlog(player, sp.getName() + "&b が透明モードで&c切断&bしました");
         }
         
         // Set survival as current gamemode for safety

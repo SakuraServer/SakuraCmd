@@ -12,6 +12,7 @@ import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.storage.I18n;
+import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -62,6 +63,7 @@ public class InvisibleCommand extends BaseCommand{
                 Util.message(sender, "&a" + sp.getName() + " &aの透明モードを解除しました");
             }
             Util.message(target, "&aあなたの透明モードは解除されました");
+            SakuraCmdUtil.sendlog(sender, sp.getName() + "&a が透明モードを解除しました");
         }else{
             worker.vanish(target, false);
             
@@ -75,6 +77,7 @@ public class InvisibleCommand extends BaseCommand{
                 Util.message(sender, "&c" + sp.getName() + " &cを透明モードにしました");
             }
             Util.message(target, "&cあなたは透明モードになりました");
+            SakuraCmdUtil.sendlog(sender, sp.getName() + "&c が透明モードになりました");
         }
     }
 }
