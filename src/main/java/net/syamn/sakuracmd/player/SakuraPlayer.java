@@ -46,13 +46,13 @@ public class SakuraPlayer {
         return this;
     }
     
-    public String getName(){
+    public String getName(boolean hideStatus){
         if (player == null){
             throw new IllegalStateException("Null Player!");
         }
         
         if (config.getUseNamePrefix()){
-            final String prefix = getPrefix();
+            final String prefix = getPrefix(hideStatus);
             String suffix = PermissionManager.getSuffix(player);
             suffix = (suffix == null) ? "" : Util.coloring(suffix);
             
@@ -65,10 +65,16 @@ public class SakuraPlayer {
             return (config.getUseDisplayname()) ? player.getDisplayName() : player.getName();
         }
     }
+    public String getName(){
+        return getName(false);
+    }
     
-    public String getPrefix(){
+    public String getPrefix(boolean hideStatus){
         String prefix = PermissionManager.getPrefix(player);
         if (prefix == null) prefix = "";
+        if (hideStatus){
+            return prefix;
+        }
         
         String status = "";
         
@@ -80,6 +86,9 @@ public class SakuraPlayer {
         }
         
         return Util.coloring(status + prefix);
+    }
+    public String getPrefix(){
+        return getPrefix(false);
     }
     
     public PlayerData getData(){

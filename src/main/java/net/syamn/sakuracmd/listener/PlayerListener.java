@@ -186,7 +186,7 @@ public class PlayerListener implements Listener{
             Util.message(player, welcome);
         }
         
-        String msg = _(((player.hasPlayedBefore()) ? "joinMessage" : "firstJoinMessage"), I18n.PLAYER, sp.getName());
+        String msg = _(((player.hasPlayedBefore()) ? "joinMessage" : "firstJoinMessage"), I18n.PLAYER, sp.getName(true));
         if (msg.length() < 1) msg = null;
         event.setJoinMessage(msg);
         
@@ -254,7 +254,7 @@ public class PlayerListener implements Listener{
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         
         // Messages
-        String msg = _("quitMessage", I18n.PLAYER, sp.getName());
+        String msg = _("quitMessage", I18n.PLAYER, sp.getName(true));
         if (msg.length() < 1) msg = null;
         event.setQuitMessage(msg);
         

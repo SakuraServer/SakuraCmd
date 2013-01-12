@@ -49,7 +49,7 @@ public class InvisibleCommand extends BaseCommand{
             worker.reappear(target);
             
             // send fake join message
-            String msg = _("joinMessage", I18n.PLAYER, sp.getName());
+            String msg = _("joinMessage", I18n.PLAYER, sp.getName(true));
             if (msg != null && !msg.isEmpty()) {
                 if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(player)){
                     String geoStr = GeoIP.getInstance().getGeoIpString(player, SCHelper.getInstance().getConfig().getUseSimpleFormatOnJoin());
@@ -66,7 +66,7 @@ public class InvisibleCommand extends BaseCommand{
             worker.vanish(target, false);
             
             // send fake quit message
-            String msg = _("quitMessage", I18n.PLAYER, sp.getName());
+            String msg = _("quitMessage", I18n.PLAYER, sp.getName(true));
             if (msg != null && !msg.isEmpty()) {
                 Util.broadcastMessage(msg);
             }

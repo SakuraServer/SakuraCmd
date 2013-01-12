@@ -29,7 +29,8 @@ public class SakuraCmdTest {
     
     @Test
     public void addPlayerTest(){
-        addPlayer("testPlayer1");
+        Player p = addPlayer("testPlayer1");
+        log("addPlayerTest passed");
     }
     
     @After
@@ -38,9 +39,14 @@ public class SakuraCmdTest {
         System.gc();
     }
     
-    private void addPlayer(String name){
+    private void log(String str){
+        System.out.println(str);
+    }
+    
+    private Player addPlayer(String name){
         Player player = mock(Player.class);
         when(player.getName()).thenReturn(name);
         playerList.add(player);
+        return player;
     }
 }
