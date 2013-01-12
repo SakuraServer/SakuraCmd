@@ -11,6 +11,7 @@ import net.syamn.sakuracmd.commands.CommandHandler;
 import net.syamn.sakuracmd.commands.CommandRegister;
 import net.syamn.sakuracmd.listener.BlockListener;
 import net.syamn.sakuracmd.listener.CreativeListener;
+import net.syamn.sakuracmd.listener.EndListener;
 import net.syamn.sakuracmd.listener.EntityListener;
 import net.syamn.sakuracmd.listener.InventoryListener;
 import net.syamn.sakuracmd.listener.PlayerListener;
@@ -48,7 +49,6 @@ public class SakuraCmd extends JavaPlugin{
 
     // ** Private Classes **
     private SCHelper worker;
-    
 
     // ** Static **
     //private static Database database;
@@ -85,6 +85,8 @@ public class SakuraCmd extends JavaPlugin{
         pm.registerEvents(new EntityListener(this), this);
         pm.registerEvents(new InventoryListener(this), this);
         pm.registerEvents(new CreativeListener(this), this);
+        pm.registerEvents(new EndListener(this), this);
+        
         // features
         pm.registerEvents(new PassengerListener(this), this);
         pm.registerEvents(new BackLocationListener(), this);
