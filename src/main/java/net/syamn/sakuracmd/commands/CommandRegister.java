@@ -20,6 +20,7 @@ import net.syamn.sakuracmd.commands.player.GodCommand;
 import net.syamn.sakuracmd.commands.player.InvisibleCommand;
 import net.syamn.sakuracmd.commands.player.WhoisCommand;
 import net.syamn.sakuracmd.commands.server.LockdownCommand;
+import net.syamn.sakuracmd.commands.tp.BackCommand;
 import net.syamn.sakuracmd.commands.tp.TpCommand;
 import net.syamn.sakuracmd.commands.tp.TpHereCommand;
 import net.syamn.sakuracmd.commands.world.WeatherCommand;
@@ -39,6 +40,7 @@ public class CommandRegister {
         // Teleport Commands
         cmds.add(new TpHereCommand());
         cmds.add(new TpCommand());
+        cmds.add(new BackCommand());
         
         // Server Commands
         cmds.add(new LockdownCommand());

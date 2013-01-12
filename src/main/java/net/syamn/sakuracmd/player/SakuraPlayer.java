@@ -119,7 +119,14 @@ public class SakuraPlayer {
         return InvisibleWorker.getInstance().isInvisible(this.player);
     }
     
-    // Powers
+    // infos:
+    public void updateLastLocation(){
+        if (this.player != null){
+            this.data.setLastLocation(this.player.getLocation());
+        }
+    }
+    
+    // Powers:
     public boolean hasPower(final Power power){
         return this.data.hasPower(power);
     }

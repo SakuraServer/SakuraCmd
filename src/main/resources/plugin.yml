@@ -20,6 +20,9 @@ commands:
     tphere:
       usage: /tphere - to see the help
       description: See plugin help.
+    back:
+      usage: /back - to see the help
+      description: See plugin help.
     lockdown:
       usage: /lockdown - to see the help
       description: See plugin help.

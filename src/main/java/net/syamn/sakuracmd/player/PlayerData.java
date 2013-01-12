@@ -8,7 +8,9 @@ import java.io.File;
 import java.util.ArrayList;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.utils.ParseUtil;
 
+import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -34,6 +36,8 @@ public class PlayerData{
     private long lastDisconnect = 0L;
     private String lastIP = "";
     private int mofCount = 0;
+    private Location lastLocation = null;
+    
     // powers:
     private ArrayList<Power> powers = new ArrayList<Power>();
     
@@ -71,6 +75,7 @@ public class PlayerData{
                 this.lastDisconnect = csi.getLong("lastDisconnect", 0L);
                 this.lastIP = csi.getString("last-ip", "");
                 this.mofCount = csi.getInt("mofCount", 0);
+                this.lastLocation = ParseUtil.stringToLocation(csi.getString("lastLocation", ""));
             }
             
             // load powers
@@ -100,6 +105,9 @@ public class PlayerData{
                 csi.set("lastDisconnect", lastDisconnect);
                 csi.set("last-ip", lastIP);
                 csi.set("mofCount", mofCount);
+                if (lastLocation != null){
+                    csi.set("lastLocation", ParseUtil.locationToString(lastLocation));
+                }
                 
                 // save powers
                 ConfigurationSection csp = conf.createSection("powers");
@@ -127,21 +135,8 @@ public class PlayerData{
     }
     
     /* Getter/Setter */
-    // power
-    public boolean hasPower(final Power power){
-        return powers.contains(power);
-    }
-    public void addPower(final Power power/*, final int level*/){
-        if (!hasPower(power)){
-            powers.add(power);
-            saved = false;
-        }
-    }
-    public void removePower(final Power power){
-        powers.remove(power);
-        saved = false;
-    }
     
+    // infos:
     // lastConnection
     public void updateLastConnection(){
         lastConnection = System.currentTimeMillis();
@@ -177,5 +172,29 @@ public class PlayerData{
     }
     public int getMofCount(){
         return this.mofCount;
+    }
+
+    // lastLocation
+    public void setLastLocation(final Location loc){
+        this.lastLocation = loc;
+        saved = false;
+    }
+    public Location getLastLocation(){
+        return this.lastLocation;
+    }
+    
+    // powers:
+    public boolean hasPower(final Power power){
+        return powers.contains(power);
+    }
+    public void addPower(final Power power/*, final int level*/){
+        if (!hasPower(power)){
+            powers.add(power);
+            saved = false;
+        }
+    }
+    public void removePower(final Power power){
+        powers.remove(power);
+        saved = false;
     }
 }
