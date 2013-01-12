@@ -5,7 +5,9 @@
 package net.syamn.sakuracmd.listener.feature;
 
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.player.SakuraPlayer;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -23,11 +25,19 @@ public class BackLocationListener implements Listener{
         if (event.getCause() != TeleportCause.PLUGIN && event.getCause() != TeleportCause.COMMAND){
             return;
         }
-        PlayerManager.getPlayer(event.getPlayer()).getData().setLastLocation(event.getPlayer().getLocation());
+        setLastLocation(event.getPlayer());
     }
     
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerRespawn(final PlayerRespawnEvent event){
-        PlayerManager.getPlayer(event.getPlayer()).getData().setLastLocation(event.getPlayer().getLocation());
+        setLastLocation(event.getPlayer());
+    }
+    
+    private void setLastLocation(final Player player){
+        if (player == null || !player.isOnline()){
+            return;
+        }
+        final SakuraPlayer sp = PlayerManager.getPlayer(player);
+        sp.getData().setLastLocation(player.getLocation());
     }
 }
