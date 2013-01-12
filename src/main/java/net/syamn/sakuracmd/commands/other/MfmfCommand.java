@@ -46,7 +46,7 @@ public class MfmfCommand extends BaseCommand {
             }
             
             final SakuraPlayer sp = PlayerManager.getPlayer(target);
-            final String senderName = (isPlayer) ? PlayerManager.getPlayer(target).getName() : sender.getName();
+            final String senderName = (isPlayer) ? PlayerManager.getPlayer(player).getName() : sender.getName();
             
             boolean paid = false;
             if (isPlayer && SCHelper.getInstance().isEnableEcon()){
