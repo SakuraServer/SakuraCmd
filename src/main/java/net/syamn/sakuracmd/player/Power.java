@@ -15,6 +15,7 @@ public enum Power {
     GODMODE,
     NO_PICKUP,
     FLY,
+    FLYMODE,
     ;
     
     @Override

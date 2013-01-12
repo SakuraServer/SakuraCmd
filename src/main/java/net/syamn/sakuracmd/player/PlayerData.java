@@ -40,6 +40,7 @@ public class PlayerData{
     
     // powers:
     private ArrayList<Power> powers = new ArrayList<Power>();
+    private int flymodeTime = 0;
     
     /* ************************** */
 
@@ -87,6 +88,9 @@ public class PlayerData{
                         this.powers.add(p);
                     }
                 }
+                if (hasPower(Power.FLYMODE)){
+                    this.flymodeTime = csp.getInt("flymodeTime", 0);
+                }
             }
             
         }catch (Exception ex){
@@ -112,7 +116,12 @@ public class PlayerData{
                 // save powers
                 ConfigurationSection csp = conf.createSection("powers");
                 for (final Power p : Power.values()){
-                    csp.set(p.toString(), this.hasPower(p));
+                    if (this.hasPower(p)){
+                        csp.set(p.toString(), true);
+                    }
+                }
+                if (hasPower(Power.FLYMODE)){
+                    csp.set("flymodeTime", this.flymodeTime);
                 }
                 
                 conf.save(file);
@@ -196,5 +205,13 @@ public class PlayerData{
     public void removePower(final Power power){
         powers.remove(power);
         saved = false;
+    }
+    
+    public void setFlymodeTime(final int time){
+        this.flymodeTime = time;
+        saved = false;
+    }
+    public int getFlymodeTime(){
+        return this.flymodeTime;
     }
 }
