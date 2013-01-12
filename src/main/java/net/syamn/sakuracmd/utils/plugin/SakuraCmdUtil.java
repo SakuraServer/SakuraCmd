@@ -35,7 +35,9 @@ public class SakuraCmdUtil {
         else if (Perms.TAB_GRAY.has(player)){
             color = ChatColor.GRAY;
         }
-        
+        changeTabColor(player, color);
+    }
+    public static void changeTabColor(final Player player, final ChatColor color){
         if (color != null){
             String newName = color.toString() + player.getDisplayName();
             if (newName.length() > 16){
