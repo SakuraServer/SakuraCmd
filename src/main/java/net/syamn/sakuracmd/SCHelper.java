@@ -8,6 +8,7 @@ import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
+import net.syamn.sakuracmd.storage.Database;
 import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
@@ -37,6 +38,7 @@ public class SCHelper {
     
     private SakuraCmd plugin;
     private ConfigurationManager config;
+    private Database database;
     private int afkTaskID = -1;
     private boolean isEnableEcon = false;
     
@@ -88,6 +90,9 @@ public class SCHelper {
         this.plugin = plugin;
         this.config = new ConfigurationManager(plugin);
         
+        this.database = new Database(plugin);
+        database.createStructure();
+        
         // database
         //database = new Database(this);
         //database.createStructure();
@@ -133,6 +138,11 @@ public class SCHelper {
     }
     public boolean isEnableEcon(){
         return this.isEnableEcon;
+    }
+    
+    // Database getter
+    public Database getDB(){
+        return this.database;
     }
     
     /**
