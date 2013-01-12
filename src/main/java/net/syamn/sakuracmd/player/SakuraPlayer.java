@@ -73,7 +73,7 @@ public class SakuraPlayer {
         String prefix = PermissionManager.getPrefix(player);
         if (prefix == null) prefix = "";
         if (hideStatus){
-            return prefix;
+            return Util.coloring(prefix);
         }
         
         String status = "";
