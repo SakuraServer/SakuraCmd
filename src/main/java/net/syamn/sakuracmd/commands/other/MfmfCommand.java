@@ -4,6 +4,7 @@
  */
 package net.syamn.sakuracmd.commands.other;
 
+import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.SakuraPlayer;
@@ -48,7 +49,7 @@ public class MfmfCommand extends BaseCommand {
             final String senderName = (isPlayer) ? PlayerManager.getPlayer(target).getName() : sender.getName();
             
             boolean paid = false;
-            if (isPlayer){
+            if (isPlayer && SCHelper.getInstance().isEnableEcon()){
                 paid = EconomyUtil.takeMoney(player, 150.0D); // -150 Coin
             }
             
