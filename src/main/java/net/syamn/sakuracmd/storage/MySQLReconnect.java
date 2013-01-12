@@ -22,7 +22,7 @@ public class MySQLReconnect implements Runnable{
     @Override
     public void run(){
         if (!db.isConnected()){
-            Database.connect();
+            db.connect();
             if (db.isConnected()){
                 // TODO stuff
             }

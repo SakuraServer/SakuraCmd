@@ -38,7 +38,6 @@ public class SCHelper {
     
     private SakuraCmd plugin;
     private ConfigurationManager config;
-    private Database database;
     private int afkTaskID = -1;
     private boolean isEnableEcon = false;
     
@@ -53,6 +52,10 @@ public class SCHelper {
             LogUtil.warning(SakuraCmd.logPrefix + "an error occured while trying to load the config file.");
             ex.printStackTrace();
         }
+        
+        // connect database
+        Database db = Database.getInstance(plugin);
+        db.createStructure();
         
         // worker
         AFKWorker.getInstance();
@@ -90,13 +93,6 @@ public class SCHelper {
         this.plugin = plugin;
         this.config = new ConfigurationManager(plugin);
         
-        this.database = new Database(plugin);
-        database.createStructure();
-        
-        // database
-        //database = new Database(this);
-        //database.createStructure();
-        
         init();
     }
     
@@ -114,6 +110,7 @@ public class SCHelper {
         DynmapHandler.dispose();
         ConfirmQueue.dispose();
         GeoIP.dispose();
+        Database.dispose(); // conn close
     }
     
     /**
@@ -138,11 +135,6 @@ public class SCHelper {
     }
     public boolean isEnableEcon(){
         return this.isEnableEcon;
-    }
-    
-    // Database getter
-    public Database getDB(){
-        return this.database;
     }
     
     /**

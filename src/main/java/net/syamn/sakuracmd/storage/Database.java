@@ -22,17 +22,43 @@ import net.syamn.utils.LogUtil;
  * @author syam(syamn)
  */
 public class Database {
-    private static SakuraCmd plugin;
-
-    private static String connectionString = null;
-    private static Connection connection = null;
+    private static Database instance = null;
+    public static Database getInstance(final SakuraCmd plugin){
+        if (instance == null){
+            synchronized (Database.class){
+                if (instance == null){
+                    instance = new Database(plugin);
+                }
+            }
+        }
+        return instance;
+    }
+    public static Database getInstance(){
+        return instance;
+    }
+    public static void dispose(){
+        if (connection != null){
+            try {
+                connection.close();
+            }catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+        connection = null;
+        instance = null;
+    }
+    
+    private SakuraCmd plugin;
+    private String connectionString = null;
+    
     private static long reconnectTimestamp = 0;
+    private static Connection connection = null;
 
     /**
      * コンストラクタ
      * @param plugin FlagGameプラグインインスタンス
      */
-    public Database(final SakuraCmd plugin){
+    private Database(final SakuraCmd plugin){
         this.plugin = plugin;
         ConfigurationManager conf = SCHelper.getInstance().getConfig();
 
@@ -56,7 +82,7 @@ public class Database {
     /**
      * データベースに接続する
      */
-    public static void connect(){
+    void connect(){
         try{
             LogUtil.info("Attempting connection to MySQL..");
 
@@ -351,7 +377,7 @@ public class Database {
      * エラーを出力する
      * @param ex
      */
-    private static void printErrors(SQLException ex){
+    private void printErrors(SQLException ex){
         LogUtil.warning("SQLException:" +ex.getMessage());
         LogUtil.warning("SQLState:" +ex.getSQLState());
         LogUtil.warning("ErrorCode:" +ex.getErrorCode());

@@ -33,7 +33,7 @@ public class RegisterCommand extends BaseCommand{
     public void execute() throws CommandException{
         Util.message(sender, "&6登録処理を行っています...");
         
-        final Database db = SCHelper.getInstance().getDB();
+        final Database db = Database.getInstance();
         if (db == null || !db.isConnected()){
             throw new CommandException("&c現在データベースと接続されていません！");
         }
