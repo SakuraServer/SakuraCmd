@@ -7,6 +7,7 @@ package net.syamn.sakuracmd.commands;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.syamn.sakuracmd.commands.db.RegisterCommand;
 import net.syamn.sakuracmd.commands.items.RepairAllCommand;
 import net.syamn.sakuracmd.commands.items.RepairItemCommand;
 import net.syamn.sakuracmd.commands.other.ColorsCommand;
@@ -55,6 +56,9 @@ public class CommandRegister {
         
         // World Commands
         cmds.add(new WeatherCommand());
+        
+        // Database Commands
+        cmds.add(new RegisterCommand());
         
         // Other Commands
         cmds.add(new SakuraCmdCommand());

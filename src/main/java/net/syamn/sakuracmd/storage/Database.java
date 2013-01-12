@@ -77,7 +77,16 @@ public class Database {
      * データベース構造を構築する
      */
     public void createStructure(){
-        // TODO stuff..
+        // for Register command
+        write("CREATE TABLE IF NOT EXISTS `regist_key` (" +
+              "`data_id` int (10) unsigned NOT NULL AUTO_INCREMENT," + 
+              "`player_name` varchar(32) NOT NULL," +
+              "`key` varchar(10) NOT NULL," +
+              "`expired` int(32) unsigned NOT NULL," +
+              "PRIMARY KEY (`data_id`)," +
+              "UNIQUE KEY `player_name` (`player_name`)" +
+              ") ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;");
+        
         /*
         write("CREATE TABLE IF NOT EXISTS `" + userTable + "` (" +
                 "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," +   // 割り当てられたプレイヤーID
@@ -312,7 +321,7 @@ public class Database {
      * 接続状況を返す
      * @return 接続中ならtrue、タイムアウトすればfalse
      */
-    public static boolean isConnected(){
+    public boolean isConnected(){
         if (connection == null){
             return false;
         }
@@ -327,14 +336,14 @@ public class Database {
     /**
      * MySQLデータベースへ再接続を試みる
      */
-    public static void attemptReconnect(){
+    public void attemptReconnect(){
         final int RECONNECT_WAIT_TICKS = 60000;
         final int RECONNECT_DELAY_TICKS = 1200;
 
         if (reconnectTimestamp + RECONNECT_WAIT_TICKS < System.currentTimeMillis()){
             reconnectTimestamp = System.currentTimeMillis();
             LogUtil.severe("Conection to MySQL was lost! Attempting to reconnect 60 seconds...");
-            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new MySQLReconnect(plugin), RECONNECT_DELAY_TICKS);
+            plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new MySQLReconnect(plugin, this), RECONNECT_DELAY_TICKS);
         }
     }
 

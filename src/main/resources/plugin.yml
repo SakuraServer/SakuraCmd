@@ -49,6 +49,10 @@ commands:
     whois:
       usage: /whois - to see the help
       description: See plugin help.
+    register:
+      usage: /register - to see the help
+      aliases: [webregister]
+      description: See plugin help.
     mfmf:
       usage: /mfmf - to see the help
       aliases: [もふもふ]

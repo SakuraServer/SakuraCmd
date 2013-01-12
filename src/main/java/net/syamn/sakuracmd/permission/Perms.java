@@ -41,6 +41,9 @@ public enum Perms {
     
     // World Commands
     WEATHER ("world.weather"),
+    
+    // Database Commands
+    REGISTER ("db.register"),
 
     // Other / Admin Commands
     SAKURACMD ("admin.sakuracmd"),

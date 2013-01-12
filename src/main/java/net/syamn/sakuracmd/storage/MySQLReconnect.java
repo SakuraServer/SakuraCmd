@@ -12,16 +12,18 @@ import net.syamn.sakuracmd.SakuraCmd;
  */
 public class MySQLReconnect implements Runnable{
     private final SakuraCmd plugin;
+    private final Database db;
 
-    public MySQLReconnect(final SakuraCmd plugin){
+    public MySQLReconnect(final SakuraCmd plugin, final Database db){
         this.plugin = plugin;
+        this.db = db;
     }
 
     @Override
     public void run(){
-        if (!Database.isConnected()){
+        if (!db.isConnected()){
             Database.connect();
-            if (Database.isConnected()){
+            if (db.isConnected()){
                 // TODO stuff
             }
         }
