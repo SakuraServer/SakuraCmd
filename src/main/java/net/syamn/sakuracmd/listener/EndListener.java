@@ -8,7 +8,6 @@ import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.utils.Util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Entity;
