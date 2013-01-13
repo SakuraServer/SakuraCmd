@@ -53,6 +53,10 @@ commands:
       usage: /register - to see the help
       aliases: [webregister]
       description: See plugin help.
+    password:
+      usage: /password - to see the help
+      aliases: [passwd]
+      description: See plugin help.
     mfmf:
       usage: /mfmf - to see the help
       aliases: [もふもふ]

@@ -44,6 +44,7 @@ public enum Perms {
     
     // Database Commands
     REGISTER ("db.register"),
+    PASSWORD ("db.password"),
 
     // Other / Admin Commands
     SAKURACMD ("admin.sakuracmd"),

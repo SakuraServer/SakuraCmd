@@ -7,6 +7,7 @@ package net.syamn.sakuracmd.commands;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.syamn.sakuracmd.commands.db.PasswordCommand;
 import net.syamn.sakuracmd.commands.db.RegisterCommand;
 import net.syamn.sakuracmd.commands.items.RepairAllCommand;
 import net.syamn.sakuracmd.commands.items.RepairItemCommand;
@@ -59,6 +60,7 @@ public class CommandRegister {
         
         // Database Commands
         cmds.add(new RegisterCommand());
+        cmds.add(new PasswordCommand());
         
         // Other Commands
         cmds.add(new SakuraCmdCommand());
