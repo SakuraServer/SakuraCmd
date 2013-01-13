@@ -40,9 +40,9 @@ public class PasswordCommand extends BaseCommand implements Queueable{
         }
         
         ConfirmQueue.getInstance().addQueue(sender, this, null, 15);
-        Util.message(sender, "&4ウェブページのパスワードリセットを行います！");
-        Util.message(sender, "&4ランダム文字列で今のパスワードが上書きされます！");
-        Util.message(sender, "&4本当に実行しますか？ &a/confirm&4 コマンドで続行します。");
+        Util.message(sender, "&cウェブページのパスワードリセットを行います！");
+        Util.message(sender, "&cランダム文字列で今のパスワードが上書きされます！");
+        Util.message(sender, "&c本当に実行しますか？ &a/confirm&c コマンドで続行します。");
     }
     
     @Override
