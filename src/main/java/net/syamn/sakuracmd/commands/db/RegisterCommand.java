@@ -30,7 +30,7 @@ public class RegisterCommand extends BaseCommand{
     }
     
     public void execute() throws CommandException{
-        Util.message(sender, "&6登録処理を行っています...");
+        Util.message(sender, "&6登録キーを発行しています...");
         
         final Database db = Database.getInstance();
         if (db == null || !db.isConnected()){
@@ -42,7 +42,7 @@ public class RegisterCommand extends BaseCommand{
         // check if already registered
         HashMap<Integer, ArrayList<String>> records = db.read("SELECT * FROM `user_data` WHERE `player_name` = ?", pname);
         if (records != null && records.size() > 0){
-            throw new CommandException("&c既に登録されています！");
+            throw new CommandException("&cあなたは既にアカウントを登録しています！");
         }
         
         // generate random 4-chars regist key
@@ -56,9 +56,10 @@ public class RegisterCommand extends BaseCommand{
         if (!success){
             throw new CommandException("&c登録に失敗しました！時間を置いてやり直してください！");
         }
-        
         Util.message(sender, "&aあなたの登録キー:&2 " + registKey);
-        Util.message(sender, "&a登録用のウェブページから、上記の登録キーを入力して続行してください");
+        Util.message(sender, "&a登録用ページ (キー自動入力):&2 ");
+        Util.message(sender, "&2  http://mc.sakura-server.net/make_account/" + player.getName() + "/" + registKey + "/");
+        Util.message(sender, "&a登録ページから、上記の登録キーを入力して続行してください");
         Util.message(sender, "&aこの登録キーは発行後30分間のみ有効です");
     }
 }
