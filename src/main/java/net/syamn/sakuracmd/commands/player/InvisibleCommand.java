@@ -52,8 +52,8 @@ public class InvisibleCommand extends BaseCommand{
             // send fake join message
             String msg = _("joinMessage", I18n.PLAYER, sp.getName(true));
             if (msg != null && !msg.isEmpty()) {
-                if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(player)){
-                    String geoStr = GeoIP.getInstance().getGeoIpString(player, SCHelper.getInstance().getConfig().getUseSimpleFormatOnJoin());
+                if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(target)){
+                    String geoStr = GeoIP.getInstance().getGeoIpString(target, SCHelper.getInstance().getConfig().getUseSimpleFormatOnJoin());
                     msg = msg + Util.coloring("&7") + " (" + geoStr + ")";
                 }
                 Util.broadcastMessage(msg);
