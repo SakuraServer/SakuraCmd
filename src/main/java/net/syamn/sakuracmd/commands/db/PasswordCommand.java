@@ -61,7 +61,9 @@ public class PasswordCommand extends BaseCommand implements Queueable{
         int pid = -1;
         
         // check if already registered
-        HashMap<Integer, ArrayList<String>> records = db.read("SELECT `player_id` FROM `user_data` WHERE `player_name` = ?", pname);
+        final String query = "SELECT `player_id` FROM `user_data` LEFT JOIN `user_id` USING (`player_id`) WHERE `player_name` = ?";
+        HashMap<Integer, ArrayList<String>> records = db.read(query, pname);
+        //HashMap<Integer, ArrayList<String>> records = db.read("SELECT `player_id` FROM `user_data` WHERE `player_name` = ?", pname);
         if (records == null || records.size() <= 0){
             Util.message(player, "&cアカウントが存在しません！ /register コマンドで登録できます！");
             return;

@@ -11,6 +11,7 @@ import org.apache.commons.lang.RandomStringUtils;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.Database;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
@@ -37,10 +38,10 @@ public class RegisterCommand extends BaseCommand{
             throw new CommandException("&c現在データベースと接続されていません！");
         }
         
-        final String pname = player.getName();
+        final int pid = PlayerManager.getPlayer(player).getData().getPlayerID();
         
         // check if already registered
-        HashMap<Integer, ArrayList<String>> records = db.read("SELECT * FROM `user_data` WHERE `player_name` = ?", pname);
+        HashMap<Integer, ArrayList<String>> records = db.read("SELECT * FROM `user_data` WHERE `player_id` = ?", pid);
         if (records != null && records.size() > 0){
             throw new CommandException("&cあなたは既にアカウントを登録しています！");
         }
@@ -52,7 +53,7 @@ public class RegisterCommand extends BaseCommand{
         // expired time
         final int expired = TimeUtil.getCurrentUnixSec().intValue() + (60 * 30); // available for 30 minutes
         
-        final boolean success = db.write("REPLACE INTO `regist_key` (`player_name`, `key`, `expired`) VALUES (?, ?, ?)", pname, registKey, expired);
+        final boolean success = db.write("REPLACE INTO `regist_key` (`player_id`, `key`, `expired`) VALUES (?, ?, ?)", pid, registKey, expired);
         if (!success){
             throw new CommandException("&c登録に失敗しました！時間を置いてやり直してください！");
         }
