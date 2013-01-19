@@ -45,6 +45,7 @@ public enum Perms {
     // Database Commands
     REGISTER ("db.register"),
     PASSWORD ("db.password"),
+    MAIL ("db.mail"),
 
     // Other / Admin Commands
     ADMIN ("admin.admin"),

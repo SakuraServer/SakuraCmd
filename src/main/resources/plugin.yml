@@ -46,6 +46,10 @@ commands:
     weather:
       usage: /weather - to see the help
       description: See plugin help.
+    mail:
+      usage: /mail - to see the help
+      aliases: [ml]
+      description: To see the plugin help.
     whois:
       usage: /whois - to see the help
       description: See plugin help.
