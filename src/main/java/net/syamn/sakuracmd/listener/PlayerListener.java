@@ -212,13 +212,15 @@ public class PlayerListener implements Listener{
         
         // Run async
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run(){
+            @Override public void run(){
                 AFKWorker.getInstance().updateTimeStamp(player);
                 
                 PlayerData data = sp.getData();
                 data.updateLastConnection();
                 data.setLastIP(player.getAddress().getAddress().getHostAddress());
+                
+                // onJoin notify messages
+                sp.onJoinNotify();
             }
         });
         
