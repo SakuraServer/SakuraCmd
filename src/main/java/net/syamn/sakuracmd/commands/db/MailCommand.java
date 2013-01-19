@@ -4,6 +4,7 @@
  */
 package net.syamn.sakuracmd.commands.db;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -108,7 +109,30 @@ public class MailCommand extends BaseCommand{
             Util.message(tPlayer, sp.getName() + " &aがあなたにメールを送信しました！ &7/mail list &aで確認できます！");
         }
         
+        // send notify mail via web api
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, new Runnable(){
+            public void run(){
+                try{ new URL("http://127.0.0.1/api/notify.php?type=mail&toID=" + toId + "&fromName=" + player.getName()).getContent(); }
+                catch (Exception ignore){}
+            }
+        });
+        /*
+        URLConnection con = url.openConnection();
+        con.setDoOutput(true);
         
+        OutputStream os = con.getOutputStream();
+        String post = "type=mail&toID=1&fromName=syamn";
+        PrintStream ps = new PrintStream(os);
+        ps.print(post);
+        ps.close();
+        os.close();
+       
+        OutputStreamWriter ow = new OutputStreamWriter(con.getOutputStream());
+        BufferedWriter bw = new BufferedWriter(ow);
+        bw.write("type=mail" + "\n" + "toID=1" + "\n" + "fromName=syamn");
+        bw.close();
+        ow.close();
+        */
     }
     
     private void list() throws CommandException{
