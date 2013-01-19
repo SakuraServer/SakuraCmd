@@ -31,7 +31,7 @@ public class MailCommand extends BaseCommand{
         name = "mail";
         perm = Perms.MAIL;
         argLength = 1;
-        usage = "[send/list/#ID] <- mail related commands";
+        usage = "[list/#ID/send [name] [text]] <- mail related commands";
     }
     
     Database db = null;
@@ -126,12 +126,12 @@ public class MailCommand extends BaseCommand{
         String ts, line, body;
         for (ArrayList<String> row : records.values()){
             body = row.get(3).replace("\n", "");
-            if (body.length() > 10){
-                body = body.substring(0, 8) + "&7..";
+            if (body.length() > 15){
+                body = body.substring(0, 13) + "&7..";
             }
             ts = TimeUtil.getReadableTime(TimeUtil.getDateByUnixSeconds(Long.valueOf(row.get(2))));
             
-            line = "&2#&a" + row.get(0) + "&f: &6" + row.get(1) + "&f: &7" + ts + "&f:" + body;
+            line = "&2#&a" + row.get(0) + "&f: &6" + row.get(1) + "&f: &7" + ts + "&f: " + body;
             Util.message(sender, line);
         }
     }
