@@ -47,6 +47,7 @@ public enum Perms {
     PASSWORD ("db.password"),
 
     // Other / Admin Commands
+    ADMIN ("admin.admin"),
     SAKURACMD ("admin.sakuracmd"),
     
      // Spec Permissions

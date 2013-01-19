@@ -11,6 +11,7 @@ import net.syamn.sakuracmd.commands.db.PasswordCommand;
 import net.syamn.sakuracmd.commands.db.RegisterCommand;
 import net.syamn.sakuracmd.commands.items.RepairAllCommand;
 import net.syamn.sakuracmd.commands.items.RepairItemCommand;
+import net.syamn.sakuracmd.commands.other.AdminCommand;
 import net.syamn.sakuracmd.commands.other.ColorsCommand;
 import net.syamn.sakuracmd.commands.other.ConfirmCommand;
 import net.syamn.sakuracmd.commands.other.MfmfCommand;
@@ -63,6 +64,7 @@ public class CommandRegister {
         cmds.add(new PasswordCommand());
         
         // Other Commands
+        cmds.add(new AdminCommand());
         cmds.add(new SakuraCmdCommand());
         cmds.add(new ConfirmCommand());
         cmds.add(new MfmfCommand());
