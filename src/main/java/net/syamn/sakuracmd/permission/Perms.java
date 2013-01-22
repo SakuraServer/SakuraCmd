@@ -24,6 +24,7 @@ public enum Perms {
     TP ("tp.tp"),
     TPHERE ("tp.here"),
     BACK ("tp.back"),
+    RIDE ("tp.ride"),
     
     // Server Commands
     LOCKDOWN ("server.lockdown"),
