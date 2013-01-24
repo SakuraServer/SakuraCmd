@@ -121,6 +121,7 @@ public class EntityListener implements Listener{
         }
         //Actions.message(null, player, "*: "+check.getType().name());//debug
         switch (check.getType()){
+            /*
             case SPONGE:
                 //Vector vect = new Vector(0D, 2.0D, 0D);
                 //player.setVelocity(player.getVelocity().add(vect));
@@ -136,6 +137,7 @@ public class EntityListener implements Listener{
                     }
                 }, 0L);
                 break;
+            */
             case LEAVES:
                 event.setCancelled(true);
                 event.setDamage(0);
