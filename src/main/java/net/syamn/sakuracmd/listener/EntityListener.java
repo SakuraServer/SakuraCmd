@@ -4,7 +4,11 @@
  */
 package net.syamn.sakuracmd.listener;
 
+import java.util.List;
+
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.utils.LogUtil;
+import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
@@ -24,6 +28,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -144,6 +149,39 @@ public class EntityListener implements Listener{
                 Util.message(player, "&2(◜▿‾ *)");
                 break;
             default: break;
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityDeath(final EntityDeathEvent event){
+        if (!isCheckEntity(event.getEntity()) || event.getDroppedExp() <= 0){
+            return;
+        }
+        
+        final Entity ent = event.getEntity();
+        final List<Entity> ents = ent.getNearbyEntities(0.75D, 1.5D, 0.75D);
+        
+        int i = 0;
+        for (final Entity e : ents){
+            if (isCheckEntity(e)) i++;
+        }
+        
+        if (i >= 5){
+            event.setDroppedExp(0);
+            event.getDrops().clear();
+            LogUtil.warning("ExpTrap detected! " + StrUtil.getLocationString(ent.getLocation()));
+        }
+    }
+    
+    private boolean isCheckEntity(final Entity ent){
+        if (ent == null) return false;
+        switch (ent.getType()){
+            case ZOMBIE:
+            case SKELETON:
+            case BLAZE:
+                return true;
+            default:
+                return false;
         }
     }
 }
