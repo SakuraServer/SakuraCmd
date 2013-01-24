@@ -166,7 +166,7 @@ public class EntityListener implements Listener{
             if (isCheckEntity(e)) i++;
         }
         
-        if (i >= 5){
+        if (i >= 3){
             event.setDroppedExp(0);
             event.getDrops().clear();
             LogUtil.warning("ExpTrap detected! " + StrUtil.getLocationString(ent.getLocation()));
