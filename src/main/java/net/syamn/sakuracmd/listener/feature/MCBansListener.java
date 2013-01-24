@@ -104,7 +104,7 @@ public class MCBansListener implements Listener{
         
         body += "\n[b]証拠 / Proof[/b]:\n";
         if (Pattern.compile("(honeypot)").matcher(event.getReason().toLowerCase(Locale.ENGLISH)).find()){
-            body += "[list][*]HoneyPot Logger: [url]http://sakura-server.net/hp/[/url][/list]";
+            body += "[list][*]HoneyPot Logger: [url]http://sakura-server.net/hp/[/url][/list]\n";
         }
         
         try{
