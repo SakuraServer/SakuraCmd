@@ -46,9 +46,9 @@ public class GodCommand extends BaseCommand{
                 Util.message(sender, "&3" + sp.getName() + " &3の無敵モードを解除しました");
             }
             Util.message(target, "&3あなたの無敵モードは解除されました");
-            SakuraCmdUtil.sendlog(sp.getName() + "&c が無敵モードになりました");
             SakuraCmdUtil.sendlog(sender, sp.getName() + "&3 が無敵モードを解除しました");
-        }else{
+        }
+        else{
             sp.addPower(Power.GODMODE);
             if (!sender.equals(target)){
                 Util.message(sender, "&3" + sp.getName() + " &3を無敵モードにしました");
