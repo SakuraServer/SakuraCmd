@@ -70,7 +70,7 @@ public class AFKWorker {
         
         String afkMsg = _("afkOn", I18n.PLAYER, PlayerManager.getPlayer(player.getName()).getName());
         if (message != null && !message.isEmpty()) afkMsg += ": " + message;
-        Util.broadcastMessage(afkMsg);
+        Util.broadcastMessage(afkMsg, false);
         
         afkPlayers.put(player, Long.valueOf(System.currentTimeMillis()));
         player.setSleepingIgnored(true);
@@ -80,7 +80,7 @@ public class AFKWorker {
             return;
         }
         
-        Util.broadcastMessage(_("afkOff", I18n.PLAYER, PlayerManager.getPlayer(player.getName()).getName()));
+        Util.broadcastMessage(_("afkOff", I18n.PLAYER, PlayerManager.getPlayer(player.getName()).getName()), false);
         
         afkPlayers.remove(player);
         player.setSleepingIgnored(false);
