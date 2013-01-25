@@ -35,6 +35,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -92,6 +93,11 @@ public class PlayerListener implements Listener{
         if (!player.getGameMode().equals(GameMode.SURVIVAL) && !Perms.TRUST.has(player)){
             player.setGameMode(GameMode.SURVIVAL);
         }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
+        AFKWorker.getInstance().updatePlayer(event.getPlayer());
     }
     
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
