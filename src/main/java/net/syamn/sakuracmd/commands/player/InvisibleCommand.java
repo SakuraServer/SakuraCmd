@@ -13,6 +13,7 @@ import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
+import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -47,6 +48,9 @@ public class InvisibleCommand extends BaseCommand{
         InvisibleWorker worker = InvisibleWorker.getInstance();
         
         if (worker.isInvisible(target)){
+            // first, call unafk method for remove that prefix
+            AFKWorker.getInstance().updatePlayer(target);
+            
             worker.reappear(target);
             
             // send fake join message
