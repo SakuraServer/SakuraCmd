@@ -51,7 +51,7 @@ public class FlyCommand extends BaseCommand{
             SakuraCmdUtil.changeFlyMode(target, false);
             
             if (!sender.equals(target)){
-                Util.message(sender, "&3" + sp.getName() + " &3の無敵モードを解除しました");
+                Util.message(sender, "&3" + sp.getName() + " &3の飛行モードを解除しました");
             }
             Util.message(target, "&3あなたの飛行モードは解除されました");
         }else{
