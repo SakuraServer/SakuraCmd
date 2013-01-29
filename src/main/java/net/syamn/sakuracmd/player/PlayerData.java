@@ -8,7 +8,10 @@ import java.io.File;
 import java.util.ArrayList;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.storage.Database;
+import net.syamn.utils.LogUtil;
 import net.syamn.utils.ParseUtil;
+import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -23,6 +26,7 @@ public class PlayerData{
     private final static String dataDir = "userData";
     
     private final String playerName;
+    private int playerID = 0;
     private YamlConfiguration conf = new YamlConfiguration();
     private File file;
     private boolean saved = true;
@@ -97,6 +101,28 @@ public class PlayerData{
             ex.printStackTrace();
             return false;
         }
+        return loadDB(); // next, load from mysql
+    }
+    private boolean loadDB(){
+        final Database db = Database.getInstance();
+        if (db == null || !db.isConnected()){
+            LogUtil.warning("Could not load " + playerName + " data! Not connected to DB!");
+            return false;
+        }
+        
+        playerID = db.getInt("SELECT `player_id` FROM `user_id` WHERE `player_name` = ?", playerName);
+        if (playerID == 0){
+            // not exists on base db, add as new player
+            db.write("INSERT INTO `user_id` (`player_name`) VALUES (?)", playerName);
+            playerID = db.getInt("SELECT `player_id` FROM `user_id` WHERE `player_name` = ?", playerName);
+            if (playerID == 0){
+                LogUtil.warning("Could not add new player data: " + playerName);
+                return false;
+            }else{
+                LogUtil.info("Added new player data to web database: " + playerName); // TODO for debug?
+            }
+        }
+        
         return true;
     }
     
@@ -130,11 +156,18 @@ public class PlayerData{
                 return false;
             }
         }
+        return saveDB(); // next, save to mysql
+    }
+    private boolean saveDB(){
+        // TODO nothing to do atm
         return true;
     }
-
+    
     public String getPlayerName(){
         return this.playerName;
+    }
+    public int getPlayerID(){
+        return this.playerID;
     }
     
     public static PlayerData getDataIfExists(final String playerName){

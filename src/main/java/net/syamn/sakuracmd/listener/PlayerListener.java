@@ -35,6 +35,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -92,6 +93,11 @@ public class PlayerListener implements Listener{
         if (!player.getGameMode().equals(GameMode.SURVIVAL) && !Perms.TRUST.has(player)){
             player.setGameMode(GameMode.SURVIVAL);
         }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
+        AFKWorker.getInstance().updatePlayer(event.getPlayer());
     }
     
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -186,7 +192,7 @@ public class PlayerListener implements Listener{
             Util.message(player, welcome);
         }
         
-        String msg = _(((player.hasPlayedBefore()) ? "joinMessage" : "firstJoinMessage"), I18n.PLAYER, sp.getName());
+        String msg = _(((player.hasPlayedBefore()) ? "joinMessage" : "firstJoinMessage"), I18n.PLAYER, sp.getName(true));
         if (msg.length() < 1) msg = null;
         event.setJoinMessage(msg);
         
@@ -195,6 +201,7 @@ public class PlayerListener implements Listener{
         if (sp.hasPower(Power.INVISIBLE)){
             Util.message(player, "&bあなたは透明モードが有効になっています！");
             event.setJoinMessage(null);
+            SakuraCmdUtil.sendlog(player, sp.getName() + "&b が透明モードで&a接続&bしました");
         }
         
         // Use GeoIP if enabled
@@ -211,13 +218,15 @@ public class PlayerListener implements Listener{
         
         // Run async
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-            @Override
-            public void run(){
+            @Override public void run(){
                 AFKWorker.getInstance().updateTimeStamp(player);
                 
                 PlayerData data = sp.getData();
                 data.updateLastConnection();
                 data.setLastIP(player.getAddress().getAddress().getHostAddress());
+                
+                // onJoin notify messages
+                sp.onJoinNotify();
             }
         });
         
@@ -254,13 +263,14 @@ public class PlayerListener implements Listener{
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         
         // Messages
-        String msg = _("quitMessage", I18n.PLAYER, sp.getName());
+        String msg = _("quitMessage", I18n.PLAYER, sp.getName(true));
         if (msg.length() < 1) msg = null;
         event.setQuitMessage(msg);
         
         if (InvisibleWorker.getInstance().isInvisible(player)){
             InvisibleWorker.getInstance().onPlayerQuit(player);
             event.setQuitMessage(null); // hide message of vanished player
+            SakuraCmdUtil.sendlog(player, sp.getName() + "&b が透明モードで&c切断&bしました");
         }
         
         // Set survival as current gamemode for safety

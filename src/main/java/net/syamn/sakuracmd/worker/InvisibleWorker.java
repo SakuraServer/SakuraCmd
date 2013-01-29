@@ -85,7 +85,7 @@ public class InvisibleWorker {
         from.hidePlayer(player);
     }
     private void uninvisible(final Player player, final Player from){
-        if (Perms.INV_CANSEE.has(player)){
+        if (Perms.INV_CANSEE.has(from)){
             return;
         }
         from.showPlayer(player);

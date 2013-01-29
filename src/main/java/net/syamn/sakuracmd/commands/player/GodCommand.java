@@ -9,6 +9,7 @@ import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
+import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
@@ -45,12 +46,15 @@ public class GodCommand extends BaseCommand{
                 Util.message(sender, "&3" + sp.getName() + " &3の無敵モードを解除しました");
             }
             Util.message(target, "&3あなたの無敵モードは解除されました");
-        }else{
+            SakuraCmdUtil.sendlog(sender, sp.getName() + "&3 が無敵モードを解除しました");
+        }
+        else{
             sp.addPower(Power.GODMODE);
             if (!sender.equals(target)){
-                Util.message(sender, "&3" + sp.getName() + " &3を透明モードにしました");
+                Util.message(sender, "&3" + sp.getName() + " &3を無敵モードにしました");
             }
             Util.message(target, "&3あなたは無敵モードになりました");
+            SakuraCmdUtil.sendlog(sender, sp.getName() + "&3 が無敵モードになりました");
         }
     }
 }

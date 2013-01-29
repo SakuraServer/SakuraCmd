@@ -4,6 +4,10 @@
  */
 package net.syamn.sakuracmd.permission;
 
+import net.syamn.utils.Util;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
 
 /**
@@ -20,6 +24,7 @@ public enum Perms {
     TP ("tp.tp"),
     TPHERE ("tp.here"),
     BACK ("tp.back"),
+    RIDE ("tp.ride"),
     
     // Server Commands
     LOCKDOWN ("server.lockdown"),
@@ -38,14 +43,22 @@ public enum Perms {
     
     // World Commands
     WEATHER ("world.weather"),
+    
+    // Database Commands
+    REGISTER ("db.register"),
+    PASSWORD ("db.password"),
+    MAIL ("db.mail"),
 
     // Other / Admin Commands
+    ADMIN ("admin.admin"),
     SAKURACMD ("admin.sakuracmd"),
     
      // Spec Permissions
     INV_CANSEE ("spec.cansee"),
     HIDE_GEOIP ("spec.hidegeoip"),
     TRUST ("spec.trust"),
+    LOG ("spec.log"),
+    LOG_HIDE ("spec.log.hide"),
     
     // Feature
     RIDE_PLAYER ("feature.ride"),
@@ -92,6 +105,18 @@ public enum Perms {
             return false;
         //return perm.hasPermission(node); // only support SuperPerms
         return PermissionManager.hasPerm(perm, this);
+    }
+    
+    /**
+     * Send message to players has this permission.
+     * @param message send message.
+     */
+    public void message(final String message){
+        for (final Player player : Bukkit.getServer().getOnlinePlayers()){
+            if (this.has(player)){
+                Util.message(player, message);
+            }
+        }
     }
     
     public String getNode(){

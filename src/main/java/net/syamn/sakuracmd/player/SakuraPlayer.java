@@ -5,15 +5,23 @@
 package net.syamn.sakuracmd.player;
 
 import static net.syamn.sakuracmd.storage.I18n._;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import net.syamn.sakuracmd.SCHelper;
+import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
+import net.syamn.sakuracmd.storage.Database;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
+import net.syamn.utils.exception.CommandException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 /**
@@ -46,13 +54,13 @@ public class SakuraPlayer {
         return this;
     }
     
-    public String getName(){
+    public String getName(boolean hideStatus){
         if (player == null){
             throw new IllegalStateException("Null Player!");
         }
         
         if (config.getUseNamePrefix()){
-            final String prefix = getPrefix();
+            final String prefix = getPrefix(hideStatus);
             String suffix = PermissionManager.getSuffix(player);
             suffix = (suffix == null) ? "" : Util.coloring(suffix);
             
@@ -65,10 +73,16 @@ public class SakuraPlayer {
             return (config.getUseDisplayname()) ? player.getDisplayName() : player.getName();
         }
     }
+    public String getName(){
+        return getName(false);
+    }
     
-    public String getPrefix(){
+    public String getPrefix(boolean hideStatus){
         String prefix = PermissionManager.getPrefix(player);
         if (prefix == null) prefix = "";
+        if (hideStatus){
+            return Util.coloring(prefix);
+        }
         
         String status = "";
         
@@ -80,6 +94,9 @@ public class SakuraPlayer {
         }
         
         return Util.coloring(status + prefix);
+    }
+    public String getPrefix(){
+        return getPrefix(false);
     }
     
     public PlayerData getData(){
@@ -108,6 +125,33 @@ public class SakuraPlayer {
     private void removePowerNotPerms(final Power power, final Perms perms){
         if (getPlayer() != null && hasPower(power) && !perms.has(getPlayer())){
             removePower(power);
+        }
+    }
+    
+    // call by onJoinEvent - Call Async
+    public void onJoinNotify(){
+        final Database db = Database.getInstance();
+        if (db == null || !db.isConnected()){
+            return;
+        }
+        
+        final Player p = getPlayer();
+        
+        // Check unread mail
+        if (Perms.MAIL.has(p)){
+            final int pid = getData().getPlayerID();
+            final String query = "SELECT `msg_id`, msg_from.player_name AS sender, `date`, `msg_text` "
+                    + "FROM `mail_data` LEFT JOIN `user_id` AS msg_from ON mail_data.author_id = msg_from.player_id "
+                    + "WHERE mail_data.to_id = ? AND mail_data.`read` = 0 AND mail_data.`deleted` = 0";
+            final HashMap<Integer, ArrayList<String>> records = db.read(query, pid);
+            
+            if (records != null && records.size() > 0){
+                Bukkit.getScheduler().runTaskLater(SakuraCmd.getInstance(), new Runnable(){
+                   @Override public void run(){
+                       Util.message(p, "&a * 未読メールが &c" + records.size() + "件 &aあります。&7/mail list&a で確認できます。");
+                   }
+                }, 1L);
+            }
         }
     }
     

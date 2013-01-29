@@ -38,8 +38,8 @@ public class LockdownCommand extends BaseCommand{
                         if (!Perms.LOCKDOWN_BYPASS.has(player)){
                             player.kickPlayer("サーバがロックダウンされました！");
                         }
-                        Util.broadcastMessage("&aこのサーバはロックダウンされました！");
                     }
+                    Util.broadcastMessage("&aこのサーバはロックダウンされました！");
                 }
             }, 5 * 20L);
         }

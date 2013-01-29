@@ -26,6 +26,18 @@ CityDB: "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz"
 #====================#
 language: ja-jp
 
+#==================#
+#   MySQL Config   #
+#==================#
+MySQL:
+  Server:
+    Address: localhost
+    Port: 3306
+  Database:
+    Name: DatabaseName
+    User_Name: UserName
+    User_Password: UserPassword
+
 #========================#
 #   Permission Control   #
 #========================#

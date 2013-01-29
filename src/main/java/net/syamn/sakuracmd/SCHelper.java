@@ -5,9 +5,11 @@
 package net.syamn.sakuracmd;
 
 import net.syamn.sakuracmd.feature.GeoIP;
+import net.syamn.sakuracmd.listener.feature.MCBansListener;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
+import net.syamn.sakuracmd.storage.Database;
 import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
@@ -18,6 +20,7 @@ import net.syamn.utils.queue.ConfirmQueue;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 /**
  * SCHelper (SCHelper.java)
@@ -40,6 +43,9 @@ public class SCHelper {
     private int afkTaskID = -1;
     private boolean isEnableEcon = false;
     
+    private boolean enabledMCB = false;
+    private static boolean enabledMCBlistener = false;
+    
     /**
      * プラスグインの初期化時と有効化時に呼ばれる
      */
@@ -48,9 +54,25 @@ public class SCHelper {
         try {
             config.loadConfig(true);
         } catch (Exception ex) {
-            LogUtil.warning(SakuraCmd.logPrefix + "an error occured while trying to load the config file.");
+            LogUtil.warning("an error occured while trying to load the config file.");
             ex.printStackTrace();
         }
+        
+        Plugin test = plugin.getServer().getPluginManager().getPlugin("MCBans");
+        if (test != null && test.isEnabled()){
+            if (!enabledMCBlistener){
+                plugin.getServer().getPluginManager().registerEvents(new MCBansListener(plugin), plugin);
+                LogUtil.info("MCBans integration is enabled!");
+                enabledMCBlistener = true;
+            }
+            enabledMCB = true;
+        }else{
+            enabledMCB = false;
+        }
+        
+        // connect database
+        Database db = Database.getInstance(plugin);
+        db.createStructure();
         
         // worker
         AFKWorker.getInstance();
@@ -88,10 +110,6 @@ public class SCHelper {
         this.plugin = plugin;
         this.config = new ConfigurationManager(plugin);
         
-        // database
-        //database = new Database(this);
-        //database.createStructure();
-        
         init();
     }
     
@@ -109,6 +127,7 @@ public class SCHelper {
         DynmapHandler.dispose();
         ConfirmQueue.dispose();
         GeoIP.dispose();
+        Database.dispose(); // conn close
     }
     
     /**

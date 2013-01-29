@@ -156,6 +156,23 @@ public class ConfigurationManager {
         return conf.getString("language", "ja-jp");
     }
     
+    // MySQL
+    public String getMySqlAddress(){
+        return conf.getString("MySQL.Server.Address", "localhost");
+    }
+    public int getMySqlPort(){
+        return conf.getInt("MySQL.Server.Port", 3306);
+    }
+    public String getMySqlDB(){
+        return conf.getString("MySQL.Database.Name", "DatabaseName");
+    }
+    public String getMySqlUser(){
+        return conf.getString("MySQL.Database.User_Name", "UserName");
+    }
+    public String getMySqlPass(){
+        return conf.getString("MySQL.Database.User_Password", "UserPassword");
+    }
+    
     // Permissions
     public String getPermissionCtrl(){
         return conf.getString("Permission", "PerimssionsEx");

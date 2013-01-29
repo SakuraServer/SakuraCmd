@@ -8,6 +8,7 @@ import net.syamn.sakuracmd.permission.Perms;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 /**
  * SakuraCmdUtil (SakuraCmdUtil.java)
@@ -66,5 +67,15 @@ public class SakuraCmdUtil {
             player.setFlying(false);
             player.setFallDistance(0.0F);
         }
+    }
+    
+    public static void sendlog(final String msg){
+        Perms.LOG.message("&c[通知]&f " + msg);
+    }
+    public static void sendlog(final Permissible target, final String msg){
+        if (Perms.LOG_HIDE.has(target)){
+            return;
+        }
+        Perms.LOG.message("&c[通知]&f " + msg);
     }
 }

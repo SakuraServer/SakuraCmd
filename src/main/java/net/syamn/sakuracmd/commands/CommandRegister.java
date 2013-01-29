@@ -7,12 +7,17 @@ package net.syamn.sakuracmd.commands;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.syamn.sakuracmd.commands.db.MailCommand;
+import net.syamn.sakuracmd.commands.db.PasswordCommand;
+import net.syamn.sakuracmd.commands.db.RegisterCommand;
 import net.syamn.sakuracmd.commands.items.RepairAllCommand;
 import net.syamn.sakuracmd.commands.items.RepairItemCommand;
+import net.syamn.sakuracmd.commands.other.AdminCommand;
 import net.syamn.sakuracmd.commands.other.ColorsCommand;
 import net.syamn.sakuracmd.commands.other.ConfirmCommand;
 import net.syamn.sakuracmd.commands.other.MfmfCommand;
 import net.syamn.sakuracmd.commands.other.SakuraCmdCommand;
+import net.syamn.sakuracmd.commands.other.WebCommand;
 import net.syamn.sakuracmd.commands.player.AFKCommand;
 import net.syamn.sakuracmd.commands.player.FlyCommand;
 import net.syamn.sakuracmd.commands.player.GamemodeCommand;
@@ -21,6 +26,7 @@ import net.syamn.sakuracmd.commands.player.InvisibleCommand;
 import net.syamn.sakuracmd.commands.player.WhoisCommand;
 import net.syamn.sakuracmd.commands.server.LockdownCommand;
 import net.syamn.sakuracmd.commands.tp.BackCommand;
+import net.syamn.sakuracmd.commands.tp.RideCommand;
 import net.syamn.sakuracmd.commands.tp.TpCommand;
 import net.syamn.sakuracmd.commands.tp.TpHereCommand;
 import net.syamn.sakuracmd.commands.world.WeatherCommand;
@@ -41,6 +47,7 @@ public class CommandRegister {
         cmds.add(new TpHereCommand());
         cmds.add(new TpCommand());
         cmds.add(new BackCommand());
+        cmds.add(new RideCommand());
         
         // Server Commands
         cmds.add(new LockdownCommand());
@@ -56,11 +63,18 @@ public class CommandRegister {
         // World Commands
         cmds.add(new WeatherCommand());
         
+        // Database Commands
+        cmds.add(new RegisterCommand());
+        cmds.add(new PasswordCommand());
+        cmds.add(new MailCommand());
+        
         // Other Commands
+        cmds.add(new AdminCommand());
         cmds.add(new SakuraCmdCommand());
         cmds.add(new ConfirmCommand());
         cmds.add(new MfmfCommand());
         cmds.add(new ColorsCommand());
+        cmds.add(new WebCommand());
         
         return cmds;
     }

@@ -115,6 +115,6 @@ public abstract class BaseCommand {
      * コマンドの使い方を送信する
      */
     public void sendUsage() {
-        Util.message(sender, "&c/" + this.command + " " + name + " " + usage);
+        Util.message(sender, "&c/" + this.command + " " + usage);
     }
 }

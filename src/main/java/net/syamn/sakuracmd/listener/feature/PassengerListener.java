@@ -5,6 +5,7 @@
 package net.syamn.sakuracmd.listener.feature;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.utils.ItemUtil;
 import net.syamn.utils.Util;
 
@@ -12,6 +13,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -44,26 +46,24 @@ public class PassengerListener implements Listener{
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event) {
         final Entity ent = event.getEntity();
         final Entity damager = event.getDamager();
-        
-        // Player attacking to Creeper
-        if ((damager instanceof Player) && (ent instanceof Creeper)) {
-            final Player player = (Player) damager;
-            final ItemStack hand = player.getItemInHand();
-            if (hand.getType() == Material.BONE && ent.getPassenger() == null) {
-                if (!player.getGameMode().equals(GameMode.CREATIVE)){
-                    player.setItemInHand(ItemUtil.decrementItem(hand, 1));
-                }
-                ent.setPassenger(player);
-                Util.message(player, "&bクリーパーに乗りました！");
-            }
-        }
-        
-        // Player attackint to Player
-        if ((damager instanceof Player)) {
+                
+        // Player attacking entity
+        if (damager instanceof Player) {
             final Player player = (Player) damager;
             final ItemStack hand = player.getItemInHand();
             if (hand.getType() != Material.BONE){
                 return; // return if player inHand item is not bone
+            }
+            
+            // Check player permission
+            if (ent.getType().equals(EntityType.PLAYER)){
+                if (!Perms.RIDE_PLAYER.has(player) && !Perms.RIDE_ALLENTITY.has(player)){
+                    return;
+                }
+            }else{
+                if (!Perms.RIDE_ALLENTITY.has(player)){
+                    return;
+                }
             }
             
             event.setDamage(0);

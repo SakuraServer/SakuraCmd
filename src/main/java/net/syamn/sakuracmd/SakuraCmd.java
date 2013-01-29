@@ -11,6 +11,7 @@ import net.syamn.sakuracmd.commands.CommandHandler;
 import net.syamn.sakuracmd.commands.CommandRegister;
 import net.syamn.sakuracmd.listener.BlockListener;
 import net.syamn.sakuracmd.listener.CreativeListener;
+import net.syamn.sakuracmd.listener.EndListener;
 import net.syamn.sakuracmd.listener.EntityListener;
 import net.syamn.sakuracmd.listener.InventoryListener;
 import net.syamn.sakuracmd.listener.PlayerListener;
@@ -37,9 +38,6 @@ public class SakuraCmd extends JavaPlugin{
     public final static String logPrefix = "[SakuraCmd] ";
     public final static String msgPrefix = "&c[SakuraCmd] &f";
 
-    // ** Listener **
-    // ServerListener serverListener = new ServerListener(this);
-
     // ** Commands **
     private CommandHandler commandHandler;
     
@@ -48,18 +46,13 @@ public class SakuraCmd extends JavaPlugin{
 
     // ** Private Classes **
     private SCHelper worker;
-    
 
     // ** Static **
     //private static Database database;
 
     // ** Instance **
     private static SakuraCmd instance;
-
-    // ** Hookup Plugins **
-    //private static Vault vault = null;
-    //private static Economy economy = null;
-
+    
     /**
      * プラグイン起動処理
      */
@@ -85,6 +78,8 @@ public class SakuraCmd extends JavaPlugin{
         pm.registerEvents(new EntityListener(this), this);
         pm.registerEvents(new InventoryListener(this), this);
         pm.registerEvents(new CreativeListener(this), this);
+        pm.registerEvents(new EndListener(this), this);
+        
         // features
         pm.registerEvents(new PassengerListener(this), this);
         pm.registerEvents(new BackLocationListener(), this);
@@ -130,46 +125,6 @@ public class SakuraCmd extends JavaPlugin{
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         return commandHandler.onTabComplete(sender, command, alias, args);
     }
-
-    /**
-     * Vaultプラグインにフック
-     */
-    /*
-    public boolean setupVault() {
-        Plugin plugin = this.getServer().getPluginManager().getPlugin("Vault");
-        if (plugin != null & plugin instanceof Vault) {
-            RegisteredServiceProvider<Economy> economyProvider = getServer()
-                    .getServicesManager().getRegistration(
-                            net.milkbowl.vault.economy.Economy.class);
-            // 経済概念のプラグインがロードされているかチェック
-            if (economyProvider == null) {
-                log.warning(logPrefix
-                        + "Economy plugin NOT found. Disabled Vault plugin integration.");
-                return false;
-            }
-
-            try {
-                vault = (Vault) plugin;
-                economy = economyProvider.getProvider();
-
-                if (vault == null || economy == null) {
-                    throw new NullPointerException();
-                }
-            } // 例外チェック
-            catch (Exception e) {
-                log.warning(logPrefix
-                        + "Could NOT be hook to Vault plugin. Disabled Vault plugin integration.");
-                return false;
-            }
-
-            // Success
-            log.info(logPrefix + "Hooked to Vault plugin!");
-            return true;
-        } else {
-            // Vaultが見つからなかった
-            log.warning(logPrefix
-                    + "Vault plugin was NOT found! Disabled Vault integration.");
-    */
     
     /**
      * サーバマネージャを返す

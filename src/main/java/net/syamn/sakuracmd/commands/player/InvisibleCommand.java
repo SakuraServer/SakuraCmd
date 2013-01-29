@@ -12,6 +12,8 @@ import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.storage.I18n;
+import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
+import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -46,13 +48,16 @@ public class InvisibleCommand extends BaseCommand{
         InvisibleWorker worker = InvisibleWorker.getInstance();
         
         if (worker.isInvisible(target)){
+            // first, call unafk method for remove that prefix
+            AFKWorker.getInstance().updatePlayer(target);
+            
             worker.reappear(target);
             
             // send fake join message
-            String msg = _("joinMessage", I18n.PLAYER, sp.getName());
+            String msg = _("joinMessage", I18n.PLAYER, sp.getName(true));
             if (msg != null && !msg.isEmpty()) {
-                if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(player)){
-                    String geoStr = GeoIP.getInstance().getGeoIpString(player, SCHelper.getInstance().getConfig().getUseSimpleFormatOnJoin());
+                if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(target)){
+                    String geoStr = GeoIP.getInstance().getGeoIpString(target, SCHelper.getInstance().getConfig().getUseSimpleFormatOnJoin());
                     msg = msg + Util.coloring("&7") + " (" + geoStr + ")";
                 }
                 Util.broadcastMessage(msg);
@@ -62,11 +67,12 @@ public class InvisibleCommand extends BaseCommand{
                 Util.message(sender, "&a" + sp.getName() + " &aの透明モードを解除しました");
             }
             Util.message(target, "&aあなたの透明モードは解除されました");
+            SakuraCmdUtil.sendlog(sender, sp.getName() + "&a が透明モードを解除しました");
         }else{
             worker.vanish(target, false);
             
             // send fake quit message
-            String msg = _("quitMessage", I18n.PLAYER, sp.getName());
+            String msg = _("quitMessage", I18n.PLAYER, sp.getName(true));
             if (msg != null && !msg.isEmpty()) {
                 Util.broadcastMessage(msg);
             }
@@ -75,6 +81,7 @@ public class InvisibleCommand extends BaseCommand{
                 Util.message(sender, "&c" + sp.getName() + " &cを透明モードにしました");
             }
             Util.message(target, "&cあなたは透明モードになりました");
+            SakuraCmdUtil.sendlog(sender, sp.getName() + "&c が透明モードになりました");
         }
     }
 }

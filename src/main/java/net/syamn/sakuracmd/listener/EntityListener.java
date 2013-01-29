@@ -4,7 +4,12 @@
  */
 package net.syamn.sakuracmd.listener;
 
+import java.util.List;
+
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
+import net.syamn.utils.LogUtil;
+import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
@@ -24,6 +29,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -121,6 +127,7 @@ public class EntityListener implements Listener{
         }
         //Actions.message(null, player, "*: "+check.getType().name());//debug
         switch (check.getType()){
+            /*
             case SPONGE:
                 //Vector vect = new Vector(0D, 2.0D, 0D);
                 //player.setVelocity(player.getVelocity().add(vect));
@@ -136,12 +143,49 @@ public class EntityListener implements Listener{
                     }
                 }, 0L);
                 break;
+            */
             case LEAVES:
                 event.setCancelled(true);
                 event.setDamage(0);
                 Util.message(player, "&2(◜▿‾ *)");
                 break;
             default: break;
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityDeath(final EntityDeathEvent event){
+        if (!isCheckEntity(event.getEntity()) || event.getDroppedExp() <= 0){
+            return;
+        }
+        
+        final Entity ent = event.getEntity();
+        final List<Entity> ents = ent.getNearbyEntities(0.75D, 1.75D, 0.75D);
+        
+        int i = 0;
+        for (final Entity e : ents){
+            if (isCheckEntity(e)) i++;
+        }
+        
+        if (i >= 3){
+            event.setDroppedExp(0);
+            event.getDrops().clear();
+            
+            String locStr = StrUtil.getLocationString(ent.getLocation().getBlock());
+            SakuraCmdUtil.sendlog("&6経験値トラップを検出: " + locStr);
+            LogUtil.warning("ExpTrap detected at " + locStr);
+        }
+    }
+    
+    private boolean isCheckEntity(final Entity ent){
+        if (ent == null) return false;
+        switch (ent.getType()){
+            case ZOMBIE:
+            case SKELETON:
+            case BLAZE:
+                return true;
+            default:
+                return false;
         }
     }
 }
