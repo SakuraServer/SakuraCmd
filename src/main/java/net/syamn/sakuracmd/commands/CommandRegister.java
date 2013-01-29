@@ -17,6 +17,7 @@ import net.syamn.sakuracmd.commands.other.ColorsCommand;
 import net.syamn.sakuracmd.commands.other.ConfirmCommand;
 import net.syamn.sakuracmd.commands.other.MfmfCommand;
 import net.syamn.sakuracmd.commands.other.SakuraCmdCommand;
+import net.syamn.sakuracmd.commands.other.WebCommand;
 import net.syamn.sakuracmd.commands.player.AFKCommand;
 import net.syamn.sakuracmd.commands.player.FlyCommand;
 import net.syamn.sakuracmd.commands.player.GamemodeCommand;
@@ -73,6 +74,7 @@ public class CommandRegister {
         cmds.add(new ConfirmCommand());
         cmds.add(new MfmfCommand());
         cmds.add(new ColorsCommand());
+        cmds.add(new WebCommand());
         
         return cmds;
     }

@@ -83,6 +83,9 @@ commands:
       usage: /colors - to see the help
       aliases: [col]
       description: To see the plugin help.
+    web:
+      usage: /web - to see the help
+      description: To see the plugin help.
 permissions:
     sakuracmd.admin:
         default: op
