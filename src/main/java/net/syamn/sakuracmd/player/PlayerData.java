@@ -92,11 +92,7 @@ public class PlayerData{
                         this.powers.add(p);
                     }
                 }
-                if (hasPower(Power.FLYMODE)){
-                    this.flymodeTime = csp.getInt("flymodeTime", 0);
-                }
             }
-            
         }catch (Exception ex){
             ex.printStackTrace();
             return false;
@@ -145,9 +141,6 @@ public class PlayerData{
                     if (this.hasPower(p)){
                         csp.set(p.toString(), true);
                     }
-                }
-                if (hasPower(Power.FLYMODE)){
-                    csp.set("flymodeTime", this.flymodeTime);
                 }
                 
                 conf.save(file);
@@ -238,13 +231,5 @@ public class PlayerData{
     public void removePower(final Power power){
         powers.remove(power);
         saved = false;
-    }
-    
-    public void setFlymodeTime(final int time){
-        this.flymodeTime = time;
-        saved = false;
-    }
-    public int getFlymodeTime(){
-        return this.flymodeTime;
     }
 }

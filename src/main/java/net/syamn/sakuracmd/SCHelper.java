@@ -14,6 +14,7 @@ import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.queue.ConfirmQueue;
@@ -41,6 +42,7 @@ public class SCHelper {
     private SakuraCmd plugin;
     private ConfigurationManager config;
     private int afkTaskID = -1;
+    private int flymodeTaskID = -1;
     private boolean isEnableEcon = false;
     
     private boolean enabledMCB = false;
@@ -75,10 +77,13 @@ public class SCHelper {
         db.createStructure();
         
         // worker
-        AFKWorker.getInstance();
+        AFKWorker.getInstance(); // AFK worker
         afkTaskID = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
                 this.plugin, AFKWorker.getInstance().getAfkChecker(), 0, config.getAfkCheckIntervalInSec() * 20).getTaskId();
-        InvisibleWorker.createInstance();
+        FlymodeWorker.getInstance(); // Flymode worker
+        flymodeTaskID = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
+                this.plugin, FlymodeWorker.getInstance().getTask(), 0, 20).getTaskId();
+        InvisibleWorker.createInstance(); // Invisible worker
        
         PermissionManager.setupPermissions(plugin); // init permission
         
@@ -120,6 +125,7 @@ public class SCHelper {
         }
         AFKWorker.dispose();
         InvisibleWorker.dispose();
+        FlymodeWorker.dispose();
         
         if (DynmapHandler.getInstance() != null){
             DynmapHandler.getInstance().deactivate();

@@ -17,6 +17,7 @@ import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.ItemUtil;
 import net.syamn.utils.Util;
@@ -81,12 +82,21 @@ public class PlayerListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChangedWorld(final PlayerChangedWorldEvent event){
         final Player player = event.getPlayer();
+        final SakuraPlayer sp = PlayerManager.getPlayer(player);
         final World world = player.getWorld();
         
         // messages
         if (world.getName().equalsIgnoreCase(Worlds.main_end)){
             Util.message(player, "&b ここは定期的にリセットされるエンドワールドです");
             Util.message(player, "&b メインワールドに戻るには &f/spawn &bコマンドを使ってください");
+        }
+        
+        // check flymode
+        if (sp.hasPower(Power.FLYMODE) && Worlds.isFlyAllowed(world.getName())){
+            FlymodeWorker.getInstance().changeFlyMode(player, true);
+        }
+        else{
+            FlymodeWorker.getInstance().changeFlyMode(player, false);
         }
         
         // Set survival as current gamemode for safety

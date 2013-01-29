@@ -17,6 +17,7 @@ import net.syamn.sakuracmd.storage.ConfigurationManager;
 import net.syamn.sakuracmd.storage.Database;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -120,6 +121,8 @@ public class SakuraPlayer {
         if (hasPower(Power.FLY)){
             SakuraCmdUtil.changeFlyMode(player, true);
         }
+        // Flymode power
+        FlymodeWorker.getInstance().checkRestoreFlymode(this);
     }
     
     private void removePowerNotPerms(final Power power, final Perms perms){

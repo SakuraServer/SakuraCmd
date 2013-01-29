@@ -12,18 +12,20 @@ import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
+import net.syamn.sakuracmd.worker.FlymodeWorker;
+import net.syamn.utils.LogUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.economy.EconomyUtil;
 import net.syamn.utils.exception.CommandException;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import net.syamn.utils.queue.ConfirmQueue;
+import net.syamn.utils.queue.Queueable;
+import net.syamn.utils.queue.QueuedCommand;
 
 /**
  * FlymodeCommand (FlymodeCommand.java)
  * @author syam(syamn)
  */
-public class FlymodeCommand extends BaseCommand{
+public class FlymodeCommand extends BaseCommand implements Queueable{
     public FlymodeCommand(){
         bePlayer = true;
         name = "flymode";
@@ -31,56 +33,63 @@ public class FlymodeCommand extends BaseCommand{
         argLength = 0;
         usage = "<- buy flymode";
     }
+    
+    private double getCost(){
+        return 5000.0D; //TODO configuable
+    }
+    
+    private int getDuration(){
+        return 2; //TODO configuable
+    }
 
     public void execute() throws CommandException{
-        if (player.getWorld().getName().equals(Worlds.main_world)){
-            throw new CommandException("&cこのワールドでは飛行が許可されていません！");
+        final SakuraPlayer sp = PlayerManager.getPlayer(player);
+        if (sp.hasPower(Power.FLY)){
+            throw new CommandException("&cあなたは飛行モード(fly)が有効です");
+        }
+        if (sp.hasPower(Power.FLYMODE)){
+            throw new CommandException("&cあなたは既に飛行権限を購入しています");
+        }
+        
+        ConfirmQueue.getInstance().addQueue(sender, this, null, 15);
+        Util.message(sender, "&6飛行権限を購入しようとしています！");
+        Util.message(sender, "&6現在の価格は &a" + getDuration() + "分間 " + getCost() + " Coin &6です");
+        Util.message(sender, "&6本当に購入しますか？ &a/confirm&6 コマンドで続行します。");
+    }
+    
+    @Override
+    public void executeQueue(QueuedCommand queued){
+        if (!Worlds.isFlyAllowed(player.getWorld().getName())){
+            Util.message(sender, "&cこのワールドでは飛行が許可されていません！");
+            return;
         }
         if (player.getLocation().getY() > 257 || player.getLocation().getY() < 0){
-            throw new CommandException("&cあなたの座標からこのコマンドは使えません！");
+            Util.message(sender, "&cあなたの座標からこのコマンドは使えません！");
+            return;
         }
         
         // pay cost
         if (!SCHelper.getInstance().isEnableEcon()){
-            throw new CommandException("&c経済システムが動作していないため使えません！");
+            Util.message(sender, "&c経済システムが動作していないため使えません！");
+            return;
         }
         
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         
-        double cost = 5000.0D; //TODO configuable
+        double cost = getCost();
         boolean paid = EconomyUtil.takeMoney(player, cost);
         if (!paid){
-            throw new CommandException("&cお金が足りません！ " + cost + "Coin必要です！");
+            Util.message(sender, "&cお金が足りません！ " + cost + "Coin必要です！");
+            return;
         }
         
-        int minute = 30; //TODO configuable
+        int minute = getDuration();
         
+        final FlymodeWorker worker = FlymodeWorker.getInstance();
+        worker.enableFlymode(sp, minute);
         
-        
-        
-        // self-check
-        if (!sender.equals(target) && !Perms.FLY_OTHER.has(sender)){
-            throw new CommandException("&c他人の飛行モードを変更する権限がありません！");
-        }
-        
-        if (sp.hasPower(Power.FLY)){
-            // Remove fly power
-            sp.removePower(Power.FLY);
-            SakuraCmdUtil.changeFlyMode(target, false);
-            
-            if (!sender.equals(target)){
-                Util.message(sender, "&3" + sp.getName() + " &3の無敵モードを解除しました");
-            }
-            Util.message(target, "&3あなたの飛行モードは解除されました");
-        }else{
-            // Add fly power
-            sp.addPower(Power.FLY);
-            SakuraCmdUtil.changeFlyMode(target, true);
-            
-            if (!sender.equals(target)){
-                Util.message(sender, "&3" + sp.getName() + " &3を飛行モードにしました");
-            }
-            Util.message(target, "&3あなたは飛行モードになりました");
-        }
+        Util.message(player, "&a飛行モードが " + minute + "分間 有効になりました！");
+        LogUtil.info(player.getName() + " is bought flying mode: " + minute + " minutes for " + cost + " coins");
+        SakuraCmdUtil.sendlog(player, sp.getName() + " &aが飛行権限を購入しました");
     }
 }

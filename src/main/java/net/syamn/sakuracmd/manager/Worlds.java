@@ -34,4 +34,8 @@ public class Worlds {
     public static boolean isResource(final String worldName){
         return worldName.contains("resource");
     }
+    
+    public static boolean isFlyAllowed(final String worldName){
+        return worldName.equals(main_world);
+    }
 }

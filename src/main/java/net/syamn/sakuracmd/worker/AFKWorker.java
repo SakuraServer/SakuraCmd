@@ -45,7 +45,6 @@ public class AFKWorker {
         instance = null;
     }
     
-    
     public AfkChecker getAfkChecker(){
         return afkChecker;
     }
