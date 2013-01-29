@@ -11,6 +11,14 @@ AfkTimeInSec: 300
 AfkCheckIntervalInSec: 30
 UseEconomy: true
 
+#====================#
+#   Flymode Config   #
+#====================#
+Flymode:
+  Cost: 6000.0
+  TimeInMinutes: 20
+  PlayerLimit: 5
+
 #==================#
 #   GeoIP Config   #
 #==================#

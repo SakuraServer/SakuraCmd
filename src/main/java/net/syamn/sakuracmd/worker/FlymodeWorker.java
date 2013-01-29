@@ -4,6 +4,8 @@
  */
 package net.syamn.sakuracmd.worker;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -104,6 +106,21 @@ public class FlymodeWorker {
         }
     }
     
+    public String getRemainTime(final String name){
+        if (!flymodePlayers.containsKey(name)){
+            throw new IllegalArgumentException(name + " is not in flymode players map!");
+        }
+        
+        final int remain = flymodePlayers.get(name) - TimeUtil.getCurrentUnixSec().intValue();
+        if (remain <= 0){
+            return "0秒";
+        }
+        return TimeUtil.getReadableTimeBySecond(remain);
+    }
+    public String getRemainTime(final Player player){
+        return getRemainTime(player.getName());
+    }
+    
     public void changeFlyMode(final Player player, final boolean enable){
         if (player == null){
             return;
@@ -159,5 +176,15 @@ public class FlymodeWorker {
                 }
             }, 0L);
         }
+    }
+    
+    public Map<String, Integer> getFlymodePlayers(){
+        return Collections.unmodifiableMap(flymodePlayers);
+    }
+    public void addFlymodePlayersMap(final String name, final Integer expire){
+        flymodePlayers.put(name.trim(), expire);
+    }
+    public int getPlayersCount(){
+        return flymodePlayers.size();
     }
 }

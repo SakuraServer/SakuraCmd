@@ -35,11 +35,13 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
     }
     
     private double getCost(){
-        return 5000.0D; //TODO configuable
+        return SCHelper.getInstance().getConfig().getFlymodeCost();
     }
-    
     private int getDuration(){
-        return 2; //TODO configuable
+        return SCHelper.getInstance().getConfig().getFlymodeTimeInMinutes();
+    }
+    private int getMaxPlayers(){
+        return SCHelper.getInstance().getConfig().getFlymodePlayersLimit();
     }
 
     public void execute() throws CommandException{
@@ -48,12 +50,14 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
             throw new CommandException("&cあなたは飛行モード(fly)が有効です");
         }
         if (sp.hasPower(Power.FLYMODE)){
-            throw new CommandException("&cあなたは既に飛行権限を購入しています");
+            Util.message(player, "&bあなたはあと &a" + FlymodeWorker.getInstance().getRemainTime(player) + "間 &b飛行可能です");
+            return;
         }
         
         ConfirmQueue.getInstance().addQueue(sender, this, null, 15);
-        Util.message(sender, "&6飛行権限を購入しようとしています！");
-        Util.message(sender, "&6現在の価格は &a" + getDuration() + "分間 " + getCost() + " Coin &6です");
+        
+        Util.message(sender, "&6現在の飛行権価格は &a" + getDuration() + "分間 " + getCost() + " Coin &6です");
+        Util.message(sender, "&6一部ワールドでのみ飛行可能になります");
         Util.message(sender, "&6本当に購入しますか？ &a/confirm&6 コマンドで続行します。");
     }
     
@@ -65,6 +69,10 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
         }
         if (player.getLocation().getY() > 257 || player.getLocation().getY() < 0){
             Util.message(sender, "&cあなたの座標からこのコマンドは使えません！");
+            return;
+        }
+        if (FlymodeWorker.getInstance().getPlayersCount() >= getMaxPlayers()){
+            Util.message(sender, "&c同時に飛行可能な最大人数に達しています！ (" + FlymodeWorker.getInstance().getPlayersCount() + "/" + getMaxPlayers() + ")");
             return;
         }
         

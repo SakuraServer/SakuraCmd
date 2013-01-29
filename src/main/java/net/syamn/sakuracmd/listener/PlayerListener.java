@@ -5,6 +5,9 @@
 package net.syamn.sakuracmd.listener;
 
 import static net.syamn.sakuracmd.storage.I18n._;
+
+import java.util.ArrayList;
+
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.feature.GeoIP;
@@ -94,6 +97,7 @@ public class PlayerListener implements Listener{
         // check flymode
         if (sp.hasPower(Power.FLYMODE) && Worlds.isFlyAllowed(world.getName())){
             FlymodeWorker.getInstance().changeFlyMode(player, true);
+            Util.message(player, "&bあなたはあと &a" + FlymodeWorker.getInstance().getRemainTime(player) + "間 &b飛行可能です");
         }
         else{
             FlymodeWorker.getInstance().changeFlyMode(player, false);
@@ -190,6 +194,7 @@ public class PlayerListener implements Listener{
     public void onPlayerJoin(final PlayerJoinEvent event){
         final Player player = event.getPlayer();
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
+        final ArrayList<String> notify = new ArrayList<String>();
         
         InvisibleWorker.getInstance().sendInvisibleOnJoin(player);
         
@@ -209,9 +214,13 @@ public class PlayerListener implements Listener{
         // restore powers
         sp.restorePowers();
         if (sp.hasPower(Power.INVISIBLE)){
-            Util.message(player, "&bあなたは透明モードが有効になっています！");
+            //Util.message(player, );
+            notify.add("&bあなたは透明モードが有効になっています！");
             event.setJoinMessage(null);
             SakuraCmdUtil.sendlog(player, sp.getName() + "&b が透明モードで&a接続&bしました");
+        }
+        if (sp.hasPower(Power.FLYMODE)){
+            notify.add("&bあなたはあと &a" + FlymodeWorker.getInstance().getRemainTime(player) + "間 &b飛行可能です");
         }
         
         // Use GeoIP if enabled
@@ -225,6 +234,18 @@ public class PlayerListener implements Listener{
         
         // Change TabColor
         SakuraCmdUtil.changeTabColor(player);
+        
+        // Send notify
+        if (notify.size() > 0){
+            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+                @Override public void run(){
+                    for (final String line : notify){
+                        Util.message(player, line);
+                    }
+                    notify.clear();
+                }
+            }, 5L);
+        }
         
         // Run async
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
