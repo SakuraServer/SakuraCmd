@@ -11,7 +11,6 @@ import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.storage.Database;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.ParseUtil;
-import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;

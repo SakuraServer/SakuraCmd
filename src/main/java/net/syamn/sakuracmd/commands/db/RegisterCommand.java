@@ -7,8 +7,6 @@ package net.syamn.sakuracmd.commands.db;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.commons.lang.RandomStringUtils;
-
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
@@ -16,6 +14,8 @@ import net.syamn.sakuracmd.storage.Database;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
+
+import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * RegisterCommand (RegisterCommand.java)

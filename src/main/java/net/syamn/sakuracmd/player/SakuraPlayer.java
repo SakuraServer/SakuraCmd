@@ -20,7 +20,6 @@ import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.Util;
-import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

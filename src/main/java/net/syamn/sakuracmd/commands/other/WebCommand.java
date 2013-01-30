@@ -5,7 +5,6 @@
 package net.syamn.sakuracmd.commands.other;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
-import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.command.CommandSender;

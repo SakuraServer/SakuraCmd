@@ -4,8 +4,6 @@
  */
 package net.syamn.sakuracmd.worker;
 
-import static org.mockito.Matchers.contains;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -13,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.manager.Worlds;
-import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerData;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
@@ -26,7 +23,6 @@ import net.syamn.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 /**
  * FlymodeWorker (FlymodeWorker.java)

@@ -19,7 +19,6 @@ import net.syamn.sakuracmd.listener.feature.BackLocationListener;
 import net.syamn.sakuracmd.listener.feature.PassengerListener;
 import net.syamn.sakuracmd.manager.ServerManager;
 import net.syamn.sakuracmd.player.PlayerManager;
-import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Metrics;
 
