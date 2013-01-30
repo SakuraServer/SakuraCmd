@@ -75,11 +75,9 @@ public class AFKWorker {
         player.setSleepingIgnored(true);
     }
     public void setOnline(final Player player){
-        if (InvisibleWorker.getInstance().isInvisible(player)){
-            return;
+        if (!InvisibleWorker.getInstance().isInvisible(player)){
+            Util.broadcastMessage(_("afkOff", I18n.PLAYER, PlayerManager.getPlayer(player.getName()).getName()), false);
         }
-        
-        Util.broadcastMessage(_("afkOff", I18n.PLAYER, PlayerManager.getPlayer(player.getName()).getName()), false);
         
         afkPlayers.remove(player);
         player.setSleepingIgnored(false);
