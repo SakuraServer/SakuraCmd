@@ -11,6 +11,7 @@ import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
 import net.syamn.sakuracmd.storage.Database;
 import net.syamn.sakuracmd.storage.I18n;
+import net.syamn.sakuracmd.storage.ServerData;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
@@ -41,6 +42,8 @@ public class SCHelper {
     
     private SakuraCmd plugin;
     private ConfigurationManager config;
+    private ServerData saveData;
+    
     private int afkTaskID = -1;
     private int flymodeTaskID = -1;
     private boolean isEnableEcon = false;
@@ -108,21 +111,33 @@ public class SCHelper {
         for (final Player player : Bukkit.getOnlinePlayers()){
             PlayerManager.addPlayer(player);
         }
+        
+        // last, restore save data
+        saveData.loadRestore();
     }
     
     public void setMainPlugin(final SakuraCmd plugin){
         mainThreadID = Thread.currentThread().getId();
         this.plugin = plugin;
         this.config = new ConfigurationManager(plugin);
+        this.saveData = new ServerData(plugin);
         
         init();
     }
     
     public void disableAll(){
+        // first, save all data
+        saveData.save();
+        
         if (afkTaskID != -1){
             plugin.getServer().getScheduler().cancelTask(afkTaskID);
             afkTaskID = -1;
         }
+        if (flymodeTaskID != -1){
+            plugin.getServer().getScheduler().cancelTask(flymodeTaskID);
+            flymodeTaskID = -1;
+        }
+        
         AFKWorker.dispose();
         InvisibleWorker.dispose();
         FlymodeWorker.dispose();
