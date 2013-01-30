@@ -48,6 +48,7 @@ commands:
       description: See plugin help.
     flymode:
       usage: /flymode - to see the help
+      aliases: [fm]
       description: See plugin help.
     weather:
       usage: /weather - to see the help
