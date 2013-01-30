@@ -186,7 +186,7 @@ public class FlymodeWorker {
                             disableFlymode(name);
                         }
                     }, 0L);
-                    sendNotify(name, "&a飛行モードが終了しました！");
+                    sendNotify(name, " &f[&c+&f] &aあなたの飛行モードが終了しました！");
                     LogUtil.info("Player " + name + " is expired flying mode!");
                     SakuraCmdUtil.sendlog("&6" + name + " の飛行権限が期限切れで終了しました");
                 }
