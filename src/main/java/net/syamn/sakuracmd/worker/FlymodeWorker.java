@@ -4,6 +4,8 @@
  */
 package net.syamn.sakuracmd.worker;
 
+import static org.mockito.Matchers.contains;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.manager.Worlds;
+import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerData;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
@@ -52,8 +55,35 @@ public class FlymodeWorker {
         return instance;
     }
     public static void dispose(){
+        if (instance != null && instance.flymodePlayers != null && instance.flymodePlayers.size() > 0){
+            for (final String name : instance.flymodePlayers.keySet()){
+                final Player p = Bukkit.getPlayerExact(name);
+                if (p != null && p.isOnline()){
+                    instance.changeFlyMode(p, false);
+                    Util.message(p, "&cあなたの飛行権はプラグイン更新のため一時的に停止されました");
+                }
+            }
+        }
+        
         instance.plugin = null;
         instance = null;
+    }
+    
+    public void onPluginEnabled(){
+        if (flymodePlayers.size() > 0){
+            int now = TimeUtil.getCurrentUnixSec().intValue();
+            for (final Map.Entry<String, Integer> entry : flymodePlayers.entrySet()){
+                if ((entry.getValue() - now) <= 0){
+                    continue;
+                }
+                
+                final Player player = Bukkit.getPlayerExact(entry.getKey());
+                if (player != null && player.isOnline()){
+                    changeFlyMode(player, true);
+                    Util.message(player, "&aプラグインが有効になり、あなたの飛行権が復活しました");
+                }
+            }
+        }
     }
     
     public FlymodeTask getTask(){
@@ -94,16 +124,14 @@ public class FlymodeWorker {
         
         final Player player = sp.getPlayer();
         
-        if (!flymodePlayers.containsKey(player.getName())){
+        if (!flymodePlayers.containsKey(player.getName())){ // don't check permission
             sp.removePower(Power.FLYMODE);
             changeFlyMode(player, false);
             return;
         }
         // player has flymode power
         
-        if (Worlds.isFlyAllowed(player.getWorld().getName())){
-            changeFlyMode(player, true);
-        }
+        changeFlyMode(player, true);
     }
     
     public String getRemainTime(final String name){
@@ -127,7 +155,9 @@ public class FlymodeWorker {
         }
         
         if (enable){
-            SakuraCmdUtil.changeFlyMode(player, true);
+            if (Worlds.isFlyAllowed(player.getWorld().getName())){
+                SakuraCmdUtil.changeFlyMode(player, true);
+            }
         }else{
             if (!player.getGameMode().equals(GameMode.CREATIVE) && !PlayerManager.getPlayer(player).hasPower(Power.FLY)){
                 SakuraCmdUtil.changeFlyMode(player, false);
@@ -156,12 +186,12 @@ public class FlymodeWorker {
                             disableFlymode(name);
                         }
                     }, 0L);
-                    sendNotify(name, "&6飛行モードが終了しました！");
+                    sendNotify(name, "&a飛行モードが終了しました！");
                     LogUtil.info("Player " + name + " is expired flying mode!");
                     SakuraCmdUtil.sendlog("&6" + name + " の飛行権限が期限切れで終了しました");
                 }
-                else if (remain <= 5 || remain == 10 || remain == 30){
-                    sendNotify(name, "&6あと " + remain + "秒 で飛行モードが終了します");
+                else if (remain <= 5 || remain == 10 || remain == 30 || remain == 60){
+                    sendNotify(name, " &f[&c+&f] &6あと &b" + remain + "秒 &6で飛行モードが終了します");
                 }
             }
         }

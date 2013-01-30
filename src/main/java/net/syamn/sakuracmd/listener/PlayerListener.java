@@ -95,7 +95,7 @@ public class PlayerListener implements Listener{
         }
         
         // check flymode
-        if (sp.hasPower(Power.FLYMODE) && Worlds.isFlyAllowed(world.getName())){
+        if (sp.hasPower(Power.FLYMODE)){
             FlymodeWorker.getInstance().changeFlyMode(player, true);
             Util.message(player, "&bあなたはあと &a" + FlymodeWorker.getInstance().getRemainTime(player) + "間 &b飛行可能です");
         }

@@ -84,7 +84,7 @@ public class ServerData {
             FlymodeWorker.getInstance().addFlymodePlayersMap(name, expire);
             i++;
         }
-        
+        FlymodeWorker.getInstance().onPluginEnabled();
         LogUtil.info("Restored " + i + " player(s) flying mode data!");
     }
     

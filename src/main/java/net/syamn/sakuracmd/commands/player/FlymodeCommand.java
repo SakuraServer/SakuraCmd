@@ -4,6 +4,8 @@
  */
 package net.syamn.sakuracmd.commands.player;
 
+import java.util.Map;
+
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.manager.Worlds;
@@ -14,6 +16,7 @@ import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.utils.LogUtil;
+import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.economy.EconomyUtil;
 import net.syamn.utils.exception.CommandException;
@@ -46,19 +49,36 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
 
     public void execute() throws CommandException{
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
-        if (sp.hasPower(Power.FLY)){
-            throw new CommandException("&cあなたは飛行モード(fly)が有効です");
-        }
-        if (sp.hasPower(Power.FLYMODE)){
-            Util.message(player, "&bあなたはあと &a" + FlymodeWorker.getInstance().getRemainTime(player) + "間 &b飛行可能です");
-            return;
-        }
         
-        ConfirmQueue.getInstance().addQueue(sender, this, null, 15);
-        
-        Util.message(sender, "&6現在の飛行権価格は &a" + getDuration() + "分間 " + getCost() + " Coin &6です");
-        Util.message(sender, "&6一部ワールドでのみ飛行可能になります");
-        Util.message(sender, "&6本当に購入しますか？ &a/confirm&6 コマンドで続行します。");
+        if (args.size() > 0 && args.get(0).equalsIgnoreCase("list")){
+            // Show flymode players list
+            Map<String, Integer> players = FlymodeWorker.getInstance().getFlymodePlayers();
+            
+            if (players.size() == 0){
+                Util.message(sender, "&a現在飛行権が有効なプレイヤーはいません");
+            }else{
+                Util.message(sender, "&6飛行権が有効なプレイヤーリスト:");
+                int now = TimeUtil.getCurrentUnixSec().intValue();
+                for (final Map.Entry<String, Integer> entry : players.entrySet()){
+                    Util.message(sender, "&7 - &a" + entry.getKey() + "&7 (あと " + TimeUtil.getReadableTimeBySecond(entry.getValue() - now) + ")");
+                }
+            }
+        }
+        else{
+            if (sp.hasPower(Power.FLY)){
+                throw new CommandException("&cあなたは飛行モード(fly)が有効です");
+            }
+            if (sp.hasPower(Power.FLYMODE)){
+                Util.message(player, "&bあなたはあと &a" + FlymodeWorker.getInstance().getRemainTime(player) + "間 &b飛行可能です");
+                return;
+            }
+            
+            ConfirmQueue.getInstance().addQueue(sender, this, null, 15);
+            
+            Util.message(sender, "&6現在の飛行権価格は &a" + getDuration() + "分間 " + getCost() + " Coin &6です");
+            Util.message(sender, "&6一部ワールドでのみ飛行可能になります");
+            Util.message(sender, "&6本当に購入しますか？ &a/confirm&6 コマンドで続行します。");
+        }
     }
     
     @Override
@@ -76,13 +96,18 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
             return;
         }
         
+        final SakuraPlayer sp = PlayerManager.getPlayer(player);
+        
+        if (sp.hasPower(Power.FLY) || sp.hasPower(Power.FLYMODE)){
+            Util.message(sender, "&cあなたは飛行モード、または飛行権限が既に有効になっています！");
+            return;
+        }
+        
         // pay cost
         if (!SCHelper.getInstance().isEnableEcon()){
             Util.message(sender, "&c経済システムが動作していないため使えません！");
             return;
         }
-        
-        final SakuraPlayer sp = PlayerManager.getPlayer(player);
         
         double cost = getCost();
         boolean paid = EconomyUtil.takeMoney(player, cost);
