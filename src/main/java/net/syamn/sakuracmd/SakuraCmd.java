@@ -64,10 +64,6 @@ public class SakuraCmd extends JavaPlugin{
         worker = SCHelper.getInstance();
         worker.setMainPlugin(this);
         
-        // I18n Init
-        LogUtil.info("Loading language file: " + worker.getConfig().getLanguage());
-        I18n.init(worker.getConfig().getLanguage());
-
         // Managers
         serverMan = new ServerManager(this);
         

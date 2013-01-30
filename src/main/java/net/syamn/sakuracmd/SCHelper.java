@@ -54,7 +54,7 @@ public class SCHelper {
     /**
      * プラスグインの初期化時と有効化時に呼ばれる
      */
-    private void init(){
+    private void init(final boolean startup){
         // loadconfig
         try {
             config.loadConfig(true);
@@ -112,6 +112,18 @@ public class SCHelper {
             PlayerManager.addPlayer(player);
         }
         
+        // Setup language
+        LogUtil.info("Loading language file: " + config.getLanguage());
+        if (startup){
+            I18n.init(config.getLanguage());
+        }else{
+            try {
+                I18n.setCurrentLanguage(config.getLanguage());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        
         // last, restore save data
         saveData.loadRestore();
     }
@@ -122,7 +134,7 @@ public class SCHelper {
         this.config = new ConfigurationManager(plugin);
         this.saveData = new ServerData(plugin);
         
-        init();
+        init(true);
     }
     
     public void disableAll(){
@@ -157,7 +169,7 @@ public class SCHelper {
     public synchronized void reload(){
         disableAll();
         System.gc();
-        init();
+        init(false);
         
         try {
             I18n.setCurrentLanguage(config.getLanguage());
