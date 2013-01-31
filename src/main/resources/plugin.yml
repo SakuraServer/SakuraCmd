@@ -20,6 +20,9 @@ commands:
     tphere:
       usage: /tphere - to see the help
       description: See plugin help.
+    tploc:
+      usage: /tploc - to see the help
+      description: See plugin help.
     ride:
       usage: /ride - to see the help
       description: See plugin help.

@@ -23,6 +23,7 @@ public enum Perms {
     // Tp Commands
     TP ("tp.tp"),
     TPHERE ("tp.here"),
+    TPLOC ("tp.tploc"),
     BACK ("tp.back"),
     RIDE ("tp.ride"),
     

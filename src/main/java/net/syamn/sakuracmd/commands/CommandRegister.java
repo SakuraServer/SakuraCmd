@@ -30,6 +30,7 @@ import net.syamn.sakuracmd.commands.tp.BackCommand;
 import net.syamn.sakuracmd.commands.tp.RideCommand;
 import net.syamn.sakuracmd.commands.tp.TpCommand;
 import net.syamn.sakuracmd.commands.tp.TpHereCommand;
+import net.syamn.sakuracmd.commands.tp.TplocCommand;
 import net.syamn.sakuracmd.commands.world.WeatherCommand;
 
 /**
@@ -49,6 +50,7 @@ public class CommandRegister {
         cmds.add(new TpCommand());
         cmds.add(new BackCommand());
         cmds.add(new RideCommand());
+        cmds.add(new TplocCommand());
         
         // Server Commands
         cmds.add(new LockdownCommand());
