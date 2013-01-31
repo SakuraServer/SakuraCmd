@@ -49,7 +49,7 @@ public class AdminCommand extends BaseCommand {
             final String str = (args.size() > 0) ? Util.coloring(StrUtil.join(args, " ")) : null;
             
             ItemStack is = player.getItemInHand();
-            if (is == null){
+            if (is == null || is.getType() == Material.AIR){
                 throw new CommandException("&c手にアイテムを持っていません！");
             }
             ItemMeta meta = is.getItemMeta();
