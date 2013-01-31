@@ -60,6 +60,7 @@ public enum Perms {
     TRUST ("spec.trust"),
     LOG ("spec.log"),
     LOG_HIDE ("spec.log.hide"),
+    PLACE_NETHER_TOP ("spec.place.nethertop"),
     
     // Feature
     RIDE_PLAYER ("feature.ride"),

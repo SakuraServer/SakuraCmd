@@ -11,6 +11,7 @@ import java.util.Locale;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.utils.Util;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -23,6 +24,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -42,6 +44,19 @@ public class BlockListener implements Listener{
             if (block.getType() == Material.STATIONARY_LAVA && event.getChangedType() == Material.WATER) {
                 event.setCancelled(true);
             }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockPlaceNetherTop(final BlockPlaceEvent event) {
+        final Block block = event.getBlock();
+        if (!block.getWorld().getName().equals(Worlds.main_nether)){
+            return;
+        }
+        
+        if (block.getY() >= 127 && !Perms.PLACE_NETHER_TOP.has(event.getPlayer())){
+            Util.message(event.getPlayer(), "&cメインネザーの127以上には建築できません！");
+            event.setCancelled(true);
         }
     }
     
