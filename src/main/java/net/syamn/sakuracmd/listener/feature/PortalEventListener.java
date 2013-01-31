@@ -89,7 +89,7 @@ public class PortalEventListener implements Listener{
         final Location ploc = ent.getLocation().clone();
         ploc.setWorld(world);
         ploc.setX(x + 0.5D);
-        ploc.setY(y + 0.5D);
+        ploc.setY(y);
         ploc.setZ(z + 0.5D);
         
         return ploc;
@@ -100,7 +100,7 @@ public class PortalEventListener implements Listener{
         }
         for (int y = 2; y < 256; y++) { // don't check y=0,1
             if (w.getBlockAt(x, y, z).getTypeId() == 90) {
-                return y + 1;
+                return y;
             }
         }
         return -1;
