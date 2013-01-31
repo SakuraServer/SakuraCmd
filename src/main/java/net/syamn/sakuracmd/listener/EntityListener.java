@@ -12,9 +12,7 @@ import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.PortalType;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Entity;
@@ -26,7 +24,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -98,18 +95,7 @@ public class EntityListener implements Listener{
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onEntityCreatePortal(final EntityCreatePortalEvent event) {
-        if (event.getPortalType() == PortalType.NETHER && event.getEntityType() == EntityType.PLAYER) {
-            Player player = (Player) event.getEntity();
-            // メインワールド以外ならキャンセル
-            if (player.getWorld() != Bukkit.getWorld("new")) {
-                String loc = player.getWorld().getName() + ":" + player.getLocation().getBlockX() + "," + player.getLocation().getBlockY() + "," + player.getLocation().getBlockZ();
-                //Actions.executeCommandOnConsole("kick " + player.getName() + " ネザーポータル設置違反 at " + loc);
-                event.setCancelled(true);
-            }
-        }
-    }
+
     
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerFallDamage(final EntityDamageEvent event){

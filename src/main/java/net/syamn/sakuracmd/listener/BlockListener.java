@@ -11,14 +11,9 @@ import java.util.Locale;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.permission.Perms;
-import net.syamn.utils.LogUtil;
-import net.syamn.utils.Util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,9 +23,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
-import org.bukkit.event.world.PortalCreateEvent;
-import org.bukkit.event.world.PortalCreateEvent.CreateReason;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -122,56 +114,6 @@ public class BlockListener implements Listener{
                 }
             }
         }, 4L);
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerPortal(final PlayerPortalEvent event) {
-        final Player player = event.getPlayer();
-        final Location from = event.getFrom();
-        final Environment fromEnv = from.getWorld().getEnvironment();
-        if (Environment.THE_END.equals(fromEnv)) { return; }
-        
-        int x = from.getBlockX();
-        int z = from.getBlockZ();
-        World world = null;
-        if (Environment.NORMAL.equals(fromEnv)) {
-            world = Bukkit.getWorld(Worlds.main_nether); // goto nether
-        } else if (Environment.NETHER.equals(fromEnv)) {
-            world = Bukkit.getWorld(Worlds.main_world); // goto main
-        }
-        if (world == null) return;
-        
-        int y = getFirtstPortalY(world, x, z, player);
-        if (y < 0) {
-            Util.message(player, "&c" + world.getName() + "のxz座標(" + x + "," + z + ")にポータルが見つかりません！");
-            event.setCancelled(true);
-            return;
-        }
-        
-        final Location ploc = player.getLocation().clone();
-        ploc.setWorld(world);
-        ploc.setX(x);
-        ploc.setY(y);
-        ploc.setZ(z);
-        
-        event.useTravelAgent(false);
-        event.setTo(ploc);
-    }
-    private int getFirtstPortalY(final World w, final int x, final int z, final Player player) {
-        if (!w.isChunkLoaded(x, z) && w.loadChunk(x, z, false)) { return -1; }
-        for (int y = 2; y < 256; y++) { // don't check y=0,1
-            if (w.getBlockAt(x, y, z).getTypeId() == 90) { return y + 1; }
-        }
-        return -1;
-    }
-    
-    // ポータル生成キャンセル
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPortalCreate(final PortalCreateEvent event) {
-        if (CreateReason.OBC_DESTINATION.equals(event.getReason())) {
-            event.setCancelled(true);
-            LogUtil.info("Portal auto-create event cancelled on World " + event.getWorld().getName());
-        }
     }
     
     /*
