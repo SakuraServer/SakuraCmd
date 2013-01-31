@@ -103,7 +103,7 @@ public class BlockListener implements Listener{
         block.getWorld().createExplosion(block.getLocation(), (float) 0.0, false);
         checkNextTicks(block, true);
     }
-    final BlockFace[] oumpkinSearchDirs = new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
+    final BlockFace[] pumpkinSearchDirs = new BlockFace[] { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST, BlockFace.UP, BlockFace.DOWN };
     private void checkNextTicks(final Block block, final boolean first) {
         if (block == null || (!first && (block.getTypeId() != 86 && block.getTypeId() == 91))) { return; }
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -112,7 +112,7 @@ public class BlockListener implements Listener{
                 List<Block> nexts = new ArrayList<Block>();
                 
                 Block check;
-                for (final BlockFace face : oumpkinSearchDirs) {
+                for (final BlockFace face : pumpkinSearchDirs) {
                     check = block.getRelative(face);
                     if (check.getTypeId() == 86 || check.getTypeId() == 91) {
                         if (Math.random() > 0.5)
