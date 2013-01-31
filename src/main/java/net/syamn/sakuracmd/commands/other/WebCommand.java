@@ -37,14 +37,18 @@ public class WebCommand extends BaseCommand {
         
         // web tploc [name] (world) [x] [y] [z] (yaw) (pitch) [message]
         if (action.equalsIgnoreCase("tploc") && args.size() >= 8){
-            tploc();
+            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+                @Override public void run(){
+                    tploc();
+                }
+            }, 1L);
             return;
         }
         
         throw new CommandException("&cUndefined command!");
     }
     
-    private void tploc() throws CommandException {
+    private void tploc() {
         final String targetName = args.remove(0);
         
         Player target = Bukkit.getPlayer(targetName);
