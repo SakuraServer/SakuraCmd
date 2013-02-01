@@ -7,6 +7,7 @@ package net.syamn.sakuracmd.listener;
 import java.util.List;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
@@ -60,7 +61,7 @@ public class EntityListener implements Listener{
                 default:
                     break;
             }
-            if (EntityType.ZOMBIE.equals(e.getType())) {
+            if (EntityType.SKELETON.equals(e.getType()) && Worlds.isResource(event.getLocation().getWorld().getName())) {
                 event.setCancelled(true);
             }
         }
