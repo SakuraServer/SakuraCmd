@@ -66,6 +66,9 @@ commands:
     openinv:
       usage: /openinv - to see the help
       description: See plugin help.
+    openender:
+      usage: /openender - to see the help
+      description: See plugin help.
     register:
       usage: /register - to see the help
       aliases: [webregister]
