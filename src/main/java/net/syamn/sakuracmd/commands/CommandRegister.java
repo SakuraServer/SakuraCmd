@@ -26,6 +26,7 @@ import net.syamn.sakuracmd.commands.player.GodCommand;
 import net.syamn.sakuracmd.commands.player.InvisibleCommand;
 import net.syamn.sakuracmd.commands.player.OpenEnderCommand;
 import net.syamn.sakuracmd.commands.player.OpenInvCommand;
+import net.syamn.sakuracmd.commands.player.SpecChestCommand;
 import net.syamn.sakuracmd.commands.player.WhoisCommand;
 import net.syamn.sakuracmd.commands.server.LockdownCommand;
 import net.syamn.sakuracmd.commands.tp.BackCommand;
@@ -67,6 +68,7 @@ public class CommandRegister {
         cmds.add(new FlymodeCommand());
         cmds.add(new OpenInvCommand());
         cmds.add(new OpenEnderCommand());
+        cmds.add(new SpecChestCommand());
         
         // World Commands
         cmds.add(new WeatherCommand());

@@ -111,6 +111,7 @@ public class SakuraPlayer {
         removePowerNotPerms(Power.INVISIBLE, Perms.INVISIBLE);
         removePowerNotPerms(Power.FLY, Perms.FLY);
         removePowerNotPerms(Power.GODMODE, Perms.GOD);
+        removePowerNotPerms(Power.SPEC_CHEST, Perms.SPECCHEST);
         
         // Invisible power
         if (hasPower(Power.INVISIBLE)){

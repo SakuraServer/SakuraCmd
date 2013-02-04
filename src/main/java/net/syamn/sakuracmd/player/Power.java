@@ -16,6 +16,7 @@ public enum Power {
     NO_PICKUP,
     FLY,
     FLYMODE,
+    SPEC_CHEST,
     ;
     
     @Override

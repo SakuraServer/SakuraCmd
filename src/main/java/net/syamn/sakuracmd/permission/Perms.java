@@ -43,6 +43,8 @@ public enum Perms {
     FLYMODE ("player.flymode"),
     OPENINV ("player.openinv"),
     OPENENDER ("player.openender"),
+    SPECCHEST ("player.specchest"),
+    SPECCHEST_OTHER ("player.specchest.other"),
     
     // World Commands
     WEATHER ("world.weather"),
