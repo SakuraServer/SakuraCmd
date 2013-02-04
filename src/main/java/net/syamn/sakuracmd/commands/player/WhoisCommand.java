@@ -4,12 +4,17 @@
  */
 package net.syamn.sakuracmd.commands.player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerData;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.player.Power;
+import net.syamn.utils.StrUtil;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -46,6 +51,7 @@ public class WhoisCommand extends BaseCommand{
         final boolean self = (sender.equals(target));
         
         String str = null;
+        String str2 = null;
         
         // ***** header *****
         send("&b========== &2" + ((target != null) ? PlayerManager.getPlayer(target).getName() : targetName) + " &b==========");
@@ -60,12 +66,18 @@ public class WhoisCommand extends BaseCommand{
         
         // Last IP
         str = data.getLastIP();
-        send("&6Last IP  &f: &a" + ((str == null) ? "なし" : str));
+        // lookup ip
+        if (SCHelper.getInstance().getConfig().getUseGeoIP()){
+            str2 = GeoIP.getInstance().getGeoIpString(str);
+            send("&6Last IP  &f: &a" + ((str == null) ? "なし" : str) + ((str2 == null) ? "" : " &7(" + str2 + ")"));
+        }else{
+            send("&6Last IP  &f: &a" + ((str == null) ? "なし" : str));
+        }
         
-        // Lookup IP
-        if (SCHelper.getInstance().getConfig().getUseGeoIP() && str != null){
-            str = GeoIP.getInstance().getGeoIpString(str);
-            send("&6IP Location &f: &a" + ((str == null) ? "不明" : str));
+        // Powers
+        List<Power> powers = getHasPowers(data);
+        if (powers.size() > 0){
+            send("&6Powers  &f: &a" + StrUtil.join(powers, "&7, &a"));
         }
        
         // ****** online section *****
@@ -80,6 +92,23 @@ public class WhoisCommand extends BaseCommand{
     private String getTimeStr(long unixMillis){
         if (unixMillis <= 0) return null;
         return TimeUtil.getReadableTime(TimeUtil.getDateByUnixMillis(unixMillis));
+    }
+    
+    private List<Power> getHasPowers(PlayerData data){
+        ArrayList<Power> ret = new ArrayList<Power>();
+        ret.clear();
+        
+        if (data == null){
+            return ret;
+        }
+        
+        for (final Power power : Power.values()){
+            if (data.hasPower(power)){
+                ret.add(power);
+            }
+        }
+        
+        return ret;
     }
     
     private void send(final String line){
