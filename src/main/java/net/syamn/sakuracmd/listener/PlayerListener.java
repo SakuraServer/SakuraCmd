@@ -47,6 +47,7 @@ import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -187,6 +188,14 @@ public class PlayerListener implements Listener{
                     player.teleport(new Location(world, toLoc.getX(), 500.0D, toLoc.getZ()), TeleportCause.PLUGIN);
                 }
             }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerPickupItem(final PlayerPickupItemEvent event){
+        final SakuraPlayer sp = PlayerManager.getPlayer(event.getPlayer());
+        if (sp.hasPower(Power.NO_PICKUP)){
+            event.setCancelled(true);
         }
     }
     

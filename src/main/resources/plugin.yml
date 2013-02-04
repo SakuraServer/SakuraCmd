@@ -73,6 +73,10 @@ commands:
       usage: /specchest - to see the help
       aliases: [schest, sc]
       description: See plugin help.
+    nopickup:
+      usage: /nopickup - to see the help
+      aliases: [np]
+      description: See plugin help.
     register:
       usage: /register - to see the help
       aliases: [webregister]

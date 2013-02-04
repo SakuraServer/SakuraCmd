@@ -45,6 +45,8 @@ public enum Perms {
     OPENENDER ("player.openender"),
     SPECCHEST ("player.specchest"),
     SPECCHEST_OTHER ("player.specchest.other"),
+    NO_PICKUP ("player.nopickup"),
+    NO_PICKUP_OTHER ("player.nopickup.other"),
     
     // World Commands
     WEATHER ("world.weather"),

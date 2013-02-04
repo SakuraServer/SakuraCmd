@@ -10,6 +10,7 @@ import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.storage.I18n;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
@@ -53,6 +54,9 @@ public class InvisibleCommand extends BaseCommand{
             
             worker.reappear(target);
             
+            // auto add no pickup power
+            sp.addPower(Power.NO_PICKUP);
+            
             // send fake join message
             String msg = _("joinMessage", I18n.PLAYER, sp.getName(true));
             if (msg != null && !msg.isEmpty()) {
@@ -70,6 +74,9 @@ public class InvisibleCommand extends BaseCommand{
             SakuraCmdUtil.sendlog(sender, sp.getName() + "&a が透明モードを解除しました");
         }else{
             worker.vanish(target, false);
+            
+            // auto remove no pickup power
+            sp.removePower(Power.NO_PICKUP);
             
             // send fake quit message
             String msg = _("quitMessage", I18n.PLAYER, sp.getName(true));
