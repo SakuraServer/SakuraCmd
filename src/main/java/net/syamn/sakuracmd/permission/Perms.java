@@ -41,6 +41,7 @@ public enum Perms {
     FLY ("player.fly"),
     FLY_OTHER ("player.fly.other"),
     FLYMODE ("player.flymode"),
+    OPENINV ("player.openinv"),
     
     // World Commands
     WEATHER ("world.weather"),

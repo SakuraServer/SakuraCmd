@@ -63,6 +63,9 @@ commands:
     whois:
       usage: /whois - to see the help
       description: See plugin help.
+    openinv:
+      usage: /openinv - to see the help
+      description: See plugin help.
     register:
       usage: /register - to see the help
       aliases: [webregister]
