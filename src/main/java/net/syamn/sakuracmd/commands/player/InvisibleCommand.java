@@ -55,7 +55,7 @@ public class InvisibleCommand extends BaseCommand{
             worker.reappear(target);
             
             // auto add no pickup power
-            sp.addPower(Power.NO_PICKUP);
+            sp.removePower(Power.NO_PICKUP);
             
             // send fake join message
             String msg = _("joinMessage", I18n.PLAYER, sp.getName(true));
@@ -76,7 +76,7 @@ public class InvisibleCommand extends BaseCommand{
             worker.vanish(target, false);
             
             // auto remove no pickup power
-            sp.removePower(Power.NO_PICKUP);
+            sp.addPower(Power.NO_PICKUP);
             
             // send fake quit message
             String msg = _("quitMessage", I18n.PLAYER, sp.getName(true));
