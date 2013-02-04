@@ -62,10 +62,12 @@ public class OpenInvCommand extends BaseCommand{
             throw new CommandException("&cプレイヤー " + targetName + " が見つかりません！");
         }
         
-        // self check
+        // self check -- removed
+        /*
         if (target.equals(player)){
             throw new CommandException("&c自分のインベントリは開けません！");
         }
+        */
         
         // save history
         historyMap.put(player, target.getName());
@@ -81,7 +83,7 @@ public class OpenInvCommand extends BaseCommand{
         player.openInventory(inv.getBukkitInventory());
         
         // logg
-        SakuraCmdUtil.sendlog(sender, PlayerManager.getPlayer(player).getName() + "&6 が &f"
-                        + (online ? (PlayerManager.getPlayer(target)) : target.getName()) + " &6のインベントリを開きました");
+        SakuraCmdUtil.sendlog(sender, PlayerManager.getPlayer(player).getName() + "&6 が &7"
+                        + (online ? (PlayerManager.getPlayer(target).getName()) : target.getName()) + " &6のインベントリを開きました");
     }
 }
