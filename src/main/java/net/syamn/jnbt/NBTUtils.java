@@ -1,5 +1,7 @@
 package net.syamn.jnbt;
 
+import java.util.Map;
+
 /*
  * JNBT License
  * 
@@ -68,6 +70,8 @@ public final class NBTUtils {
 			return "TAG_Short";
 		} else if(clazz.equals(StringTag.class)) {
 			return "TAG_String";
+		} else if (clazz.equals(IntArrayTag.class)) {
+		        return "TAG_Int_Array";
 		} else {
 			throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
 		}
@@ -102,6 +106,8 @@ public final class NBTUtils {
 			return NBTConstants.TYPE_SHORT;
 		} else if(clazz.equals(StringTag.class)) {
 			return NBTConstants.TYPE_STRING;
+		} else if (clazz.equals(IntArrayTag.class)) {
+		        return NBTConstants.TYPE_INT_ARRAY;
 		} else {
 			throw new IllegalArgumentException("Invalid tag classs (" + clazz.getName() + ").");
 		}
@@ -137,6 +143,8 @@ public final class NBTUtils {
 			return ListTag.class;
 		case NBTConstants.TYPE_COMPOUND:
 			return CompoundTag.class;
+		case NBTConstants.TYPE_INT_ARRAY:
+		        return IntArrayTag.class;
 		default:
 			throw new IllegalArgumentException("Invalid tag type : " + type + ".");
 		}
@@ -148,5 +156,24 @@ public final class NBTUtils {
 	private NBTUtils() {
 		
 	}
-
+	
+	/**
+	 * Get child tag of a NBT structure.
+	 *
+	 * @param items
+	 * @param key
+	 * @param expected
+	 * @return child tag
+	 * @throws InvalidFormatException
+	 */
+	public static <T extends Tag> T getChildTag(Map<String, Tag> items, String key, Class<T> expected) throws IllegalStateException {
+            	if (!items.containsKey(key)) {
+            	    throw new IllegalStateException("Missing a \"" + key + "\" tag");
+        	}
+        	Tag tag = items.get(key);
+        	if (!expected.isInstance(tag)) {
+        	    throw new IllegalStateException(key + " tag is not of tag type " + expected.getName());
+        	}
+        	return expected.cast(tag);
+	}
 }

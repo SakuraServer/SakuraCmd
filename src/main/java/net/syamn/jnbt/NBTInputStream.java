@@ -145,7 +145,7 @@ public final class NBTInputStream implements Closeable {
 			length = is.readInt();
 			
 			List<Tag> tagList = new ArrayList<Tag>();
-			for(int i = 0; i < length; i++) {
+			for(int i = 0; i < length; i++) { // ++i ?
 				Tag tag = readTagPayload(childType, "", depth + 1);
 				if(tag instanceof EndTag) {
 					throw new IOException("TAG_End not permitted in a list.");
@@ -166,6 +166,14 @@ public final class NBTInputStream implements Closeable {
 			}
 			
 			return new CompoundTag(name, tagMap);
+		case NBTConstants.TYPE_INT_ARRAY:
+		    length = is.readInt();
+		    int[] data = new int[length];
+		    for (int i = 0; i < length; i++) {
+		        data[i] = is.readInt();
+		    }
+		    
+		    return new IntArrayTag(name, data);
 		default:
 			throw new IOException("Invalid tag type: " + type + ".");
 		}
