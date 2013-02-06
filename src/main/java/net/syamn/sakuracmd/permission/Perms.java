@@ -57,6 +57,7 @@ public enum Perms {
     MAIL ("db.mail"),
 
     // Other / Admin Commands
+    RATIO ("admin.ratio"),
     ADMIN ("admin.admin"),
     SAKURACMD ("admin.sakuracmd"),
     

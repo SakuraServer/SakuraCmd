@@ -16,6 +16,7 @@ import net.syamn.sakuracmd.commands.other.AdminCommand;
 import net.syamn.sakuracmd.commands.other.ColorsCommand;
 import net.syamn.sakuracmd.commands.other.ConfirmCommand;
 import net.syamn.sakuracmd.commands.other.MfmfCommand;
+import net.syamn.sakuracmd.commands.other.RatioCommand;
 import net.syamn.sakuracmd.commands.other.SakuraCmdCommand;
 import net.syamn.sakuracmd.commands.other.WebCommand;
 import net.syamn.sakuracmd.commands.player.AFKCommand;
@@ -87,6 +88,7 @@ public class CommandRegister {
         cmds.add(new MfmfCommand());
         cmds.add(new ColorsCommand());
         cmds.add(new WebCommand());
+        cmds.add(new RatioCommand());
         
         return cmds;
     }

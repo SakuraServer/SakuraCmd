@@ -4,6 +4,9 @@
  */
 package net.syamn.sakuracmd.manager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -37,5 +40,24 @@ public class Worlds {
     
     public static boolean isFlyAllowed(final String worldName){
         return worldName.equals(main_world);
+    }
+    
+    public static List<String> getNormalWorlds(){
+        List<String> ret = new ArrayList<String>();
+        
+        // Add mains
+        ret.add(main_world);
+        //ret.add(main_nether);
+        //ret.add(main_end);
+        ret.add(skylands);
+        
+        // Add resources
+        for (final World w : Bukkit.getWorlds()){
+            if (isResource(w.getName())){ // isNormalResource
+                ret.add(w.getName());
+            }
+        }
+        
+        return ret;
     }
 }
