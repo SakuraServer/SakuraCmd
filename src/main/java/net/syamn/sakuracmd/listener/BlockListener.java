@@ -9,10 +9,13 @@ import java.util.List;
 import java.util.Locale;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.feature.HawkEyeSearcher;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
@@ -26,6 +29,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.dynmap.Log;
 
 /**
  * BlockListener (BlockListener.java)
@@ -75,10 +79,23 @@ public class BlockListener implements Listener{
                 }, 0L);
             }
         }
+        
         // Skull to air
         if (block.getTypeId() == 144){
             event.setCancelled(true);
             block.setType(Material.AIR);
+        }
+        
+        // call hawkeye searcher
+        if (block.getTypeId() == 56 && !GameMode.CREATIVE.equals(player.getGameMode()) && Worlds.getNormalWorlds().contains(block.getWorld().getName())){
+            Integer prevTime = HawkEyeSearcher.lookupHistory.get(player.getName());
+            int now = TimeUtil.getCurrentUnixSec().intValue();
+            if (prevTime == null || now >= prevTime.intValue() + 180){
+                HawkEyeSearcher.lookupHistory.put(player.getName(), now);
+                HawkEyeSearcher searcher = new HawkEyeSearcher(plugin, player, player.getName(), 48, false);
+                Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, searcher, 1L);
+                //Log.info("debuglog -- searching"); //debug
+            }
         }
     }
     

@@ -8,7 +8,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -38,6 +40,8 @@ import net.syamn.utils.Util;
  */
 public class HawkEyeSearcher implements Runnable{
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static Map<String, Integer> lookupHistory = new HashMap<String, Integer>();
+    private static boolean using = false;
     
     private SakuraCmd plugin;
     private CommandSender sender;
@@ -50,7 +54,16 @@ public class HawkEyeSearcher implements Runnable{
 
     public int searchTime;
     private boolean done = false;
+    private boolean error = false;
     private boolean command;
+    
+    public static void dispose(){
+        lookupHistory.clear();
+        using = false;
+    }
+    public static boolean isUsing(){
+        return using;
+    }
     
     public HawkEyeSearcher(final SakuraCmd plugin, CommandSender sender, String target, final List<Integer> blockIds, int time, String[] searchWorlds, boolean command){
         this.plugin = plugin;
@@ -88,13 +101,20 @@ public class HawkEyeSearcher implements Runnable{
         Util.message(sender, "&f---------- &aX-ray Check for " + dname + " &f----------");
         Util.message(sender, "&aTotal blocks broken in last " + searchTime + " hours: " + totals);
         
+        if (totals == 0){
+            return;
+        }
+        
         for (int i = 0; i < this.blockIds.size(); i++){
-            String prefix = "";
+            String prefix = getColor(blockIds.get(i));
             String name = ItemUtil.getReadableName(blockIds.get(i));
-            Util.message(sender, name + ": " + Util.getPercent(broken.get(i), totals, 5) + "% (" + broken.get(i) + ")");
+            Util.message(sender, prefix + name + ": " + Util.getPercent(broken.get(i), totals, 5) + "% (" + broken.get(i) + ")");
         }
     }
     private void printWarn(){
+        if (totals == 0){
+            return;
+        }
         for (int i = 0; i < this.blockIds.size(); i++){
             // checks only diamond-ore(56)
             if (blockIds.get(i) != 56){
@@ -109,26 +129,57 @@ public class HawkEyeSearcher implements Runnable{
                 if (p != null && p.isOnline()){
                     dname = PlayerManager.getPlayer(p).getName();
                 }
-                SakuraCmdUtil.sendlog(dname + " &cが &6" + name + " &cを " + perc +"% の比率で採掘しました");
+                SakuraCmdUtil.sendlog(dname + " &cが &6" + name + " &cを &6" + perc +"% &cの比率で採掘しました");
                 LogUtil.warning(targetName + " has a break percentage of " + perc + "% for " + name);
             }
             break;
         }
     }
     
-    public void run(){
-        search();
-        
-        while (!this.done){
-            try{
-                wait(50L);
-            } catch (InterruptedException ignore) {}
+    private String getColor(int blockId){
+        switch (Material.getMaterial(blockId)){
+            case DIAMOND_ORE:
+                return "&b";
+            case IRON_ORE:
+                return "&7";
+            case GOLD_ORE:
+                return "&6";
+            case LAPIS_ORE:
+                return "&9";
+            case MOSSY_COBBLESTONE:
+                return "&2";
+            case EMERALD_ORE:
+                return "&a";
+            default:
+                return "&7";
         }
-        
-        if (command){
-            printData();
-        }else{
-            printWarn();
+    }
+    
+    public void run(){
+        synchronized (this){
+            if (using){
+                return;
+            }
+            using = true;
+        }
+        try{
+            search();
+            
+            while (!this.done){
+                try{
+                    wait(50L);
+                } catch (InterruptedException ignore) {}
+            }
+            
+            if (!error){
+                if (command){
+                    printData();
+                }else{
+                    printWarn();
+                }
+            }
+        }finally{
+            using = false;
         }
     }
     
@@ -156,6 +207,7 @@ public class HawkEyeSearcher implements Runnable{
         
         this.totals = callback.total;
         this.broken = callback.broken;
+        this.error = callback.error;
         
         done = true;
         return true;
@@ -166,6 +218,7 @@ public class HawkEyeSearcher implements Runnable{
         private PlayerSession session;
         
         private boolean complete = false;
+        private boolean error = false;
         
         private int total = 0;
         private List<Integer> blocks;
@@ -183,8 +236,9 @@ public class HawkEyeSearcher implements Runnable{
         @Override
         public void error(SearchQuery.SearchError error, String message) {
             try{
+                this.error = true;
                 if (sender != null && sender instanceof Player){
-                    Util.message(sender, "&c Hawkeye Error: &f" + error.name() + " " + message);
+                    Util.message(sender, "&cHawkeye Error: &f" + error.name() + ": " + message);
                 }else{
                     LogUtil.warning("Hawkeye Error: " + error.name() + " " + message);
                 }

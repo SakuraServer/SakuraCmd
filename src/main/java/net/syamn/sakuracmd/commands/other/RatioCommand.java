@@ -26,6 +26,9 @@ public class RatioCommand extends BaseCommand{
     }
     
     public void execute() throws CommandException{
+        if (HawkEyeSearcher.isUsing()){
+            throw new CommandException("&c現在別の検索タスクが稼働中です。しばらくお待ちください。");
+        }
         Util.message(sender, "&7検索しています...");
         HawkEyeSearcher searcher = new HawkEyeSearcher(plugin, sender, args.get(0), 48, true);
         Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, searcher, 1L);

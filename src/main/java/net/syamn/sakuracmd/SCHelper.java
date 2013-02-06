@@ -5,6 +5,7 @@
 package net.syamn.sakuracmd;
 
 import net.syamn.sakuracmd.feature.GeoIP;
+import net.syamn.sakuracmd.feature.HawkEyeSearcher;
 import net.syamn.sakuracmd.listener.feature.MCBansListener;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
@@ -153,6 +154,7 @@ public class SCHelper {
         AFKWorker.dispose();
         InvisibleWorker.dispose();
         FlymodeWorker.dispose();
+        HawkEyeSearcher.dispose();
         
         if (DynmapHandler.getInstance() != null){
             DynmapHandler.getInstance().deactivate();
