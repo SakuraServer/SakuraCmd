@@ -11,9 +11,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -32,7 +34,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.listener.feature.EndResetListener;
-import net.syamn.sakuracmd.serial.endreset.EndResetWorld;
+import net.syamn.sakuracmd.serial.EndResetWorldData;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
@@ -62,9 +64,9 @@ public class EndResetWorker{
     private List<Integer> tasks = new ArrayList<Integer>();
     
     // data start
-    public final HashMap<String, HashMap<String, Long>> resetChunks = new HashMap<String, HashMap<String, Long>>();
-    public final HashMap<String, Long> cvs = new HashMap<String, Long>();
-    public final HashMap<String, EndResetWorld> worldData = new HashMap<String, EndResetWorld>();
+    private final HashMap<String, HashMap<String, Long>> resetChunks = new HashMap<String, HashMap<String, Long>>();
+    private final HashMap<String, Long> cvs = new HashMap<String, Long>();
+    private final HashMap<String, EndResetWorldData> worldData = new HashMap<String, EndResetWorldData>();
     
     private boolean save = false;
     private final AtomicBoolean saveLock = new AtomicBoolean(false);
@@ -106,7 +108,7 @@ public class EndResetWorker{
                 for (Entry<String, Long> e : ((HashMap<String, Long>) in.readObject()).entrySet()){
                     cvs.put(e.getKey(), e.getValue());
                 }
-                for (Entry<String, EndResetWorld> e : ((HashMap<String, EndResetWorld>) in.readObject()).entrySet()){
+                for (Entry<String, EndResetWorldData> e : ((HashMap<String, EndResetWorldData>) in.readObject()).entrySet()){
                     worldData.put(e.getKey(), e.getValue());
                 }
             }
@@ -188,9 +190,9 @@ public class EndResetWorker{
             
             final long now = TimeUtil.getCurrentUnixSec();
             Server server = Bukkit.getServer();
-            EndResetWorld resetWorld;
+            EndResetWorldData resetWorld;
             
-            for (Entry<String, EndResetWorld> entry : worldData.entrySet()) {
+            for (Entry<String, EndResetWorldData> entry : worldData.entrySet()) {
                 resetWorld = entry.getValue();
                 if (resetWorld.getNextReset() <= now) {
                     World world = server.getWorld(entry.getKey());
@@ -253,5 +255,42 @@ public class EndResetWorker{
     /* getter / setter */
     public void updateSaveFlag(){
         this.save = true;
+    }
+    
+    // worldData
+    public void putWorldData(final String worldName, final EndResetWorldData data){
+        this.worldData.put(worldName, data);
+        this.save = true;
+    }
+    public void removeWorldData(final String worldName){
+        this.worldData.remove(worldName);
+        this.save = true;
+    }
+    public Map<String, EndResetWorldData> getWorldDataMap(){
+        return Collections.unmodifiableMap(this.worldData);
+    }
+    
+    // cvs
+    public void putCvs(final String worldName, final Long hashKey){
+        this.cvs.put(worldName, hashKey);
+        this.save = true;
+    }
+    public long getCvs(final String worldName){
+        return this.cvs.get(worldName);
+    }
+    public Map<String, Long> getCvsMap(){
+        return Collections.unmodifiableMap(this.cvs);
+    }
+    
+    // resetChunks
+    public void putResetChunks(final String worldName, final HashMap<String, Long> value){
+        this.resetChunks.put(worldName, value);
+        this.save = true;
+    }
+    public HashMap<String, Long> getResetChunks(final String worldName){
+        return this.resetChunks.get(worldName);
+    }
+    public Map<String, HashMap<String, Long>> getResetChunkMap(){
+        return Collections.unmodifiableMap(this.resetChunks);
     }
 }

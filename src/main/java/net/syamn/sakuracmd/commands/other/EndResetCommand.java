@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
-import net.syamn.sakuracmd.serial.endreset.EndResetWorld;
+import net.syamn.sakuracmd.serial.EndResetWorldData;
 import net.syamn.sakuracmd.worker.EndResetWorker;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.TimeUtil;
@@ -72,14 +72,14 @@ public class EndResetCommand extends BaseCommand {
                 if (!StrUtil.isInteger(args.get(3))){
                     throw new CommandException("&c数値ではありません: " + args.get(3));
                 }
-                worker.worldData.put(world.getName(), new EndResetWorld(Integer.parseInt(args.get(3))));
+                worker.putWorldData(world.getName(), new EndResetWorldData(Integer.parseInt(args.get(3))));
                 Util.message(sender, "&aワールド " + world.getName() + " は" + args.get(3) + "時間毎にリセットされます");
             }
             else if (sub.equals("disable")){
-                if (!worker.worldData.containsKey(args.get(2))){
+                if (!worker.getWorldDataMap().containsKey(args.get(2))){
                     throw new CommandException("&c" + args.get(2) + " がリストに見つかりません");
                 }
-                worker.worldData.remove(args.get(2));
+                worker.removeWorldData(args.get(2));
                 Util.message(sender, "&aワールド " + args.get(2) + " は自動でリセットされなくなりました");
             }
             else{
@@ -115,13 +115,13 @@ public class EndResetCommand extends BaseCommand {
             }
             
             // Auto reset worlds
-            if (worker.worldData.isEmpty()){
+            if (worker.getWorldDataMap().isEmpty()){
                 Util.message(sender, "&c自動リセットが有効になっているワールドはありません");
             }
             else{       
                 Util.message(sender, "&d 自動リセットが有効になっているワールドリスト: ");
-                for (Entry<String, EndResetWorld> entry : worker.worldData.entrySet()){
-                    EndResetWorld data = entry.getValue();
+                for (Entry<String, EndResetWorldData> entry : worker.getWorldDataMap().entrySet()){
+                    EndResetWorldData data = entry.getValue();
                     int interval = data.getInterval();
                     String next = TimeUtil.getReadableTime(TimeUtil.getDateByUnixSeconds(data.getNextReset()));
                     

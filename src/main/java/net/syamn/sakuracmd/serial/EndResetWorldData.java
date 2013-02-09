@@ -1,10 +1,10 @@
-package net.syamn.sakuracmd.serial.endreset;
+package net.syamn.sakuracmd.serial;
 
 import java.io.Serializable;
 
 import net.syamn.utils.TimeUtil;
 
-public class EndResetWorld implements Serializable {
+public class EndResetWorldData implements Serializable {
     private static final long serialVersionUID = 4748861011063168140L;
     
     private final int hours;
@@ -15,7 +15,7 @@ public class EndResetWorld implements Serializable {
      * 
      * @param hours
      */
-    public EndResetWorld(final int hours) {
+    public EndResetWorldData(final int hours) {
         this.hours = hours;
         updateLastReset();
     }

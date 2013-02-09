@@ -51,8 +51,8 @@ public class EndResetListener implements Listener{
         EndResetWorker worker = EndResetWorker.getInstance();
         if (worker == null) return;
         
-        if (worker.worldData.containsKey(wname)){
-            worker.worldData.get(wname).updateLastReset();
+        if (worker.getWorldDataMap().containsKey(wname)){
+            worker.getWorldDataMap().get(wname).updateLastReset();
             worker.updateSaveFlag();
         }
     }
@@ -68,11 +68,11 @@ public class EndResetListener implements Listener{
         final String wname = world.getName();
         HashMap<String, Long> worldMap;
         
-        if (worker.resetChunks.containsKey(wname)){
-            worldMap = worker.resetChunks.get(wname);
+        if (worker.getResetChunkMap().containsKey(wname)){
+            worldMap = worker.getResetChunks(wname);
         } else {
             worldMap = new HashMap<String, Long>();
-            worker.resetChunks.put(wname, worldMap);
+            worker.putResetChunks(wname, worldMap);
         }
 
         final Chunk chunk = event.getChunk();
@@ -80,7 +80,7 @@ public class EndResetListener implements Listener{
         final int z = chunk.getZ();
         final String hash = x + "/" + z;
         
-        long cv = worker.cvs.get(wname);
+        long cv = worker.getCvs(wname);
 
         if (worldMap.containsKey(hash)) {
             if (worldMap.get(hash) != cv) {
@@ -90,6 +90,7 @@ public class EndResetListener implements Listener{
                 
                 world.regenerateChunk(x, z);
                 worldMap.put(hash, cv);
+                
                 worker.updateSaveFlag();
             }
         } else{
@@ -106,9 +107,8 @@ public class EndResetListener implements Listener{
         if (worker == null) return;
         
         String worldName = world.getName();
-        if (!worker.cvs.containsKey(worldName)) {
-            worker.cvs.put(worldName, Long.MIN_VALUE);
-            worker.updateSaveFlag();
+        if (!worker.getCvsMap().containsKey(worldName)) {
+            worker.putCvs(worldName, Long.MIN_VALUE);
         }
     }
 }
