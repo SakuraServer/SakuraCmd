@@ -51,13 +51,6 @@ public class EndResetCommand extends BaseCommand {
             return;
         }
         
-        if (StrUtil.isInteger(args.get(0))){
-            worker.inactiveMin = Integer.parseInt(args.get(0));
-            Util.message(sender, "&a設定した非アクティブ時間: " + worker.inactiveMin + " 分");
-            worker.inactiveMin = worker.inactiveMin * 20 * 60;
-            return;
-        }
-        
         String action = args.get(0).toLowerCase(Locale.ENGLISH);
         if (action.equals("force")){
             if (args.size() < 3){
@@ -98,22 +91,6 @@ public class EndResetCommand extends BaseCommand {
                 Util.message(sender, "&aワールド " + wname + " を除外リストに追加しました");
             }
         }
-        else if (action.equals("amount")){
-            if (args.size() < 3){
-                throw new CommandException("&c引数が足りません！ /endreset amount world_name amount");
-            }
-            if (!StrUtil.isShort(args.get(2))){
-                throw new CommandException("&c数値が不正です: " + args.get(2));
-            }
-            String wname = args.get(1);
-            short amount = Short.parseShort(args.get(2));
-            if (amount == 1){
-                worker.dragonAmount.remove(wname);
-            }else{
-                worker.dragonAmount.put(wname, amount);
-            }
-            Util.message(sender, "&a" + wname + " でのドラゴン数を" + amount + "に設定しました");
-        }
         else if (action.equals("list")){
             List<World> worlds = Bukkit.getServer().getWorlds();
             if (worlds.isEmpty()){
@@ -137,7 +114,7 @@ public class EndResetCommand extends BaseCommand {
             return;
         }
         else{
-            throw new CommandException("&c有効なアクションではありません (force/ignore/amount/list)");
+            throw new CommandException("&c有効なアクションではありません (force/ignore/list)");
         }
         worker.save = true;
     }

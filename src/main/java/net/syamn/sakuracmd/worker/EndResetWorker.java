@@ -4,8 +4,6 @@
  */
 package net.syamn.sakuracmd.worker;
 
-import static org.mockito.Matchers.contains;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -57,30 +55,24 @@ public class EndResetWorker{
     
     //--
     private SakuraCmd plugin;
-    private File endResetData = new File(plugin.getDataFolder(), "endResetData.sav");
-    private boolean enabled = false;
+    private File endResetData;
     private List<Integer> tasks = new ArrayList<Integer>();
     
     // data start
     public final HashMap<String, HashMap<String, Long>> resetchunks = new HashMap<String, HashMap<String, Long>>();
     public final HashMap<String, Long> cvs = new HashMap<String, Long>();
-
-    public final HashSet<String> reg = new HashSet<String>();
-
     public final HashMap<String, Integer> pids = new HashMap<String, Integer>();
-    public long inactiveMin = 1200;
-    public boolean save = false;
-    private final AtomicBoolean saveLock = new AtomicBoolean(false);
-
     public final HashSet<String> dontHandle = new HashSet<String>();
     public final HashMap<String, EndResetWorld> forceReset = new HashMap<String, EndResetWorld>();
-    public final HashMap<String, Short> dragonAmount = new HashMap<String, Short>();
-
     public final HashMap<String, RegenThread> threads = new HashMap<String, RegenThread>();
-    public final HashMap<String, Long> suspendedTasks = new HashMap<String, Long>();
+    
+    public boolean save = false;
+    private final AtomicBoolean saveLock = new AtomicBoolean(false);
     // data end
     
     private void init(){
+        endResetData = new File(plugin.getDataFolder(), "endResetData.sav");
+        
         if (!endResetData.exists()){
             // file not exists, check directory
             plugin.getDataFolder().mkdir();
@@ -115,30 +107,11 @@ public class EndResetWorker{
                 for (Entry<String, Long> e : ((HashMap<String, Long>) in.readObject()).entrySet()){
                     cvs.put(e.getKey(), e.getValue());
                 }
-                for (String regen : (HashSet<String>) in.readObject()){
-                    reg.add(regen);
-                }
-                
-                inactiveMin = in.readLong();
-                
                 for (String dh : (HashSet<String>) in.readObject()){
                     dontHandle.add(dh);
                 }
                 for (Entry<String, EndResetWorld> e : ((HashMap<String, EndResetWorld>) in.readObject()).entrySet()){
                     forceReset.put(e.getKey(), e.getValue());
-                }
-                for (Entry<String, Short> e : ((HashMap<String, Short>) in.readObject()).entrySet()){
-                    dragonAmount.put(e.getKey(), e.getValue());
-                }
-                for (Entry<String, Long> e : ((HashMap<String, Long>) in.readObject()).entrySet()) {
-                    String worldName = e.getKey();
-                    reg.add(worldName);
-                    world = plugin.getServer().getWorld(worldName);
-                    if (world != null) {
-                        tr = e.getValue();
-                        regenThread = new RegenThread(worldName, world.getFullTime() + tr);
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, regenThread, tr);
-                    }
                 }
             }
             catch(Exception ex){
@@ -150,11 +123,12 @@ public class EndResetWorker{
             }
             
             BukkitScheduler scheduler = Bukkit.getScheduler();
-            tasks.add(scheduler.runTaskTimer(plugin, new SaveThread(), 36000L, 36000L).getTaskId());
-            tasks.add(scheduler.runTaskTimer(plugin, new ForceThread(), 20L, 72000L).getTaskId());
-            tasks.add(scheduler.runTaskTimer(plugin, new TickThread(), 1L, 1L).getTaskId());
+            tasks.add(scheduler.runTaskTimer(plugin, new SaveThread(), 36000L, 36000L).getTaskId()); // 30分毎
+            tasks.add(scheduler.runTaskTimer(plugin, new ForceThread(), 20L, 72000L).getTaskId()); // 1時間毎
         }
-        
+    }
+    
+    public void callWorldLoad(){
         for (World world : Bukkit.getServer().getWorlds()){
             if (world.getEnvironment() != Environment.THE_END) continue;
             EndResetListener.getInstance().onWorldLoad(new WorldLoadEvent(world));
@@ -188,13 +162,7 @@ public class EndResetWorker{
             listener.onChunkLoad(new ChunkLoadEvent(chunk, false));
         }
 
-        short amount;
-        if (dragonAmount.containsKey(worldName)){
-            amount = dragonAmount.get(worldName);
-        }else{
-            amount = 1;
-        }
-        
+        short amount = 1;
         if (amount > 1) {
             amount--;
             Location loc = world.getSpawnLocation();
@@ -206,40 +174,6 @@ public class EndResetWorker{
         
         save = true;
         Util.broadcastMessage("&c[SakuraServer] &dエンドワールド'&6" + worldName + "&d'はリセットされました！");
-    }
-    
-    private class TickThread implements Runnable{
-        @Override
-        public void run(){
-            int pc;
-            int pid;
-            BukkitScheduler scheduler = Bukkit.getScheduler();
-            for (World world : Bukkit.getServer().getWorlds()) {
-                if (world.getEnvironment() != Environment.THE_END) continue;
-                
-                String worldName = world.getName();
-                if (!reg.contains(worldName)) continue;
-                pc = world.getPlayers().size();
-                if (pc < 1 && !pids.containsKey(worldName)) {
-                    long tr;
-                    if (!suspendedTasks.containsKey(worldName))
-                        tr = inactiveMin;
-                    else {
-                        tr = suspendedTasks.get(worldName);
-                        suspendedTasks.remove(worldName);
-                    }
-                    RegenThread regenThread = new RegenThread(worldName, world.getFullTime() + tr);
-                    pids.put(worldName, scheduler.scheduleSyncDelayedTask(plugin, regenThread, tr));
-                    threads.put(worldName, regenThread);
-                } else if (pc > 0 && pids.containsKey(worldName)) {
-                    pid = pids.get(worldName);
-                    scheduler.cancelTask(pid);
-                    pids.remove(worldName);
-                    suspendedTasks.put(worldName, threads.get(worldName).getRemainingDelay());
-                    threads.remove(worldName);
-                }
-            }
-        }
     }
     
     public class RegenThread implements Runnable{
@@ -256,7 +190,6 @@ public class EndResetWorker{
             if (!pids.containsKey(worldName)) return;
             World world = Bukkit.getServer().getWorld(worldName);
             if (world != null) regen(world);
-            reg.remove(worldName);
             pids.remove(worldName);
             threads.remove(this);
         }
@@ -274,13 +207,14 @@ public class EndResetWorker{
             if (forceReset.isEmpty()) return;
             
             long now = System.currentTimeMillis() * 1000;
-            EndResetWorld vw;
+            EndResetWorld resetWorld;
             Server server = Bukkit.getServer();
-            for (Entry<String, EndResetWorld> e : forceReset.entrySet()) {
-                vw = e.getValue();
-                if (vw.lastReset + vw.hours >= now) {
-                    regen(server.getWorld(e.getKey()));
-                    vw.lastReset = now;
+            for (Entry<String, EndResetWorld> entry : forceReset.entrySet()) {
+                resetWorld = entry.getValue();
+                if (resetWorld.lastReset + resetWorld.hours >= now) {
+                    World world = server.getWorld(entry.getKey());
+                    if (world != null) regen(world);
+                    resetWorld.lastReset = now;
                     save = true;
                 }
             }
@@ -304,12 +238,8 @@ public class EndResetWorker{
                 out.writeInt(0); // file version
                 out.writeObject(resetchunks);
                 out.writeObject(cvs);
-                out.writeObject(reg);
-                out.writeLong(inactiveMin);
                 out.writeObject(dontHandle);
                 out.writeObject(forceReset);
-                out.writeObject(dragonAmount);
-                out.writeObject(suspendedTasks);
 
                 Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, new AsyncSaveThread(out));
             } catch (Exception ex) {
