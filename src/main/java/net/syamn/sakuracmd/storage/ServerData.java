@@ -23,12 +23,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class ServerData {
     final private static String fileName = "serverData.yml";
-    
+
     private FileConfiguration conf;
     private File pluginDir;
-    
+
     private final SakuraCmd plugin;
-    
+
     /**
      * Constructor
      * @param plugin
@@ -37,7 +37,7 @@ public class ServerData {
         this.plugin = plugin;
         this.pluginDir = plugin.getDataFolder();
     }
-    
+
     /**
      * Load and restore configuration
      * @param initialLoad
@@ -46,13 +46,13 @@ public class ServerData {
     public void loadRestore(){
         try{
             FileStructure.createDir(pluginDir);
-            
+
             final File file = new File(pluginDir, fileName);
             if (!file.exists()){
                 LogUtil.info(fileName + " is not found! Skipping restore server data!");
                 return;
             }
-            
+
             conf = new YamlConfiguration();
             conf.load(file);
         }catch (Exception ex){
@@ -60,11 +60,11 @@ public class ServerData {
             ex.printStackTrace();
             return;
         }
-        
+
         // restore data
         restoreData();
     }
-    
+
     private void restoreData(){
         restoreFlymode();
     }
@@ -73,7 +73,7 @@ public class ServerData {
         if (obj == null){
             return;
         }
-        
+
         MemorySection table = (MemorySection) obj;
         int i = 0;
         for (final String name : table.getKeys(false)){
@@ -87,17 +87,17 @@ public class ServerData {
         FlymodeWorker.getInstance().onPluginEnabled();
         LogUtil.info("Restored " + i + " player(s) flying mode data!");
     }
-    
-    
+
+
     /**
      * Save configuraiton
      * @throws Exception
      */
     public void save(){
         conf = new YamlConfiguration();
-        
+
         buildSaveData();
-        
+
         try{
             FileStructure.createDir(pluginDir);
             conf.save(new File(pluginDir, fileName));
@@ -118,7 +118,7 @@ public class ServerData {
                 cs.set(entry.getKey(), entry.getValue().intValue());
                 i++;
             }
-            
+
             LogUtil.info("Saved " + i + " player(s) flying mode data!");
         }
     }

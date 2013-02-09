@@ -26,15 +26,16 @@ public class TpHereCommand extends BaseCommand{
         argLength = 1;
         usage = "[player] <- tp ";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         final Player target = Bukkit.getPlayer(args.get(0));
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
-        
+
         target.teleport(player, TeleportCause.COMMAND);
-        
+
         Util.message(target, "&aプレイヤー " + PlayerManager.getPlayer(player).getName() + " &aがあなたをテレポートしました");
         Util.message(sender, "&aプレイヤー " + PlayerManager.getPlayer(target).getName() + " &aをあなたにテレポートしました");
     }

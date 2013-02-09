@@ -28,7 +28,8 @@ public class RideCommand extends BaseCommand{
         argLength = 0;
         usage = "[player] <- ride player ";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         // eject entity
         if (args.size() < 1){
@@ -40,13 +41,13 @@ public class RideCommand extends BaseCommand{
                 return;
             }
         }
-        
+
         final Player target = Bukkit.getPlayer(args.get(0));
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         final SakuraPlayer sp = PlayerManager.getPlayer(target);
-        
+
         final Entity cur = player.getVehicle();
         if (cur != null){
             if (cur instanceof Player && ((Player) cur).equals(target)){
@@ -55,12 +56,12 @@ public class RideCommand extends BaseCommand{
                 cur.eject();
             }
         }
-        
+
         player.teleport(target, TeleportCause.COMMAND);
         if (target.getPassenger() != null){
             target.eject();
         }
-        
+
         plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
             @Override public void run(){
                 target.setPassenger(player);

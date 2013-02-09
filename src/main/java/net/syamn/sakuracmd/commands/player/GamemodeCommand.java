@@ -29,22 +29,23 @@ public class GamemodeCommand extends BaseCommand{
         usage = "[player] <- toggle gamemode";
     }
 
+    @Override
     public void execute() throws CommandException{
         if (args.size() == 0 && !isPlayer){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         final Player target = (args.size() > 0) ? Bukkit.getPlayer(args.remove(0)) : player;
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         final SakuraPlayer sp = PlayerManager.getPlayer(target);
-        
+
         // self-check
         if (!sender.equals(target) && !Perms.GAMEMODE_OTHER.has(sender)){
             throw new CommandException("&c他人のゲームモードを変更する権限がありません！");
         }
-        
+
         GameMode toMode = null;
         if (args.size() < 1){
             toMode = (target.getGameMode().equals(GameMode.SURVIVAL)) ? GameMode.CREATIVE : GameMode.SURVIVAL;
@@ -54,9 +55,9 @@ public class GamemodeCommand extends BaseCommand{
                 throw new CommandException("&c有効なゲームモードを指定してください: survival, creative, adventure");
             }
         }
-        
+
         target.setGameMode(toMode);
-        
+
         if (!sender.equals(target)){
             Util.message(sender, sp.getName() + "&3 のゲームモードを " + toMode.name() + " に変更しました！");
         }

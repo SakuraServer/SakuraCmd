@@ -25,7 +25,8 @@ public class LockdownCommand extends BaseCommand{
         argLength = 0;
         usage = "<- lockdown this server";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         ServerManager serv = plugin.getServerManager();
         if (!serv.isLockdown()){

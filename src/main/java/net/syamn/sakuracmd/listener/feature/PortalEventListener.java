@@ -6,7 +6,6 @@ package net.syamn.sakuracmd.listener.feature;
 
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.utils.LogUtil;
-import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
@@ -53,31 +52,31 @@ public class PortalEventListener implements Listener{
         event.useTravelAgent(false);
         event.setTo(toLoc);
     }
-    
+
     private Location getToLocation(Entity ent, Location from){
         if (ent == null || from == null){
             return null;
         }
-        
+
         final Environment fromEnv = from.getWorld().getEnvironment();
         if (Environment.THE_END.equals(fromEnv)) {
             return null;
         }
-        
+
         final int x = from.getBlockX(); // x, z = fix value
         final int z = from.getBlockZ();
-        
+
         World world = null;
         if (Environment.NORMAL.equals(fromEnv)) {
             world = Bukkit.getWorld(Worlds.main_nether); // goto nether
         } else if (Environment.NETHER.equals(fromEnv)) {
             world = Bukkit.getWorld(Worlds.main_world); // goto main
         }
-        
+
         if (world == null){
             return null;
         }
-        
+
         final int y = getFirstPortalY(world, x, z);
         if (y < 0) {
             if (ent instanceof Player){
@@ -85,13 +84,13 @@ public class PortalEventListener implements Listener{
             }
             return null;
         }
-        
+
         final Location ploc = ent.getLocation().clone();
         ploc.setWorld(world);
         ploc.setX(x + 0.5D);
         ploc.setY(y);
         ploc.setZ(z + 0.5D);
-        
+
         return ploc;
     }
     private int getFirstPortalY(final World w, final int x, final int z) {
@@ -106,7 +105,7 @@ public class PortalEventListener implements Listener{
         return -1;
     }
     // *** Entity teleport with portal events - End ***
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPortalCreate(final PortalCreateEvent event) {
         if (CreateReason.OBC_DESTINATION.equals(event.getReason())) {
@@ -114,7 +113,7 @@ public class PortalEventListener implements Listener{
             LogUtil.info("Portal auto-create event cancelled on World " + event.getWorld().getName());
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityCreatePortal(final EntityCreatePortalEvent event) {
         if (event.getPortalType() == PortalType.NETHER && event.getEntityType() == EntityType.PLAYER) {

@@ -23,14 +23,14 @@ import org.bukkit.entity.Player;
 public class AFKWorker {
     private final ConcurrentHashMap<Player, Long> playerTimeStamp = new ConcurrentHashMap<Player, Long>();
     private final ConcurrentHashMap<Player, Long> afkPlayers = new ConcurrentHashMap<Player, Long>();
-    
+
     private final AfkChecker afkChecker;
     private static AFKWorker instance = new AFKWorker();
-    
+
     private AFKWorker(){
         this.afkChecker = new AfkChecker();
     }
-    
+
     public static AFKWorker getInstance(){
         if (instance == null){
             synchronized (AFKWorker.class) {
@@ -44,21 +44,21 @@ public class AFKWorker {
     public static void dispose(){
         instance = null;
     }
-    
+
     public AfkChecker getAfkChecker(){
         return afkChecker;
     }
-    
+
     public void updateTimeStamp(final Player player){
         playerTimeStamp.put(player, System.currentTimeMillis());
     }
-    
+
     public void removePlayer(final Player player){
         playerTimeStamp.remove(player);
         afkPlayers.remove(player);
     }
-    
-    // ** AFK status setter/getter 
+
+    // ** AFK status setter/getter
     public void setAfk(final Player player){
         setAfk(player, null);
     }
@@ -66,11 +66,11 @@ public class AFKWorker {
         if (InvisibleWorker.getInstance().isInvisible(player)){
             return;
         }
-        
+
         String afkMsg = _("afkOn", I18n.PLAYER, PlayerManager.getPlayer(player.getName()).getName());
         if (message != null && !message.isEmpty()) afkMsg += ": " + message;
         Util.broadcastMessage(afkMsg, false);
-        
+
         afkPlayers.put(player, Long.valueOf(System.currentTimeMillis()));
         player.setSleepingIgnored(true);
     }
@@ -78,27 +78,27 @@ public class AFKWorker {
         if (!InvisibleWorker.getInstance().isInvisible(player)){
             Util.broadcastMessage(_("afkOff", I18n.PLAYER, PlayerManager.getPlayer(player.getName()).getName()), false);
         }
-        
+
         afkPlayers.remove(player);
         player.setSleepingIgnored(false);
     }
     public boolean isAfk(final Player player){
         return afkPlayers.containsKey(player);
     }
-    
+
     public void updatePlayer(final Player player){
         updateTimeStamp(player);
         if (isAfk(player)){
             setOnline(player);
         }
     }
-    
+
     private class AfkChecker implements Runnable{
         @Override
         public void run(){
             final long now = System.currentTimeMillis();
             final int afkTime = SCHelper.getInstance().getConfig().getAfkTimeInSec() * 1000;
-            
+
             for (final Player player : Bukkit.getOnlinePlayers()){
                 final Long last = playerTimeStamp.get(player);
                 if (last != null && !afkPlayers.containsKey(player) && (now - last) >= afkTime){

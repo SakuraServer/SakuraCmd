@@ -23,12 +23,13 @@ public class AFKCommand extends BaseCommand{
         argLength = 0;
         usage = "[message] <- toggle your AFK status";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         if (InvisibleWorker.getInstance().isInvisible(player)){
             throw new CommandException("&cあなたは透明モードが有効になっています！");
         }
-        
+
         AFKWorker worker = AFKWorker.getInstance();
         if (worker.isAfk(player)){
             worker.setOnline(player);

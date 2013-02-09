@@ -18,7 +18,7 @@ public enum Power {
     FLYMODE,
     SPEC_CHEST,
     ;
-    
+
     @Override
     public String toString(){
         return this.name().toLowerCase(Locale.ENGLISH);

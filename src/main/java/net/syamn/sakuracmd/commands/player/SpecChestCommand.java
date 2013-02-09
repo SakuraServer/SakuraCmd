@@ -29,26 +29,27 @@ public class SpecChestCommand extends BaseCommand{
         usage = "[player] <- toggle special chest mode";
     }
 
+    @Override
     public void execute() throws CommandException{
         if (args.size() == 0 && !isPlayer){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         final Player target = (args.size() > 0) ? Bukkit.getPlayer(args.get(0)) : player;
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         final SakuraPlayer sp = PlayerManager.getPlayer(target);
-        
+
         // self-check
         if (!sender.equals(target) && !Perms.SPECCHEST_OTHER.has(sender)){
             throw new CommandException("&c他人のチェスト拡張モードを変更する権限がありません！");
         }
-        
+
         if (sp.hasPower(Power.SPEC_CHEST)){
             // Remove power
             sp.removePower(Power.SPEC_CHEST);
-            
+
             if (!sender.equals(target)){
                 Util.message(sender, "&3" + sp.getName() + " &3のチェスト拡張モードを解除しました");
             }
@@ -57,7 +58,7 @@ public class SpecChestCommand extends BaseCommand{
         }else{
             // Add power
             sp.addPower(Power.SPEC_CHEST);
-            
+
             if (!sender.equals(target)){
                 Util.message(sender, "&3" + sp.getName() + " &3をチェスト拡張モードにしました");
             }

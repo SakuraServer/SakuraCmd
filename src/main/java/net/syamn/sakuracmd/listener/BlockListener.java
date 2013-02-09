@@ -29,7 +29,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
-import org.dynmap.Log;
 
 /**
  * BlockListener (BlockListener.java)
@@ -40,7 +39,7 @@ public class BlockListener implements Listener{
     public BlockListener (final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void stopObsidianGeneratorInNether(final BlockPhysicsEvent event) {
         final Block block = event.getBlock();
@@ -50,42 +49,43 @@ public class BlockListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPlaceNetherTop(final BlockPlaceEvent event) {
         final Block block = event.getBlock();
         if (!block.getWorld().getName().equals(Worlds.main_nether)){
             return;
         }
-        
+
         if (block.getY() >= 127 && !Perms.PLACE_NETHER_TOP.has(event.getPlayer())){
             Util.message(event.getPlayer(), "&cメインネザーの127以上には建築できません！");
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent event) {
         final Block block = event.getBlock();
         final Player player = event.getPlayer();
-        
+
         // Ice to water
         if (block.getTypeId() == 79 && Environment.NETHER.equals(block.getLocation().getWorld().getEnvironment())) {
             if (Perms.ICE_TO_WATER.has(player) && GameMode.SURVIVAL.equals(player.getGameMode())) {
                 plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+                    @Override
                     public void run() {
                         block.setTypeId(8, true); // set water
                     }
                 }, 0L);
             }
         }
-        
+
         // Skull to air
         if (block.getTypeId() == 144){
             event.setCancelled(true);
             block.setType(Material.AIR);
         }
-        
+
         // call hawkeye searcher
         if (block.getTypeId() == 56 && !GameMode.CREATIVE.equals(player.getGameMode()) && Worlds.getNormalWorlds().contains(block.getWorld().getName())){
             Integer prevTime = HawkEyeSearcher.lookupHistory.get(player.getName());
@@ -98,23 +98,23 @@ public class BlockListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPumpkinBreak(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
         final Block block = event.getBlock();
-        
+
         // アイテムID 86, 91 以外は返す
         if (!Worlds.isResource(block.getWorld().getName().toLowerCase(Locale.ENGLISH)) || (block.getTypeId() != 86 && block.getTypeId() != 91)) {
             return;
         }
-        
+
         // 手持ちアイテムチェック
         final ItemStack is = player.getItemInHand();
         if (is == null || is.getType() != Material.STICK) {
             return;
         }
-        
+
         // 爆発させる
         block.breakNaturally();
         block.getWorld().createExplosion(block.getLocation(), (float) 0.0, false);
@@ -127,7 +127,7 @@ public class BlockListener implements Listener{
             @Override
             public void run() {
                 List<Block> nexts = new ArrayList<Block>();
-                
+
                 Block check;
                 for (final BlockFace face : pumpkinSearchDirs) {
                     check = block.getRelative(face);
@@ -136,7 +136,7 @@ public class BlockListener implements Listener{
                             check.breakNaturally();
                         else
                             check.setTypeId(0);
-                        
+
                         block.getWorld().createExplosion(block.getLocation(), 0.1F, false);
                         nexts.add(check);
                     }
@@ -147,38 +147,38 @@ public class BlockListener implements Listener{
             }
         }, 4L);
     }
-    
+
     /*
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockRedstone(final BlockRedstoneEvent event) {
         final Block block = event.getBlock();
         final BlockState state = event.getBlock().getState();
-        
+
         if (state instanceof Sign && event.getNewCurrent() > 0) {
             final Sign sign = (Sign) state;
-            
+
             if (sign.getLine(0).equals("§1[Sound]")) {
                 final Location bloc = block.getLocation();
-                
+
                 // get sound
                 final String sound = sign.getLine(1) + sign.getLine(2);
-                
+
                 // get volume, radius
                 String[] line4 = sign.getLine(3).split(":");
                 if (line4.length != 2 || !Util.isFloat(line4[0]) || !Util.isDouble(line4[1])) return;
                 float vol = Float.parseFloat(line4[0]);
                 final double radius = Double.parseDouble(line4[1]);
-                
+
                 if (sound.length() <= 0 || vol <= 0F || radius <= 0D) return;
-                
+
                 for (Player player : block.getWorld().getPlayers()) {
                     Location ploc = player.getLocation();
                     if (ploc.distance(bloc) > radius) {
                         continue;
                     }
-                    
+
                     ((CraftPlayer) player).getHandle().playerConnection.sendPacket(new Packet62NamedSoundEffect(sound, ploc.getX(), ploc.getY(), ploc.getZ(), vol, 1.0F));
-                    
+
                 }
             }
         }

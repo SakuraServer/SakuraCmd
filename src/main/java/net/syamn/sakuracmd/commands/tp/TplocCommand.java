@@ -30,25 +30,26 @@ public class TplocCommand extends BaseCommand{
         argLength = 3;
         usage = "<x> <y> <z> [world] [player] <- tp to location";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         if (!StrUtil.isDouble(args.get(0)) || !StrUtil.isDouble(args.get(1)) || !StrUtil.isDouble(args.get(2))){
             throw new CommandException("&c数値ではない座標情報が含まれています！");
         }
-        
+
         final double x = Double.parseDouble(args.remove(0));
         final double y = Double.parseDouble(args.remove(0));
         final double z = Double.parseDouble(args.remove(0));
-        
+
         World world = player.getWorld();
         Player target = player;
-        
+
         if (args.size() >= 1){
             world = Bukkit.getWorld(args.get(0));
             if (world == null){
                 throw new CommandException("&cワールド " + args.get(0) + " が見つかりません！");
             }
-            
+
             if (args.size() >= 2){
                 target = Bukkit.getPlayer(args.remove(1));
                 if (target == null || !target.isOnline()){
@@ -56,12 +57,12 @@ public class TplocCommand extends BaseCommand{
                 }
             }
         }
-        
+
         final SakuraPlayer sp = PlayerManager.getPlayer(target);
         final Location toLoc = new Location(world, x, y, z);
-        
+
         target.teleport(toLoc, TeleportCause.COMMAND);
-        
+
         if (!sender.equals(target)){
             Util.message(sender, "&a" + sp.getName() + " &aを " + StrUtil.getLocationString(toLoc) + " に移動させました");
         }

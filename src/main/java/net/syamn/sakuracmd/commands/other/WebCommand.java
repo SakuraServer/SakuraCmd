@@ -28,13 +28,13 @@ public class WebCommand extends BaseCommand {
         argLength = 1;
         usage = "<- web link commands";
     }
-    
+
     private static final String reset = "\u00A7r";
-    
+
     @Override
     public void execute() throws CommandException {
         String action = args.remove(0);
-        
+
         // web tploc [name] (world) [x] [y] [z] (yaw) (pitch) [message]
         if (action.equalsIgnoreCase("tploc") && args.size() >= 8){
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
@@ -44,19 +44,19 @@ public class WebCommand extends BaseCommand {
             }, 1L);
             return;
         }
-        
+
         throw new CommandException("&cUndefined command!");
     }
-    
+
     private void tploc() {
         final String targetName = args.remove(0);
-        
+
         Player target = Bukkit.getPlayer(targetName);
         if (target == null || !target.isOnline()) {
             LogUtil.warning("Teleport aborted. Player offline: " + targetName);
             return;
         }
-        
+
         // check location
         World world = target.getWorld();
         if (!StrUtil.isDouble(args.get(0))) {
@@ -71,26 +71,26 @@ public class WebCommand extends BaseCommand {
             LogUtil.warning("Teleport aborted. Invalid location: " + args.get(0) + "," + args.get(1) + "," + args.get(2));
             return; // invalid location
         }
-        
+
         double x = Double.parseDouble(args.remove(0));
         double y = Double.parseDouble(args.remove(0));
         double z = Double.parseDouble(args.remove(0));
         Location loc = new Location(world, x, y, z);
-        
+
         // check yaw/pitch
         if (args.size() >= 2 && StrUtil.isFloat(args.get(0)) && StrUtil.isFloat(args.get(1))) {
             loc.setYaw(Float.valueOf(args.remove(0)));
             loc.setPitch(Float.valueOf(args.remove(0)));
         }
-        
+
         String msg = (args.size() > 0) ? StrUtil.join(args, " ") : null;
-        
+
         // do action
         target.teleport(loc, TeleportCause.PLUGIN);
         if (msg != null) Util.message(target, msg);
         LogUtil.info("Teleported player:" + target.getName() + " to " + loc.getWorld().getName() + ":" + loc.getX() + "," + loc.getY() + "," + loc.getZ());
     }
-    
+
     @Override
     public boolean permission(CommandSender sender) {
         if (sender instanceof Player){

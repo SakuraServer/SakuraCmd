@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
  */
 public class OpenInvCommand extends BaseCommand{
     private static HashMap<Player, String> historyMap = new HashMap<Player, String>();
-    
+
     public OpenInvCommand(){
         bePlayer = true;
         name = "openinv";
@@ -32,14 +32,15 @@ public class OpenInvCommand extends BaseCommand{
         argLength = 0;
         usage = "[name] <- open others inventory";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         // get opened history
         String history = historyMap.get(player);
         if (args.size() == 0 && (history == null || history == "")){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         // choose target
         String targetName = null;
         if (args.size() > 0){
@@ -47,10 +48,10 @@ public class OpenInvCommand extends BaseCommand{
         }else{
             targetName = history;
         }
-        
+
         boolean online = true;
         Player target = Bukkit.getPlayerExact(targetName);
-        
+
         if (target == null){
             target = Bukkit.getPlayer(targetName);
         }
@@ -61,29 +62,29 @@ public class OpenInvCommand extends BaseCommand{
         if (target == null){
             throw new CommandException("&cプレイヤー " + targetName + " が見つかりません！");
         }
-        
+
         // self check -- removed
         /*
         if (target.equals(player)){
             throw new CommandException("&c自分のインベントリは開けません！");
         }
-        */
-        
+         */
+
         // save history
         historyMap.put(player, target.getName());
-        
+
         // create
         CBPlayerInventory inv = CBPlayerInventory.inventories.get(target.getName().toLowerCase(Locale.ENGLISH));
         if (inv == null){
             inv = new CBPlayerInventory(target, online);
             CBPlayerInventory.inventories.put(target.getName().toLowerCase(Locale.ENGLISH), inv);
         }
-        
+
         // open
         player.openInventory(inv.getBukkitInventory());
-        
+
         // logg
         SakuraCmdUtil.sendlog(sender, PlayerManager.getPlayer(player).getName() + "&6 が &7"
-                        + (online ? (PlayerManager.getPlayer(target).getName()) : target.getName()) + " &6のインベントリを開きました");
+                + (online ? (PlayerManager.getPlayer(target).getName()) : target.getName()) + " &6のインベントリを開きました");
     }
 }

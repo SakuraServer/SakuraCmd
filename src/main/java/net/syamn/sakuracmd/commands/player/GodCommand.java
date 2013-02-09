@@ -29,17 +29,18 @@ public class GodCommand extends BaseCommand{
         usage = "[player] <- toggle godmode";
     }
 
+    @Override
     public void execute() throws CommandException{
         if (args.size() == 0 && !isPlayer){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         final Player target = (args.size() > 0) ? Bukkit.getPlayer(args.get(0)) : player;
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         final SakuraPlayer sp = PlayerManager.getPlayer(target);
-        
+
         if (sp.hasPower(Power.GODMODE)){
             sp.removePower(Power.GODMODE);
             if (!sender.equals(target)){

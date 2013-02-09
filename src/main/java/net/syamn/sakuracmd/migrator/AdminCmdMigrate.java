@@ -27,53 +27,53 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class AdminCmdMigrate implements IMigrate{
     final private SakuraCmd plugin;
     final private String sender;
-    
+
     private File pluginDir;
     private File adminCmdDir;
-    
+
     public AdminCmdMigrate(final SakuraCmd plugin, final CommandSender sender){
         this.plugin = plugin;
         this.sender = sender.getName();
         init();
     }
-    
+
     @Override
     public void init() {
         LogUtil.info("Starting migrate from AdminCmd plugin by " + sender);
-        
+
         this.pluginDir = plugin.getDataFolder();
         this.adminCmdDir = new File("plugins" + File.separator + "AdminCmd" + File.separator);
-        
+
         importPlayerData();
         importOtherFiles();
-        
+
         LogUtil.info("Finished migrate from AdminCmd plugin!");
     }
 
     @Override
     public void importPlayerData() {
         LogUtil.info("Starting to migrate PlayerData..");
-        
+
         final File fromDir = new File(adminCmdDir, "userData");
         final File toDir = new File(pluginDir, "userData");
-        
+
         // target files
         File[] files = fromDir.listFiles();
         if (files == null || files.length == 0){
             LogUtil.warning("Migrate target players not found!");
             return;
         }
-        
+
         // make dir if not exist
         if (!toDir.exists()){
             toDir.mkdirs();
         }
-        
+
         int count = 0;
         File toFile;
         BufferedReader br = null;
         PrintWriter pw = null;
-        
+
         List<String> failed = new ArrayList<String>();
         List<String> names = new ArrayList<String>();
         YamlConfiguration conf = null;
@@ -83,26 +83,26 @@ public class AdminCmdMigrate implements IMigrate{
                     LogUtil.warning("Skipping directory: " + file.getPath());
                     continue; // skip directory
                 }
-                
+
                 toFile = new File(toDir, file.getName());
                 if (toFile.exists()){
                     LogUtil.warning("Skipping exist file: " + file.getPath());
                     continue; // skip already exists
                 }
-                
+
                 // Copy file
                 try{
                     br = new BufferedReader(new FileReader(file));
                     pw = new PrintWriter(new BufferedWriter(new FileWriter(toFile)));
-                    
+
                     String line;
                     while ((line = br.readLine()) != null){
-                        if (line.indexOf("!!") != -1){ 
+                        if (line.indexOf("!!") != -1){
                             continue; //while, skip serialized line
                         }
                         pw.println(line);
                     }
-                    
+
                     pw.close();
                     br.close();
                 }catch (Exception ex){
@@ -110,31 +110,31 @@ public class AdminCmdMigrate implements IMigrate{
                     failed.add(file.getName());
                     continue; // skip directory
                 }
-                
+
                 // Update YAML (toFile)
                 try {
                     conf = new YamlConfiguration();
                     conf.load(toFile);
-                    
+
                     // remove infos section
                     conf.set("infos.lastLoc", null);
                     conf.set("infos.presentation", null);
                     conf.set("infos.firstTime", null);
                     conf.set("infos.immunityLvl", null);
                     conf.set("infos.totalTime", null);
-                    
+
                     // remove home, kitsUse
                     conf.set("home", null);
                     conf.set("kitsUse", null);
                     conf.set("powers", null);
-                    
+
                     conf.save(toFile);
                 }catch(Exception ex){
                     LogUtil.warning("Checking Failed(" + toFile.getName() + "): " + ex.getMessage());
                     failed.add(toFile.getName());
                     continue;
                 }
-                
+
                 count++;
                 names.add(file.getName());
                 if (count % 10 == 0){

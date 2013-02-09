@@ -28,7 +28,7 @@ public class MfmfCommand extends BaseCommand {
         argLength = 0;
         usage = "<player> <- mfmf!";
     }
-    
+
     @Override
     public void execute() throws CommandException {
         if (args.size() == 0) {
@@ -44,18 +44,18 @@ public class MfmfCommand extends BaseCommand {
             if (target.equals(sender)){
                 throw new CommandException("&c自分をもふもふできません！");
             }
-            
+
             final SakuraPlayer sp = PlayerManager.getPlayer(target);
             final String senderName = (isPlayer) ? PlayerManager.getPlayer(player).getName() : sender.getName();
-            
+
             boolean paid = false;
             if (isPlayer && SCHelper.getInstance().isEnableEcon()){
                 paid = EconomyUtil.takeMoney(player, 150.0D); // -150 Coin
             }
-            
+
             if (paid){
                 EconomyUtil.addMoney(target, 100.0D); // +100 Coin
-                
+
                 final int total = PlayerManager.getPlayer(target).getData().addMofCount(); // mof count++
                 Util.message(target, " &6'" + senderName + "'&aにもふもふされました！(+100Coin)(" + total + "回目)");
                 Util.message(sender, " &6'" + sp.getName() + "'&aをもふもふしました！&c(-150Coin)");
@@ -65,7 +65,7 @@ public class MfmfCommand extends BaseCommand {
             }
         }
     }
-    
+
     @Override
     public boolean permission(CommandSender sender) {
         return true;

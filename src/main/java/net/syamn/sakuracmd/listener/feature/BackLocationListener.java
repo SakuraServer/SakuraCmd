@@ -27,12 +27,12 @@ public class BackLocationListener implements Listener{
         }
         setLastLocation(event.getPlayer());
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerRespawn(final PlayerRespawnEvent event){
         setLastLocation(event.getPlayer());
     }
-    
+
     private void setLastLocation(final Player player){
         if (player == null || !player.isOnline()){
             return;

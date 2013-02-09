@@ -40,12 +40,12 @@ public class EntityListener implements Listener{
     public EntityListener (final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     //@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerDamage(final EntityDamageEvent event){
         // check GodMode -> moved to PlayerListener
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
         // スポナー制限
@@ -66,30 +66,30 @@ public class EntityListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void targetCancelOnGoldEquipment(final EntityTargetLivingEntityEvent event) {
         final Entity ent = event.getEntity();
         final LivingEntity targetEnt = event.getTarget();
-        
+
         if (!targetEnt.getType().equals(EntityType.PLAYER)) {
             return;
         }
         if (ent.getLastDamageCause() != null && ent.getLastDamageCause().getCause().equals(DamageCause.ENTITY_ATTACK)) {
             return;
         }
-        
+
         final Player player = (Player) targetEnt;
         //final ItemStack hold = player.getItemInHand(); // skip inHand item check
         final ItemStack[] armors = player.getInventory().getArmorContents();
-        
+
         // アーマーが一つでも null または AIR ならリターン
         for (int i = 0; i < armors.length; ++i) {
             if (armors[i].getType() == null || armors[i].getType() == Material.AIR) {
                 return;
             }
         }
-        
+
         // アーマーが金装備ならターゲット拒否
         if (armors[0].getType() == Material.GOLD_BOOTS && armors[1].getType() == Material.GOLD_LEGGINGS && armors[2].getType() == Material.GOLD_CHESTPLATE && armors[3].getType() == Material.GOLD_HELMET) {
             event.setCancelled(true);
@@ -97,16 +97,16 @@ public class EntityListener implements Listener{
     }
 
 
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerFallDamage(final EntityDamageEvent event){
         if (!DamageCause.FALL.equals(event.getCause()) || !(event.getEntity() instanceof Player)){
             return;
         }
         final Player player = (Player) event.getEntity();
-        
+
         Block check = player.getLocation().getBlock().getRelative(BlockFace.DOWN);
-        
+
         if (check.getType() == Material.AIR && check.getRelative(BlockFace.UP).getType() == Material.AIR){
             check = check.getRelative(BlockFace.DOWN);
             //Actions.message(null, player, "Shifted down block");//debug
@@ -129,7 +129,7 @@ public class EntityListener implements Listener{
                     }
                 }, 0L);
                 break;
-            */
+             */
             case LEAVES:
                 event.setCancelled(true);
                 event.setDamage(0);
@@ -144,25 +144,25 @@ public class EntityListener implements Listener{
         if (!isCheckEntity(event.getEntity()) || event.getDroppedExp() <= 0){
             return;
         }
-        
+
         final Entity ent = event.getEntity();
         final List<Entity> ents = ent.getNearbyEntities(0.75D, 1.75D, 0.75D);
-        
+
         int i = 0;
         for (final Entity e : ents){
             if (isCheckEntity(e)) i++;
         }
-        
+
         if (i >= 3){
             event.setDroppedExp(0);
             event.getDrops().clear();
-            
+
             String locStr = StrUtil.getLocationString(ent.getLocation().getBlock());
             SakuraCmdUtil.sendlog("&6経験値トラップを検出: " + locStr);
             LogUtil.warning("ExpTrap detected at " + locStr);
         }
     }
-    
+
     private boolean isCheckEntity(final Entity ent){
         if (ent == null) return false;
         switch (ent.getType()){

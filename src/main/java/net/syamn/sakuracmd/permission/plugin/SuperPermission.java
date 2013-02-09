@@ -19,7 +19,7 @@ import org.bukkit.permissions.Permissible;
  */
 public class SuperPermission implements IPermissionPlugin{
     public SuperPermission(){
-        
+
     }
 
     @Override
@@ -57,7 +57,7 @@ public class SuperPermission implements IPermissionPlugin{
         if(!(sender instanceof Player)){
             return true;
         }
-        
+
         return sender.hasPermission(node);
     }
 }

@@ -29,30 +29,31 @@ public class RegisterCommand extends BaseCommand{
         argLength = 0;
         usage = "<- regist to website";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         Util.message(sender, "&6登録キーを発行しています...");
-        
+
         final Database db = Database.getInstance();
         if (db == null || !db.isConnected()){
             throw new CommandException("&c現在データベースと接続されていません！");
         }
-        
+
         final int pid = PlayerManager.getPlayer(player).getData().getPlayerID();
-        
+
         // check if already registered
         HashMap<Integer, ArrayList<String>> records = db.read("SELECT * FROM `user_data` WHERE `player_id` = ?", pid);
         if (records != null && records.size() > 0){
             throw new CommandException("&cあなたは既にアカウントを登録しています！");
         }
-        
+
         // generate random 4-chars regist key
         // not use following letters: IL1 il O0o
         final String registKey = RandomStringUtils.random(4, "abcdefghjkmnpqrstuvwxABCDEFGHJKMNPQRSTUVWXYZ23456789");
-        
+
         // expired time
         final int expired = TimeUtil.getCurrentUnixSec().intValue() + (60 * 30); // available for 30 minutes
-        
+
         final boolean success = db.write("REPLACE INTO `regist_key` (`player_id`, `key`, `expired`) VALUES (?, ?, ?)", pid, registKey, expired);
         if (!success){
             throw new CommandException("&c登録に失敗しました！時間を置いてやり直してください！");

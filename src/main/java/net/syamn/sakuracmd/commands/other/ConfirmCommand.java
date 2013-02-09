@@ -22,14 +22,15 @@ public class ConfirmCommand extends BaseCommand{
         argLength = 0;
         usage = "<- confirm commands";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         boolean ran = ConfirmQueue.getInstance().confirmQueue(sender);
         if (!ran) {
-            throw new CommandException("&cあなたの実行待ちコマンドはありません！"); 
+            throw new CommandException("&cあなたの実行待ちコマンドはありません！");
         }
     }
-    
+
     @Override
     public boolean permission(CommandSender sender){
         return true; // same as super class

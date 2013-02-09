@@ -25,7 +25,7 @@ public class PermissionManager {
     private static PermissionManager instance = null;
     private static PermissionType permType;
     private static IPermissionPlugin permPlugin = null;
-    
+
     /**
      * Get Instance
      * @return
@@ -40,18 +40,18 @@ public class PermissionManager {
         }
         return instance;
     }
-    
+
     public static void setupPermissions(final SakuraCmd plugin){
         final String selected = SCHelper.getInstance().getConfig().getPermissionCtrl();
         boolean found = true;
-        
+
         if ("permissionsex".equalsIgnoreCase(selected) || "pex".equalsIgnoreCase(selected)){
             Plugin testPex = plugin.getServer().getPluginManager().getPlugin("PermissionsEx");
             if (testPex == null) testPex = plugin.getServer().getPluginManager().getPlugin("permissionsex");
             if (testPex == null){
                 LogUtil.warning("Selected PermissionsEx for permission control, but NOT found this plugin!");
             }
-            
+
             try{
                 setPEX(ru.tehkode.permissions.bukkit.PermissionsEx.getPermissionManager());
             }catch(Exception ex){
@@ -64,24 +64,24 @@ public class PermissionManager {
         else{
             found = false;
         }
-        
+
         if (found && permPlugin == null){
             setSuperPerms();
         }
-        
+
         // デフォルトではSuperPermsを使用
         if (!found){
             LogUtil.warning("Valid permissions name not selected!");
             setSuperPerms();
         }
-        
+
         LogUtil.info("Using " + permType.name() + " for permission control.");
     }
-    
+
     public PermissionType getPermType(){
         return permType;
     }
-    
+
     private static void setPEX(final ru.tehkode.permissions.PermissionManager pex){
         if (!PermissionType.PEX.equals(permType)){
             permType = PermissionType.PEX;
@@ -96,9 +96,9 @@ public class PermissionManager {
             LogUtil.info("Successfully linked with SuperPerms!");
         }
     }
-    
-    
-    
+
+
+
     /* ********** */
     public static String getPrefix(final Player player){
         return permPlugin.getPrefix(player);
@@ -106,7 +106,7 @@ public class PermissionManager {
     public static String getSuffix(final Player player){
         return permPlugin.getSuffix(player);
     }
-    
+
     public Set<Player> getPlayers(final String groupName) throws NotSupportedException{
         return permPlugin.getPlayers(groupName);
     }
@@ -116,7 +116,7 @@ public class PermissionManager {
     public static boolean isInGroup(final Player player, final String groupName) throws NotSupportedException{
         return permPlugin.isInGroup(player, groupName);
     }
-    
+
     public static boolean hasPerm(final Permissible sender, final Perms perm){
         return permPlugin.hasPerm(sender, perm);
     }

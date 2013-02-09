@@ -26,11 +26,11 @@ public enum Perms {
     TPLOC ("tp.tploc"),
     BACK ("tp.back"),
     RIDE ("tp.ride"),
-    
+
     // Server Commands
     LOCKDOWN ("server.lockdown"),
     LOCKDOWN_BYPASS ("server.lockdown.bypass"),
-    
+
     // Player Commands
     AFK ("player.afk"),
     INVISIBLE ("player.invisible"),
@@ -47,10 +47,10 @@ public enum Perms {
     SPECCHEST_OTHER ("player.specchest.other"),
     NO_PICKUP ("player.nopickup"),
     NO_PICKUP_OTHER ("player.nopickup.other"),
-    
+
     // World Commands
     WEATHER ("world.weather"),
-    
+
     // Database Commands
     REGISTER ("db.register"),
     PASSWORD ("db.password"),
@@ -61,30 +61,30 @@ public enum Perms {
     END_RESET ("admin.endreset"),
     ADMIN ("admin.admin"),
     SAKURACMD ("admin.sakuracmd"),
-    
-     // Spec Permissions
+
+    // Spec Permissions
     INV_CANSEE ("spec.cansee"),
     HIDE_GEOIP ("spec.hidegeoip"),
     TRUST ("spec.trust"),
     LOG ("spec.log"),
     LOG_HIDE ("spec.log.hide"),
     PLACE_NETHER_TOP ("spec.place.nethertop"),
-    
+
     // Feature
     RIDE_PLAYER ("feature.ride"),
     RIDE_ALLENTITY ("feature.ride.all"),
     ICE_TO_WATER ("feature.icetowater"),
-    
+
     // Bypass permissions
     BYPASS_CREATIVE_ITEM ("bypass.creativeitem"),
-    
+
     // Tab color
     TAB_RED ("tab.red"),
     TAB_PURPLE ("tab.purple"),
     TAB_AQUA ("tab.aqua"),
     TAB_NONE ("tab.none"),
     TAB_GRAY ("tab.gray"),
-    
+
     // Rei's Minimap
     REIS_DEFAULT ("reisminimap.default"),
     ;
@@ -116,7 +116,7 @@ public enum Perms {
         //return perm.hasPermission(node); // only support SuperPerms
         return PermissionManager.hasPerm(perm, this);
     }
-    
+
     /**
      * Send message to players has this permission.
      * @param message send message.
@@ -128,7 +128,7 @@ public enum Perms {
             }
         }
     }
-    
+
     public String getNode(){
         return this.node;
     }

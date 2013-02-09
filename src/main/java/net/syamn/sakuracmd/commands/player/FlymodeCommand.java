@@ -36,7 +36,7 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
         argLength = 0;
         usage = "<- buy flymode";
     }
-    
+
     private double getCost(){
         return SCHelper.getInstance().getConfig().getFlymodeCost();
     }
@@ -47,13 +47,14 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
         return SCHelper.getInstance().getConfig().getFlymodePlayersLimit();
     }
 
+    @Override
     public void execute() throws CommandException{
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
-        
+
         if (args.size() > 0 && args.get(0).equalsIgnoreCase("list")){
             // Show flymode players list
             Map<String, Integer> players = FlymodeWorker.getInstance().getFlymodePlayers();
-            
+
             if (players.size() == 0){
                 Util.message(sender, "&a現在飛行権が有効なプレイヤーはいません");
             }else{
@@ -72,15 +73,15 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
                 Util.message(player, "&bあなたはあと &a" + FlymodeWorker.getInstance().getRemainTime(player) + "間 &b飛行可能です");
                 return;
             }
-            
+
             ConfirmQueue.getInstance().addQueue(sender, this, null, 15);
-            
+
             Util.message(sender, "&6現在の飛行権価格は &a" + getDuration() + "分間 " + getCost() + " Coin &6です");
             Util.message(sender, "&6一部ワールドでのみ飛行可能になります");
             Util.message(sender, "&6本当に購入しますか？ &a/confirm&6 コマンドで続行します。");
         }
     }
-    
+
     @Override
     public void executeQueue(QueuedCommand queued){
         if (!Worlds.isFlyAllowed(player.getWorld().getName())){
@@ -95,32 +96,32 @@ public class FlymodeCommand extends BaseCommand implements Queueable{
             Util.message(sender, "&c同時に飛行可能な最大人数に達しています！ (" + FlymodeWorker.getInstance().getPlayersCount() + "/" + getMaxPlayers() + ")");
             return;
         }
-        
+
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
-        
+
         if (sp.hasPower(Power.FLY) || sp.hasPower(Power.FLYMODE)){
             Util.message(sender, "&cあなたは飛行モード、または飛行権限が既に有効になっています！");
             return;
         }
-        
+
         // pay cost
         if (!SCHelper.getInstance().isEnableEcon()){
             Util.message(sender, "&c経済システムが動作していないため使えません！");
             return;
         }
-        
+
         double cost = getCost();
         boolean paid = EconomyUtil.takeMoney(player, cost);
         if (!paid){
             Util.message(sender, "&cお金が足りません！ " + cost + "Coin必要です！");
             return;
         }
-        
+
         int minute = getDuration();
-        
+
         final FlymodeWorker worker = FlymodeWorker.getInstance();
         worker.enableFlymode(sp, minute);
-        
+
         Util.message(player, "&a飛行モードが " + minute + "分間 有効になりました！");
         LogUtil.info(player.getName() + " is bought flying mode: " + minute + " minutes for " + cost + " coins");
         SakuraCmdUtil.sendlog(player, sp.getName() + " &aが飛行権限を購入しました");

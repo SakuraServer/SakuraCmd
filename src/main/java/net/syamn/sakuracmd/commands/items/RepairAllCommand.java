@@ -27,17 +27,18 @@ public class RepairAllCommand extends BaseCommand{
         argLength = 0;
         usage = "[player] <- repair your all items";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         if (args.size() == 0 && !isPlayer){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         final Player target = (args.size() > 0) ? Bukkit.getPlayer(args.get(0)) : player;
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
-        
+
         for (final ItemStack item : target.getInventory().getContents()){
             if (item != null && ItemUtil.repairable(item.getTypeId())){ // TODO add repairable check
                 item.setDurability((short) 0);
@@ -48,7 +49,7 @@ public class RepairAllCommand extends BaseCommand{
                 item.setDurability((short) 0);
             }
         }
-        
+
         if (!sender.equals(target)){
             Util.message(sender, "&a" + PlayerManager.getPlayer(target).getName() + " &aの全アイテムが修復されました");
         }

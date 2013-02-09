@@ -21,28 +21,28 @@ import org.junit.Test;
  */
 public class SakuraCmdTest {
     private transient List<Player> playerList;
-    
+
     @Before
     public void setUp(){
         playerList = new ArrayList<Player>();
     }
-    
+
     @Test
     public void addPlayerTest(){
         Player p = addPlayer("testPlayer1");
         log("addPlayerTest passed");
     }
-    
+
     @After
     public void tearDown(){
         playerList.clear();
         System.gc();
     }
-    
+
     private void log(String str){
         System.out.println(str);
     }
-    
+
     private Player addPlayer(String name){
         Player player = mock(Player.class);
         when(player.getName()).thenReturn(name);

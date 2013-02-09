@@ -15,9 +15,9 @@ public class ServerManager {
     public ServerManager(final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     private boolean lockdown = false;
-    
+
     public void setLockdown(boolean flag){
         this.lockdown = flag;
     }

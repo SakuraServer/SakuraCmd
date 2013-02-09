@@ -23,16 +23,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class PlayerData{
     private final static String SEPARATOR = System.getProperty("file.separator");
     private final static String dataDir = "userData";
-    
+
     private final String playerName;
     private int playerID = 0;
     private YamlConfiguration conf = new YamlConfiguration();
     private File file;
     private boolean saved = true;
-    
+
     /* Transient status */
     // --> moved to SakuraPlayer
-    
+
     /* Saves values*/
     // infos:
     private long lastConnection = 0L;
@@ -40,11 +40,11 @@ public class PlayerData{
     private String lastIP = "";
     private int mofCount = 0;
     private Location lastLocation = null;
-    
+
     // powers:
     private ArrayList<Power> powers = new ArrayList<Power>();
     private int flymodeTime = 0;
-    
+
     /* ************************** */
 
     public PlayerData(final String playerName){
@@ -56,7 +56,7 @@ public class PlayerData{
         this.playerName = playerName;
         load(file);
     }
-    
+
     private boolean load(final File file){
         this.file = file;
         if (!file.exists()){
@@ -67,11 +67,11 @@ public class PlayerData{
                 throw new IllegalStateException("Could not create plaer data file: " + file.getPath());
             }
         }
-        
+
         try {
             conf = new YamlConfiguration();
             conf.load(file);
-            
+
             // load infos
             ConfigurationSection csi = conf.getConfigurationSection("infos");
             if (csi != null){
@@ -81,7 +81,7 @@ public class PlayerData{
                 this.mofCount = csi.getInt("mofCount", 0);
                 this.lastLocation = ParseUtil.stringToLocation(csi.getString("lastLocation", ""));
             }
-            
+
             // load powers
             ConfigurationSection csp = conf.getConfigurationSection("powers");
             powers.clear();
@@ -104,7 +104,7 @@ public class PlayerData{
             LogUtil.warning("Could not load " + playerName + " data! Not connected to DB!");
             return false;
         }
-        
+
         playerID = db.getInt("SELECT `player_id` FROM `user_id` WHERE `player_name` = ?", playerName);
         if (playerID == 0){
             // not exists on base db, add as new player
@@ -117,10 +117,10 @@ public class PlayerData{
                 LogUtil.info("Added new player data to web database: " + playerName); // TODO for debug?
             }
         }
-        
+
         return true;
     }
-    
+
     public boolean save(final boolean force){
         if (!saved || force){
             try{
@@ -133,7 +133,7 @@ public class PlayerData{
                 if (lastLocation != null){
                     csi.set("lastLocation", ParseUtil.locationToString(lastLocation));
                 }
-                
+
                 // save powers
                 ConfigurationSection csp = conf.createSection("powers");
                 for (final Power p : Power.values()){
@@ -141,7 +141,7 @@ public class PlayerData{
                         csp.set(p.toString(), true);
                     }
                 }
-                
+
                 conf.save(file);
             }catch (Exception ex){
                 ex.printStackTrace();
@@ -154,22 +154,22 @@ public class PlayerData{
         // TODO nothing to do atm
         return true;
     }
-    
+
     public String getPlayerName(){
         return this.playerName;
     }
     public int getPlayerID(){
         return this.playerID;
     }
-    
+
     public static PlayerData getDataIfExists(final String playerName){
         final String fileName = SakuraCmd.getInstance().getDataFolder() + SEPARATOR + dataDir + SEPARATOR + playerName + ".yml";
         final File file = new File(fileName);
         return (file.exists()) ? new PlayerData(playerName, file) : null;
     }
-    
+
     /* Getter/Setter */
-    
+
     // infos:
     // lastConnection
     public void updateLastConnection(){
@@ -179,7 +179,7 @@ public class PlayerData{
     public long getLastConnection(){
         return lastConnection;
     }
-    
+
     // lastDisconnect
     public void updateLastDisconnect(){
         lastDisconnect = System.currentTimeMillis();
@@ -188,7 +188,7 @@ public class PlayerData{
     public long getLastDisconnect(){
         return lastDisconnect;
     }
-    
+
     // last-ip
     public void setLastIP(final String ip){
         this.lastIP = ip;
@@ -197,7 +197,7 @@ public class PlayerData{
     public String getLastIP(){
         return this.lastIP;
     }
-    
+
     // mofCount
     public int addMofCount(){
         this.mofCount++;
@@ -216,7 +216,7 @@ public class PlayerData{
     public Location getLastLocation(){
         return this.lastLocation;
     }
-    
+
     // powers:
     public boolean hasPower(final Power power){
         return powers.contains(power);

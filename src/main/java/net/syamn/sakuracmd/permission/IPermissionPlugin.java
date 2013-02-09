@@ -22,7 +22,7 @@ public interface IPermissionPlugin {
     public abstract Set<Player> getPlayers(String groupName) throws NotSupportedException;
     public abstract String getGroupName(Player player) throws NotSupportedException;
     public abstract boolean isInGroup(Player player, String groupName) throws NotSupportedException;
-    
+
     public abstract boolean hasPerm(Permissible sender, Perms perm);
     public abstract boolean hasPerm(Permissible sender, String node);
 }

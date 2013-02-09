@@ -46,21 +46,21 @@ import net.syamn.sakuracmd.commands.world.WeatherCommand;
 public class CommandRegister {
     private static Set<BaseCommand> getCommands(){
         Set<BaseCommand> cmds = new HashSet<BaseCommand>();
-        
+
         // Item Commands
         cmds.add(new RepairItemCommand());
         cmds.add(new RepairAllCommand());
-        
+
         // Teleport Commands
         cmds.add(new TpHereCommand());
         cmds.add(new TpCommand());
         cmds.add(new BackCommand());
         cmds.add(new RideCommand());
         cmds.add(new TplocCommand());
-        
+
         // Server Commands
         cmds.add(new LockdownCommand());
-        
+
         // Player Commands
         cmds.add(new AFKCommand());
         cmds.add(new InvisibleCommand());
@@ -73,15 +73,15 @@ public class CommandRegister {
         cmds.add(new OpenEnderCommand());
         cmds.add(new SpecChestCommand());
         cmds.add(new NoPickupCommand());
-        
+
         // World Commands
         cmds.add(new WeatherCommand());
-        
+
         // Database Commands
         cmds.add(new RegisterCommand());
         cmds.add(new PasswordCommand());
         cmds.add(new MailCommand());
-        
+
         // Other Commands
         cmds.add(new AdminCommand());
         cmds.add(new SakuraCmdCommand());
@@ -91,13 +91,13 @@ public class CommandRegister {
         cmds.add(new WebCommand());
         cmds.add(new RatioCommand());
         cmds.add(new EndResetCommand());
-        
+
         return cmds;
     }
-    
+
     public static void registerCommands(final CommandHandler handler){
         Set<BaseCommand> cmds = getCommands();
-        
+
         for (final BaseCommand cmd : cmds){
             handler.registerCommand(cmd);
         }

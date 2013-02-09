@@ -34,25 +34,25 @@ public class SCHelper {
     private static long mainThreadID;
     private static long pluginStarted;
     private static SCHelper instance = new SCHelper();
-    
+
     public static SCHelper getInstance(){
         return instance;
     }
     public static void dispose(){
         instance = null;
     }
-    
+
     private SakuraCmd plugin;
     private ConfigurationManager config;
     private ServerData saveData;
-    
+
     private int afkTaskID = -1;
     private int flymodeTaskID = -1;
     private boolean isEnableEcon = false;
-    
+
     private boolean enabledMCB = false;
     private static boolean enabledMCBlistener = false;
-    
+
     /**
      * プラスグインの初期化時と有効化時に呼ばれる
      */
@@ -64,7 +64,7 @@ public class SCHelper {
             LogUtil.warning("an error occured while trying to load the config file.");
             ex.printStackTrace();
         }
-        
+
         Plugin test = plugin.getServer().getPluginManager().getPlugin("MCBans");
         if (test != null && test.isEnabled()){
             if (!enabledMCBlistener){
@@ -76,11 +76,11 @@ public class SCHelper {
         }else{
             enabledMCB = false;
         }
-        
+
         // connect database
         Database db = Database.getInstance(plugin);
         db.createStructure();
-        
+
         // worker
         AFKWorker.getInstance(); // AFK worker
         afkTaskID = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
@@ -89,11 +89,11 @@ public class SCHelper {
         flymodeTaskID = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
                 this.plugin, FlymodeWorker.getInstance().getTask(), 0, 20).getTaskId();
         InvisibleWorker.createInstance(); // Invisible worker
-        
+
         EndResetWorker.createInstance(plugin); // EndReset worker
-       
+
         PermissionManager.setupPermissions(plugin); // init permission
-        
+
         // dynmap
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable(){
             @Override
@@ -101,21 +101,21 @@ public class SCHelper {
                 DynmapHandler.createInstance();
             }
         }, 20L);
-        
+
         // coloring tab list
         for (final Player p  : plugin.getServer().getOnlinePlayers()){
             SakuraCmdUtil.changeTabColor(p);
         }
-        
+
         // queue, create instance
         ConfirmQueue.getInstance();
-        
+
         // Mapping already online players
         PlayerManager.clearAll();
         for (final Player player : Bukkit.getOnlinePlayers()){
             PlayerManager.addPlayer(player);
         }
-        
+
         // Setup language
         LogUtil.info("Loading language file: " + config.getLanguage());
         if (startup){
@@ -127,24 +127,24 @@ public class SCHelper {
                 ex.printStackTrace();
             }
         }
-        
+
         // last, restore save data
         saveData.loadRestore();
     }
-    
+
     public void setMainPlugin(final SakuraCmd plugin){
         mainThreadID = Thread.currentThread().getId();
         this.plugin = plugin;
         this.config = new ConfigurationManager(plugin);
         this.saveData = new ServerData(plugin);
-        
+
         init(true);
     }
-    
+
     public void disableAll(){
         // first, save all data
         saveData.save();
-        
+
         if (afkTaskID != -1){
             plugin.getServer().getScheduler().cancelTask(afkTaskID);
             afkTaskID = -1;
@@ -153,13 +153,13 @@ public class SCHelper {
             plugin.getServer().getScheduler().cancelTask(flymodeTaskID);
             flymodeTaskID = -1;
         }
-        
+
         AFKWorker.dispose();
         InvisibleWorker.dispose();
         FlymodeWorker.dispose();
         HawkEyeSearcher.dispose();
         EndResetWorker.dispose();
-        
+
         if (DynmapHandler.getInstance() != null){
             DynmapHandler.getInstance().deactivate();
         }
@@ -168,7 +168,7 @@ public class SCHelper {
         GeoIP.dispose();
         Database.dispose(); // conn close
     }
-    
+
     /**
      * プラグインをリロードする
      */
@@ -176,7 +176,7 @@ public class SCHelper {
         disableAll();
         System.gc();
         init(false);
-        
+
         try {
             I18n.setCurrentLanguage(config.getLanguage());
         } catch (Exception ex) {
@@ -184,7 +184,7 @@ public class SCHelper {
             ex.printStackTrace();
         }
     }
-    
+
     // Economy getter/setter
     public void setEnableEcon(final boolean enable){
         this.isEnableEcon = enable;
@@ -192,7 +192,7 @@ public class SCHelper {
     public boolean isEnableEcon(){
         return this.isEnableEcon;
     }
-    
+
     /**
      * 設定マネージャを返す
      *

@@ -26,7 +26,7 @@ import org.bukkit.event.world.WorldLoadEvent;
  */
 public class EndResetListener implements Listener{
     private static EndResetListener instance = null;
-    
+
     public EndResetListener(){
         instance = this;
         EndResetWorker worker = EndResetWorker.getInstance();
@@ -38,36 +38,36 @@ public class EndResetListener implements Listener{
     public static EndResetListener getInstance(){
         return instance;
     }
-    
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDeath(final EntityDeathEvent event) {
         if (!(event.getEntity() instanceof EnderDragon)) return;
         final Entity entity = event.getEntity();
-        
+
         final World world = entity.getWorld();
         if (world.getEnvironment() != Environment.THE_END) return;
-        
+
         final String wname = world.getName();
         EndResetWorker worker = EndResetWorker.getInstance();
         if (worker == null) return;
-        
+
         if (worker.getWorldDataMap().containsKey(wname)){
             worker.getWorldDataMap().get(wname).updateLastReset();
             worker.updateSaveFlag();
         }
     }
-        
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChunkLoad(final ChunkLoadEvent event) {
         if (event.getWorld().getEnvironment() != Environment.THE_END) return;
-        
+
         EndResetWorker worker = EndResetWorker.getInstance();
         if (worker == null) return;
-        
+
         final World world = event.getWorld();
         final String wname = world.getName();
         HashMap<String, Long> worldMap;
-        
+
         if (worker.getResetChunkMap().containsKey(wname)){
             worldMap = worker.getResetChunks(wname);
         } else {
@@ -79,7 +79,7 @@ public class EndResetListener implements Listener{
         final int x = chunk.getX();
         final int z = chunk.getZ();
         final String hash = x + "/" + z;
-        
+
         long cv = worker.getCvs(wname);
 
         if (worldMap.containsKey(hash)) {
@@ -87,25 +87,25 @@ public class EndResetListener implements Listener{
                 for (Entity e : chunk.getEntities()){
                     e.remove();
                 }
-                
+
                 world.regenerateChunk(x, z);
                 worldMap.put(hash, cv);
-                
+
                 worker.updateSaveFlag();
             }
         } else{
             worldMap.put(hash, cv);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onWorldLoad(final WorldLoadEvent event) {
         World world = event.getWorld();
         if (world.getEnvironment() != Environment.THE_END) return;
-        
+
         EndResetWorker worker = EndResetWorker.getInstance();
         if (worker == null) return;
-        
+
         String worldName = world.getName();
         if (!worker.getCvsMap().containsKey(worldName)) {
             worker.putCvs(worldName, Long.MIN_VALUE);

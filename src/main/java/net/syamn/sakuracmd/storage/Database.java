@@ -47,10 +47,10 @@ public class Database {
         connection = null;
         instance = null;
     }
-    
+
     private SakuraCmd plugin;
     private String connectionString = null;
-    
+
     private static long reconnectTimestamp = 0;
     private static Connection connection = null;
 
@@ -63,7 +63,7 @@ public class Database {
         ConfigurationManager conf = SCHelper.getInstance().getConfig();
 
         // 接続情報読み込み
-        connectionString = "jdbc:mysql://" + conf.getMySqlAddress() + ":" + conf.getMySqlPort() + "/" + conf.getMySqlDB() + 
+        connectionString = "jdbc:mysql://" + conf.getMySqlAddress() + ":" + conf.getMySqlPort() + "/" + conf.getMySqlDB() +
                 "?user=" + conf.getMySqlUser() + "&password=" + conf.getMySqlPass();
         connect(); // 接続
 
@@ -105,14 +105,14 @@ public class Database {
     public void createStructure(){
         // for Register command
         write("CREATE TABLE IF NOT EXISTS `regist_key` (" +
-              "`data_id` int (10) unsigned NOT NULL AUTO_INCREMENT," + 
-              "`player_name` varchar(32) NOT NULL," +
-              "`key` varchar(10) NOT NULL," +
-              "`expired` int(32) unsigned NOT NULL," +
-              "PRIMARY KEY (`data_id`)," +
-              "UNIQUE KEY `player_name` (`player_name`)" +
-              ") ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;");
-        
+                "`data_id` int (10) unsigned NOT NULL AUTO_INCREMENT," +
+                "`player_name` varchar(32) NOT NULL," +
+                "`key` varchar(10) NOT NULL," +
+                "`expired` int(32) unsigned NOT NULL," +
+                "PRIMARY KEY (`data_id`)," +
+                "UNIQUE KEY `player_name` (`player_name`)" +
+                ") ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;");
+
         /*
         write("CREATE TABLE IF NOT EXISTS `" + userTable + "` (" +
                 "`player_id` int(10) unsigned NOT NULL AUTO_INCREMENT," +   // 割り当てられたプレイヤーID
@@ -134,7 +134,7 @@ public class Database {
                 "`view_players` int(10) unsigned NOT NULL DEFAULT '0'," +   // 割り当てられたプレイヤーID
                 "PRIMARY KEY (`data_id`)" +
                 ") ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;");
-        */
+         */
     }
 
     /* ******************** */

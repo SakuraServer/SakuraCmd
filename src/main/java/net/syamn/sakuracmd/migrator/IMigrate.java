@@ -10,7 +10,7 @@ package net.syamn.sakuracmd.migrator;
  */
 public interface IMigrate {
     public abstract void init();
-    
+
     public abstract void importPlayerData();
     public abstract void importOtherFiles();
 }

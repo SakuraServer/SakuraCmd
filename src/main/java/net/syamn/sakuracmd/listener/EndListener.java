@@ -28,13 +28,13 @@ public class EndListener implements Listener{
     public EndListener (final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDeath(final EntityDeathEvent event) {
         if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null) {
             int normal_end_DragonExp = 10000;
             int hard_end_DragonExp = 30000;
-            
+
             if (event.getEntity().getWorld().getName().equals(Worlds.main_end)) {
                 event.setDroppedExp(normal_end_DragonExp);
                 Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがドラゴンを倒しました！", true);
@@ -45,11 +45,11 @@ public class EndListener implements Listener{
                 Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！", true);
                 //Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
             }
-            
+
             //Actions.log("End.log", "Player " + event.getEntity().getKiller().getName() + " killed the EnderDragon at world " + event.getEntity().getWorld().getName());
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityCreatePortal(final EntityCreatePortalEvent event) {
         if (!event.getEntityType().equals(EntityType.ENDER_DRAGON)) {
@@ -57,13 +57,13 @@ public class EndListener implements Listener{
         }
         event.setCancelled(true);
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onChunkUnload(final ChunkUnloadEvent event) {
         if (event.getWorld().getEnvironment() != Environment.THE_END) {
             return;
         }
-        
+
         final Chunk chunk = event.getChunk();
         for (final Entity entity : chunk.getEntities()) {
             if (entity.getType() == EntityType.ENDER_DRAGON || entity.getType() == EntityType.COMPLEX_PART) {

@@ -23,7 +23,6 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 /**
  * EndResetCommand (EndResetCommand.java)
@@ -37,21 +36,21 @@ public class EndResetCommand extends BaseCommand {
         argLength = 0;
         usage = "[args] <- endreset commands";
     }
-    
+
     private EndResetWorker worker = null;
-    
+
     @Override
     public void execute() throws CommandException {
         worker = EndResetWorker.getInstance();
         if (worker == null){
             throw new CommandException("&c現在ワーカーがオフラインのためコマンドを実行できません");
         }
-        
+
         if (args.size() == 0){
             resetCurrentWorld();
             return;
         }
-        
+
         String action = args.get(0).toLowerCase(Locale.ENGLISH);
         if (action.equals("timer")){
             if (args.size() < 3){
@@ -97,7 +96,7 @@ public class EndResetCommand extends BaseCommand {
             if (world.getEnvironment() != Environment.THE_END){
                 throw new CommandException("&cそのワールドはエンドではありません！");
             }
-            
+
             runResetTask(world);
         }
         else if (action.equals("list")){
@@ -113,18 +112,18 @@ public class EndResetCommand extends BaseCommand {
             }else{
                 Util.message(sender, "&6エンドワールドリスト: &d" + StrUtil.join(endWorlds, "&7, &d"));
             }
-            
+
             // Auto reset worlds
             if (worker.getWorldDataMap().isEmpty()){
                 Util.message(sender, "&c自動リセットが有効になっているワールドはありません");
             }
-            else{       
+            else{
                 Util.message(sender, "&d 自動リセットが有効になっているワールドリスト: ");
                 for (Entry<String, EndResetWorldData> entry : worker.getWorldDataMap().entrySet()){
                     EndResetWorldData data = entry.getValue();
                     int interval = data.getInterval();
                     String next = TimeUtil.getReadableTime(TimeUtil.getDateByUnixSeconds(data.getNextReset()));
-                    
+
                     Util.message(sender, "&e - &d" + entry.getKey() + "&7: &6次回リセット &3" + next + "以降 &6(" + interval +"時間毎)");
                 }
             }
@@ -135,31 +134,31 @@ public class EndResetCommand extends BaseCommand {
         }
         worker.updateSaveFlag();
     }
-    
+
     private void resetCurrentWorld() throws CommandException{
         if (!(sender instanceof Player)){
             throw new CommandException("&cコンソールからは実行できません");
         }
-        
+
         final World world = player.getWorld();
         if (world.getEnvironment() != Environment.THE_END){
             throw new CommandException("&cここはエンドワールドではありません！");
         }
-        
+
         runResetTask(world);
     }
-    
+
     private void runResetTask(final World world){
         String wname = world.getName();
         Util.broadcastMessage("&dワールド '&6" + wname + "&d' をリセットしています... (" + sender.getName() + ")");
-        
+
         Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
             @Override public void run(){
                 worker.regen(world);
             }
         }, 1L);
     }
-    
+
     @Override
     public boolean permission(CommandSender sender) {
         return true;

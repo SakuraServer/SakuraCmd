@@ -32,34 +32,35 @@ public class PasswordCommand extends BaseCommand implements Queueable{
         argLength = 0;
         usage = "<- reset website password";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         final Database db = Database.getInstance();
         if (db == null || !db.isConnected()){
             throw new CommandException("&c現在データベースと接続されていません！");
         }
-        
+
         ConfirmQueue.getInstance().addQueue(sender, this, null, 15);
         Util.message(sender, "&cウェブページのパスワードリセットを行います！");
         Util.message(sender, "&cランダム文字列で今のパスワードが上書きされます！");
         Util.message(sender, "&c本当に実行しますか？ &a/confirm&c コマンドで続行します。");
     }
-    
+
     @Override
     public void executeQueue(QueuedCommand queued) {
         final Player player = (Player) queued.getSender();
-        
+
         Util.message(player, "&6パスワードをリセットしています...");
-        
+
         final Database db = Database.getInstance();
         if (db == null || !db.isConnected()){
             Util.message(player, "&c現在データベースと接続されていません！");
             return;
         }
-        
+
         final String pname = player.getName();
         int pid = -1;
-        
+
         // check if already registered
         final String query = "SELECT `player_id` FROM `user_data` LEFT JOIN `user_id` USING (`player_id`) WHERE `player_name` = ?";
         HashMap<Integer, ArrayList<String>> records = db.read(query, pname);
@@ -70,11 +71,11 @@ public class PasswordCommand extends BaseCommand implements Queueable{
         }else{
             pid = Integer.parseInt(records.get(1).get(0));
         }
-        
+
         // generate random 8-chars password, not use following letters: IL1 il O0o
         final String newPass = RandomStringUtils.random(8, "abcdefghjkmnpqrstuvwxABCDEFGHJKMNPQRSTUVWXYZ23456789");
         final String encrypted = Encrypter.getHash(newPass, Encrypter.ALG_SHA512);
-        
+
         final boolean success = db.write("UPDATE `user_data` SET `password` = ? WHERE `player_id` = ?", encrypted, pid);
         if (!success){
             Util.message(player, "&cリセットに失敗しました！時間を置いてやり直してください！");

@@ -25,7 +25,8 @@ public class WeatherCommand extends BaseCommand{
         argLength = 0;
         usage = "[weather] <- modify world weather";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         // get world
         World world = null;
@@ -41,7 +42,7 @@ public class WeatherCommand extends BaseCommand{
         }else{
             world = player.getWorld();
         }
-        
+
         // get weather type
         if (args.size() < 1){
             throw new CommandException("&c天候を指定してください！");
@@ -51,7 +52,7 @@ public class WeatherCommand extends BaseCommand{
             throw new CommandException("&c天候には clear, rain のいずれかを指定してください！");
         }
         weather = (weather.name == null) ? weather.actual : weather;
-        
+
         // get duration secs
         int secs = -1;
         if (args.size() > 1){
@@ -59,8 +60,8 @@ public class WeatherCommand extends BaseCommand{
                 secs = Integer.parseInt(args.get(1));
             }
         }
-      
-        
+
+
         // set weather
         if (weather.equals(Weather.CLEAR)){
             world.setStorm(false);
@@ -70,14 +71,14 @@ public class WeatherCommand extends BaseCommand{
         if (secs > 0){
             world.setWeatherDuration(secs * 20); // in seconds -> ticks
         }
-        
+
         // send messages
-        
+
         final String wmsg = (!isPlayer || !(world.equals(player.getWorld()))) ? "&aワールド " + world.getName() + " " : "&aこのワールド";
         final String lenmsg = (secs > 0) ? secs + "秒間" : "";
         Util.message(sender, wmsg + "の天候を" + weather.name +"に" + lenmsg + "変更しました！");
     }
-    
+
     private enum Weather{
         CLEAR ("晴れ"),
         SUN (Weather.CLEAR),
@@ -85,7 +86,7 @@ public class WeatherCommand extends BaseCommand{
         //STORM ("嵐"),
         STORM (Weather.RAIN),
         ;
-        
+
         String name = null;
         Weather actual = null;
         Weather(final String name){

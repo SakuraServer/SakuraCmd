@@ -24,7 +24,7 @@ import ru.tehkode.permissions.PermissionUser;
  */
 public class PermissionsEx implements IPermissionPlugin{
     private final PermissionManager pex;
-    
+
     public PermissionsEx(final PermissionManager pex){
         this.pex = pex;
     }
@@ -33,7 +33,7 @@ public class PermissionsEx implements IPermissionPlugin{
     public String getPrefix(Player player) {
         final PermissionUser user = pex.getUser(player);
         String prefix = "";
-        
+
         if (user != null){
             prefix = user.getPrefix();
             if (prefix == null) prefix = "";
@@ -51,7 +51,7 @@ public class PermissionsEx implements IPermissionPlugin{
     public String getSuffix(Player player) {
         final PermissionUser user = pex.getUser(player);
         String suffix = "";
-        
+
         if (user != null){
             suffix = user.getSuffix();
             if (suffix == null) suffix = "";
@@ -69,7 +69,7 @@ public class PermissionsEx implements IPermissionPlugin{
     public Set<Player> getPlayers(String groupName) {
         PermissionUser[] users = pex.getUsers(groupName);
         if (users == null) return null;
-        
+
         final Set<Player> players = new HashSet<Player>();
         Player player = null;
         for (final PermissionUser user : users){
@@ -120,7 +120,7 @@ public class PermissionsEx implements IPermissionPlugin{
         if(!(sender instanceof Player)){
             return true;
         }
-        
+
         return pex.has((Player)sender, node);
     }
 }

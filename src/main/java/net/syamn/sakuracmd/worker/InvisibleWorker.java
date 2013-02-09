@@ -25,7 +25,7 @@ public class InvisibleWorker {
     private static InvisibleWorker instance = null;
     //private final ConcurrentHashMap<Player, Object> invisiblePlayers = new ConcurrentHashMap<Player, Object>();
     private final Set<Player> invisiblePlayers = Collections.newSetFromMap(new ConcurrentHashMap<Player, Boolean>());
-    
+
     public static InvisibleWorker getInstance(){
         return instance;
     }
@@ -35,28 +35,28 @@ public class InvisibleWorker {
     public static void createInstance(){
         instance = new InvisibleWorker();
     }
-    
+
     public Collection<Player> getAllInvisiblePlayers(){
         return Collections.unmodifiableCollection(invisiblePlayers);
     }
-    
+
     public void onPlayerQuit(final Player player){
         invisiblePlayers.remove(player);
     }
-    
+
     public void vanish(final Player player, final boolean onJoin){
         if (invisiblePlayers.contains(player)){
             return;
         }
-        
+
         PlayerManager.getPlayer(player).addPower(Power.INVISIBLE);
         invisiblePlayers.add(player);
         DynmapHandler.getInstance().setPlayerVisiblity(player, false);
-        
+
         for (final Player p : Bukkit.getOnlinePlayers()){
             invisible(player, p);
         }
-        
+
         if (!onJoin){
             //TODO send join message if in fake quit mode
         }
@@ -70,14 +70,14 @@ public class InvisibleWorker {
         PlayerManager.getPlayer(player).removePower(Power.INVISIBLE);
         invisiblePlayers.remove(player);
         DynmapHandler.getInstance().setPlayerVisiblity(player, true);
-        
+
         for (final Player p : Bukkit.getOnlinePlayers()){
             uninvisible(player, p);
         }
-        
+
         //TODO send join message if in fake quit mode
     }
-    
+
     private void invisible(final Player player, final Player from){
         if (Perms.INV_CANSEE.has(from)){
             return;
@@ -90,7 +90,7 @@ public class InvisibleWorker {
         }
         from.showPlayer(player);
     }
-    
+
     public boolean isInvisible(final Player player){
         if (player == null) return false;
         return invisiblePlayers.contains(player);

@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
  */
 public class OpenEnderCommand extends BaseCommand {
     private static HashMap<Player, String> historyMap = new HashMap<Player, String>();
-    
+
     public OpenEnderCommand(){
         bePlayer = true;
         name = "openender";
@@ -31,14 +31,15 @@ public class OpenEnderCommand extends BaseCommand {
         argLength = 0;
         usage = "[name] <- open others enderchest";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         // get opened history
         String history = historyMap.get(player);
         if (args.size() == 0 && (history == null || history == "")){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         // choose target
         String targetName = null;
         if (args.size() > 0){
@@ -46,10 +47,10 @@ public class OpenEnderCommand extends BaseCommand {
         }else{
             targetName = history;
         }
-        
+
         boolean online = true;
         Player target = Bukkit.getPlayerExact(targetName);
-        
+
         if (target == null){
             target = Bukkit.getPlayer(targetName);
         }
@@ -60,22 +61,22 @@ public class OpenEnderCommand extends BaseCommand {
         if (target == null){
             throw new CommandException("&cプレイヤー " + targetName + " が見つかりません！");
         }
-        
+
         // save history
         historyMap.put(player, target.getName());
-        
+
         // create
         CBEnderChest inv = CBEnderChest.chests.get(target.getName().toLowerCase(Locale.ENGLISH));
         if (inv == null){
             inv = new CBEnderChest(target, online);
             CBEnderChest.chests.put(target.getName().toLowerCase(Locale.ENGLISH), inv);
         }
-        
+
         // open
         player.openInventory(inv.getBukkitInventory());
-        
+
         // logg
         SakuraCmdUtil.sendlog(sender, PlayerManager.getPlayer(player).getName() + "&6 が &7"
-                        + (online ? (PlayerManager.getPlayer(target).getName()) : target.getName()) + " &6のエンダーチェストを開きました");
+                + (online ? (PlayerManager.getPlayer(target).getName()) : target.getName()) + " &6のエンダーチェストを開きました");
     }
 }

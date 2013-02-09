@@ -28,26 +28,27 @@ public class NoPickupCommand extends BaseCommand{
         usage = "[player] <- toggle no pickup mode";
     }
 
+    @Override
     public void execute() throws CommandException{
         if (args.size() == 0 && !isPlayer){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         final Player target = (args.size() > 0) ? Bukkit.getPlayer(args.get(0)) : player;
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         final SakuraPlayer sp = PlayerManager.getPlayer(target);
-        
+
         // self-check
         if (!sender.equals(target) && !Perms.NO_PICKUP_OTHER.has(sender)){
             throw new CommandException("&c他人のアイテム無視モードを変更する権限がありません！");
         }
-        
+
         if (sp.hasPower(Power.NO_PICKUP)){
             // Remove power
             sp.removePower(Power.NO_PICKUP);
-            
+
             if (!sender.equals(target)){
                 Util.message(sender, "&3" + sp.getName() + " &3のアイテム無視モードを解除しました");
             }
@@ -55,7 +56,7 @@ public class NoPickupCommand extends BaseCommand{
         }else{
             // Add power
             sp.addPower(Power.NO_PICKUP);
-            
+
             if (!sender.equals(target)){
                 Util.message(sender, "&3" + sp.getName() + " &3をアイテム無視モードにしました");
             }

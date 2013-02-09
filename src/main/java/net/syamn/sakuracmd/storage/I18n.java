@@ -26,10 +26,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class I18n {
     private static final String languageDirName = "languages";
     private static final String defaultFile = "ja-jp";
-    
+
     private static Configuration fallbackMessages;
     private static Configuration messages;
-    
+
     /**
      * Init I18n
      * @param locale set current locale
@@ -53,7 +53,7 @@ public class I18n {
             messages = fallbackMessages;
         }
     }
-    
+
     // Extract methods
     private static void extractLanguageFiles(final boolean force){
         final File langDir = getLanguagesDir();
@@ -69,12 +69,12 @@ public class I18n {
             FileStructure.extractResource("/languages/" + locale + ".yml", langDir, force, true, SakuraCmd.getInstance());
         }
     }
-    
+
     // Load methods
     public static void setCurrentLanguage(final String locale) throws Exception{
         messages = loadLanguageFile(locale);
     }
-    
+
     private static Configuration loadLanguageFile(final String locale) throws Exception{
         final File langDir = getLanguagesDir();
         File file = new File(langDir, locale + ".yml");
@@ -99,11 +99,11 @@ public class I18n {
         }
         return conf;
     }
-    
+
     /* ***** Begin replace words ***** */
     public static final String PLAYER  = "%PLAYER%";
     /* ***** End replace words ******* */
-    
+
     public static String _(final String key, final Object... args){
         // message file not proper loaded
         if (messages == null){

@@ -22,9 +22,9 @@ public class ColorsCommand extends BaseCommand {
         argLength = 0;
         usage = "<- see bukkit colors list";
     }
-    
+
     private static final String rst = "\u00A7r";
-    
+
     @Override
     public void execute() throws CommandException {
         Util.message(sender, "&aカラー/フォーマットコードリスト: ");
@@ -32,7 +32,7 @@ public class ColorsCommand extends BaseCommand {
         sender.sendMessage(" \u00A78 &8 \u00A79 &9 \u00A7a &a \u00A7b &b \u00A7c &c \u00A7d &d \u00A7e &e \u00A7f &f");
         sender.sendMessage(" \u00A7m &m " + rst + "\u00A7n &n " + rst + "\u00A7l &l " + rst + "\u00A7k &k" + rst + " \u00A7o &o " + rst + "\u00A7r &r(reset)");
     }
-    
+
     @Override
     public boolean permission(CommandSender sender) {
         return true;

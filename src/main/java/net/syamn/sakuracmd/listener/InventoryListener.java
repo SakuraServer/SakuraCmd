@@ -25,12 +25,12 @@ public class InventoryListener implements Listener{
     public InventoryListener (final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     @EventHandler(priority = EventPriority.LOW)
     public void onInventoryClick(final InventoryClickEvent event) {
         final ItemStack item = event.getCurrentItem();
         if (item == null) return;
-        
+
         switch (item.getType()) {
             case MOB_SPAWNER:
             case MONSTER_EGG:

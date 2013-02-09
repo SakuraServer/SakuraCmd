@@ -25,16 +25,16 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 public class ConfigurationManager {
     /* Current config.yml file version */
     private final int latestVersion = 1;
-    
+
     // logPrefix
     private static final String logPrefix = SakuraCmd.logPrefix;
     private static final String msgPrefix = SakuraCmd.msgPrefix;
-    
+
     private FileConfiguration conf;
     private File pluginDir;
-    
+
     private final SakuraCmd plugin;
-    
+
     /**
      * Constructor
      * @param plugin
@@ -43,7 +43,7 @@ public class ConfigurationManager {
         this.plugin = plugin;
         this.pluginDir = plugin.getDataFolder();
     }
-    
+
     /**
      * Load configuration
      * @param initialLoad
@@ -51,18 +51,18 @@ public class ConfigurationManager {
      */
     public void loadConfig(final boolean initialLoad) throws Exception{
         FileStructure.createDir(pluginDir);
-        
+
         File file = new File(pluginDir, "config.yml");
         if (!file.exists()){
             FileStructure.extractResource("/config.yml", pluginDir, false, false, plugin);
             LogUtil.info(logPrefix + "config.yml is not found! Created default config.yml!");
         }
-        
+
         plugin.reloadConfig();
         conf = plugin.getConfig();
-        
+
         checkver(conf.getInt("ConfigVersion", 1));
-        
+
         // setup Vault economy
         if (getUseEconomy()){
             RegisteredServiceProvider<Economy> econProv = plugin.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
@@ -77,19 +77,19 @@ public class ConfigurationManager {
         }else{
             SCHelper.getInstance().setEnableEcon(false);
         }
-        
+
         // setup geoIP
         if (getUseGeoIP()){
             new GeoIP(plugin).init();
         }
     }
-    
+
     /**
      * Check configuration file version
      * @param ver
      */
     private void checkver(final int ver){
-     // compare configuration file version
+        // compare configuration file version
         if (ver < latestVersion) {
             // first, rename old configuration
             final String destName = "oldconfig-v" + ver + ".yml";
@@ -112,7 +112,7 @@ public class ConfigurationManager {
             LogUtil.info("Deleted existing configuration file and generate a new one!");
         }
     }
-    
+
     /* ***** Begin Configuration Getters ************************** */
     // General
     public boolean getUseNamePrefix(){
@@ -130,7 +130,7 @@ public class ConfigurationManager {
     public boolean getUseEconomy(){
         return conf.getBoolean("UseEconomy", true);
     }
-    
+
     // Flymode
     public double getFlymodeCost(){
         return conf.getDouble("Flymode.Cost", 6000.0D);
@@ -141,7 +141,7 @@ public class ConfigurationManager {
     public int getFlymodePlayersLimit(){
         return conf.getInt("Flymode.PlayerLimit", 5);
     }
-    
+
     // GeoIP
     public boolean getUseGeoIP(){
         return conf.getBoolean("UseGeoIP", true);
@@ -161,12 +161,12 @@ public class ConfigurationManager {
     public String getCityDBurl(){
         return conf.getString("CityDB", "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz");
     }
-    
+
     // Message
     public String getLanguage(){
         return conf.getString("language", "ja-jp");
     }
-    
+
     // MySQL
     public String getMySqlAddress(){
         return conf.getString("MySQL.Server.Address", "localhost");
@@ -183,12 +183,12 @@ public class ConfigurationManager {
     public String getMySqlPass(){
         return conf.getString("MySQL.Database.User_Password", "UserPassword");
     }
-    
+
     // Permissions
     public String getPermissionCtrl(){
         return conf.getString("Permission", "PerimssionsEx");
     }
-    
+
     // Debug
     public boolean isDebug(){
         return conf.getBoolean("Debug", false);

@@ -49,7 +49,7 @@ public class SakuraCmdUtil {
             player.setPlayerListName(player.getDisplayName());
         }
     }
-    
+
     /**
      * 飛行モードを設定する
      * @param player
@@ -57,7 +57,7 @@ public class SakuraCmdUtil {
      */
     public static void changeFlyMode(final Player player, final boolean enable){
         if (player == null) return;
-        
+
         if (enable){
             player.setAllowFlight(true);
             player.setFlying(true);
@@ -68,7 +68,7 @@ public class SakuraCmdUtil {
             player.setFallDistance(0.0F);
         }
     }
-    
+
     public static void sendlog(final String msg){
         Perms.LOG.message("&c[通知]&f " + msg);
     }

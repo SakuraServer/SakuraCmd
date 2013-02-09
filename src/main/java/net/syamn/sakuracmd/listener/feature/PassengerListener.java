@@ -40,12 +40,12 @@ public class PassengerListener implements Listener{
             player.eject();
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event) {
         final Entity ent = event.getEntity();
         final Entity damager = event.getDamager();
-                
+
         // Player attacking entity
         if (damager instanceof Player) {
             final Player player = (Player) damager;
@@ -53,7 +53,7 @@ public class PassengerListener implements Listener{
             if (hand.getType() != Material.BONE){
                 return; // return if player inHand item is not bone
             }
-            
+
             // Check player permission
             if (ent.getType().equals(EntityType.PLAYER)){
                 if (!Perms.RIDE_PLAYER.has(player) && !Perms.RIDE_ALLENTITY.has(player)){
@@ -64,11 +64,11 @@ public class PassengerListener implements Listener{
                     return;
                 }
             }
-            
+
             event.setDamage(0);
             event.setCancelled(true);
             final String targetStr = (ent instanceof Player) ? "プレイヤー" : ent.getType().getName();
-            
+
             if (ent.getPassenger() == null){
                 if (!player.getGameMode().equals(GameMode.CREATIVE)){
                     player.setItemInHand(ItemUtil.decrementItem(hand, 1));
@@ -89,9 +89,9 @@ public class PassengerListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void targetCancelOnRideMonster(final EntityTargetLivingEntityEvent event) {
         if (!(event.getTarget() instanceof Player)) { return; }
-        
+
         final Player target = (Player) event.getTarget();
-        
+
         if (target.getPassenger() != null && (target.getPassenger() instanceof Player)) {
             event.setCancelled(true);
         }

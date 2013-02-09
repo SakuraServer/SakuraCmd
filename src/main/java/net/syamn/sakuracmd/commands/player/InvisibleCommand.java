@@ -34,29 +34,30 @@ public class InvisibleCommand extends BaseCommand{
         argLength = 0;
         usage = "<- toggle your invisible status";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         if (args.size() == 0 && !isPlayer){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         final Player target = (args.size() > 0) ? Bukkit.getPlayer(args.get(0)) : player;
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         final SakuraPlayer sp = PlayerManager.getPlayer(target);
-        
+
         InvisibleWorker worker = InvisibleWorker.getInstance();
-        
+
         if (worker.isInvisible(target)){
             // first, call unafk method for remove that prefix
             AFKWorker.getInstance().updatePlayer(target);
-            
+
             worker.reappear(target);
-            
+
             // auto add no pickup power
             sp.removePower(Power.NO_PICKUP);
-            
+
             // send fake join message
             String msg = _("joinMessage", I18n.PLAYER, sp.getName(true));
             if (msg != null && !msg.isEmpty()) {
@@ -66,7 +67,7 @@ public class InvisibleCommand extends BaseCommand{
                 }
                 Util.broadcastMessage(msg);
             }
-             
+
             if (!sender.equals(target)){
                 Util.message(sender, "&a" + sp.getName() + " &aの透明モードを解除しました");
             }
@@ -74,16 +75,16 @@ public class InvisibleCommand extends BaseCommand{
             SakuraCmdUtil.sendlog(sender, sp.getName() + "&a が透明モードを解除しました");
         }else{
             worker.vanish(target, false);
-            
+
             // auto remove no pickup power
             sp.addPower(Power.NO_PICKUP);
-            
+
             // send fake quit message
             String msg = _("quitMessage", I18n.PLAYER, sp.getName(true));
             if (msg != null && !msg.isEmpty()) {
                 Util.broadcastMessage(msg);
             }
-            
+
             if (!sender.equals(target)){
                 Util.message(sender, "&c" + sp.getName() + " &cを透明モードにしました");
             }

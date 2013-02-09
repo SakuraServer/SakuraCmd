@@ -62,19 +62,19 @@ public class PlayerListener implements Listener{
     public PlayerListener (final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent event){
         final Player player = event.getPlayer();
         AFKWorker.getInstance().updatePlayer(player);
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerDamage(final EntityDamageEvent event){
         if (!(event.getEntity() instanceof Player)){
             return;
         }
-        
+
         final Player player = (Player) event.getEntity();
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         if (sp.hasPower(Power.GODMODE)){
@@ -82,19 +82,19 @@ public class PlayerListener implements Listener{
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChangedWorld(final PlayerChangedWorldEvent event){
         final Player player = event.getPlayer();
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         final World world = player.getWorld();
-        
+
         // messages
         if (world.getName().equalsIgnoreCase(Worlds.main_end)){
             Util.message(player, "&b ここは定期的にリセットされるエンドワールドです");
             Util.message(player, "&b メインワールドに戻るには &f/spawn &bコマンドを使ってください");
         }
-        
+
         // check flymode
         if (sp.hasPower(Power.FLYMODE)){
             FlymodeWorker.getInstance().changeFlyMode(player, true);
@@ -103,38 +103,38 @@ public class PlayerListener implements Listener{
         else{
             FlymodeWorker.getInstance().changeFlyMode(player, false);
         }
-        
+
         // Set survival as current gamemode for safety
         if (!player.getGameMode().equals(GameMode.SURVIVAL) && !Perms.TRUST.has(player)){
             player.setGameMode(GameMode.SURVIVAL);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
         AFKWorker.getInstance().updatePlayer(event.getPlayer());
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerMove(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
         final Location fromLoc = event.getFrom();
         final Location toLoc = event.getTo();
-        
+
         AFKWorker.getInstance().updatePlayer(player);
-        
+
         Location diffLoc = toLoc.clone().subtract(fromLoc);
         Location checkLoc = toLoc.clone().add(diffLoc.clone().multiply(3.0D));
         checkLoc.setY(toLoc.getY());
         Block up = checkLoc.getBlock();
         Block down = up.getRelative(BlockFace.UP, 1);
-        
+
         if (up.getType() == Material.DIAMOND_BLOCK || down.getType() == Material.DIAMOND_BLOCK) {
             Util.message(player, "&c Touch Diamond block!");
-            
+
             final Vector dir = diffLoc.getDirection();
             Vector vect = new Vector((-(dir.getX())) * 5.0D, 2.0D, (-(dir.getZ())) * 5.0D);
-            
+
             if (player.getVehicle() == null) {
                 player.setVelocity(vect);
             } else {
@@ -142,7 +142,7 @@ public class PlayerListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH) // ignoreCancelled = true
     public void onPlayerRightClickWithItem(final PlayerInteractEvent event) {
         if (event.useItemInHand() == org.bukkit.event.Event.Result.DENY){
@@ -151,7 +151,7 @@ public class PlayerListener implements Listener{
         if (!(Action.RIGHT_CLICK_AIR.equals(event.getAction()) || Action.RIGHT_CLICK_BLOCK.equals(event.getAction()))) {
             return; // return if not right click
         }
-        
+
         final Player player = event.getPlayer();
         final ItemStack is = player.getItemInHand();
         if (is == null || is.getType().equals(Material.AIR) || player.getWorld().getEnvironment().equals(Environment.THE_END)){
@@ -164,22 +164,22 @@ public class PlayerListener implements Listener{
                 if (!player.getGameMode().equals(GameMode.CREATIVE)){
                     player.setItemInHand(ItemUtil.decrementItem(is, 1));
                 }
-                
+
                 player.setVelocity(player.getEyeLocation().getDirection().multiply(5));
-                
+
                 // TODO don't use CraftBukkit class here. Add this on SakuraLib and use it.
                 //final Location loc = player.getLocation();
                 //((CraftPlayer) player).getHandle().playerConnection.sendPacket(new Packet62NamedSoundEffect("note.harp", loc.getX(), loc.getY(), loc.getZ(), 0.8F, 1.0F));
                 break;
-            // default - nop
+                // default - nop
             default: break;
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerFallOnSkyland(final PlayerMoveEvent event) {
         final Player player = event.getPlayer();
-        
+
         if (player.getWorld().getName().equalsIgnoreCase(Worlds.skylands)) {
             final Location toLoc = event.getTo();
             if (toLoc.getY() <= -50.0D) { // -50以下
@@ -190,7 +190,7 @@ public class PlayerListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerPickupItem(final PlayerPickupItemEvent event){
         final SakuraPlayer sp = PlayerManager.getPlayer(event.getPlayer());
@@ -198,15 +198,15 @@ public class PlayerListener implements Listener{
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerJoin(final PlayerJoinEvent event){
         final Player player = event.getPlayer();
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         final ArrayList<String> notify = new ArrayList<String>();
-        
+
         InvisibleWorker.getInstance().sendInvisibleOnJoin(player);
-        
+
         // send welcome message
         String welcome = _("welcomeMessage", I18n.PLAYER, sp.getName());
         if (welcome != null && !welcome.isEmpty()){
@@ -215,11 +215,11 @@ public class PlayerListener implements Listener{
             }
             Util.message(player, welcome);
         }
-        
+
         String msg = _(((player.hasPlayedBefore()) ? "joinMessage" : "firstJoinMessage"), I18n.PLAYER, sp.getName(true));
         if (msg.length() < 1) msg = null;
         event.setJoinMessage(msg);
-        
+
         // restore powers
         sp.restorePowers();
         if (sp.hasPower(Power.INVISIBLE)){
@@ -231,7 +231,7 @@ public class PlayerListener implements Listener{
         if (sp.hasPower(Power.FLYMODE)){
             notify.add("&bあなたはあと &a" + FlymodeWorker.getInstance().getRemainTime(player) + "間 &b飛行可能です");
         }
-        
+
         // Use GeoIP if enabled
         if (SCHelper.getInstance().getConfig().getUseGeoIP() && !Perms.HIDE_GEOIP.has(player)){
             msg = event.getJoinMessage();
@@ -240,10 +240,10 @@ public class PlayerListener implements Listener{
                 event.setJoinMessage(msg + Util.coloring("&7") + " (" + geoStr + ")");
             }
         }
-        
+
         // Change TabColor
         SakuraCmdUtil.changeTabColor(player);
-        
+
         // Send notify
         if (notify.size() > 0){
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
@@ -255,21 +255,21 @@ public class PlayerListener implements Listener{
                 }
             }, 5L);
         }
-        
+
         // Run async
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
             @Override public void run(){
                 AFKWorker.getInstance().updateTimeStamp(player);
-                
+
                 PlayerData data = sp.getData();
                 data.updateLastConnection();
                 data.setLastIP(player.getAddress().getAddress().getHostAddress());
-                
+
                 // onJoin notify messages
                 sp.onJoinNotify();
             }
         });
-        
+
         // First join
         if (!player.hasPlayedBefore()) {
             final int unique = plugin.getServer().getOfflinePlayers().length;
@@ -281,46 +281,46 @@ public class PlayerListener implements Listener{
             }, 5L); // 0.25s after
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerLogin(final PlayerLoginEvent event){
         if (!event.getResult().equals(Result.ALLOWED)){
             return;
         }
-        
+
         // Check Lockdown isEnabled
         if (plugin.getServerManager().isLockdown() && !Perms. LOCKDOWN_BYPASS.has(event.getPlayer())){
             event.disallow(Result.KICK_OTHER, _("serverLocked"));
         }
-        
+
         // Add to players list
         PlayerManager.addPlayer(event.getPlayer());
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event){
         final Player player = event.getPlayer();
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
-        
+
         // Messages
         String msg = _("quitMessage", I18n.PLAYER, sp.getName(true));
         if (msg.length() < 1) msg = null;
         event.setQuitMessage(msg);
-        
+
         if (InvisibleWorker.getInstance().isInvisible(player)){
             InvisibleWorker.getInstance().onPlayerQuit(player);
             event.setQuitMessage(null); // hide message of vanished player
             SakuraCmdUtil.sendlog(player, sp.getName() + "&b が透明モードで&c切断&bしました");
         }
-        
+
         // Set survival as current gamemode for safety
         if (!player.getGameMode().equals(GameMode.SURVIVAL) && !Perms.TRUST.has(player)){
             player.setGameMode(GameMode.SURVIVAL);
         }
-        
+
         PlayerManager.getPlayer(player).getData().updateLastDisconnect();
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerKick(final PlayerKickEvent event) {
         event.setLeaveMessage(Util.coloring("&c[SakuraServer] &6" + event.getPlayer().getDisplayName() + " &aはKickされました: " + event.getReason()));

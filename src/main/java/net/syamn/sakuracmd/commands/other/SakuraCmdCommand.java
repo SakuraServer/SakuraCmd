@@ -33,13 +33,14 @@ public class SakuraCmdCommand extends BaseCommand implements Queueable{
         argLength = 0;
         usage = "<- admin commands";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         if (args.size() < 1){
             throw new CommandException("&c引数が足りません！");
         }
         final String func = args.remove(0);
-        
+
         // reload
         if (func.equalsIgnoreCase("reload")){
             PlayerManager.saveAll();
@@ -63,14 +64,14 @@ public class SakuraCmdCommand extends BaseCommand implements Queueable{
             }
             return; // reload
         }
-        
+
         // save
         if (func.equalsIgnoreCase("save")){
             PlayerManager.saveAll(true);
             Util.message(sender, "&aPlayer data force saved!");
             return; // save
         }
-        
+
         // migrate
         if (func.equalsIgnoreCase("migrate")){
             if (!sender.isOp()){
@@ -79,11 +80,11 @@ public class SakuraCmdCommand extends BaseCommand implements Queueable{
             if (args.size() < 1){
                 throw new CommandException("&cマイグレート対象のプラグイン名を指定してください!");
             }
-            
+
             ArrayList<Object> queueArgs = new ArrayList<Object>(2);
             queueArgs.add("migrate");
             queueArgs.add(args.get(0));
-            
+
             if (args.get(0).equalsIgnoreCase("admincmd")){
                 ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 10);
                 Util.message(sender, "&4AdminCmdプラグインからのプレイヤーデータ移行を行います！");
@@ -99,10 +100,10 @@ public class SakuraCmdCommand extends BaseCommand implements Queueable{
             }
             return; // migrate
         }
-        
+
         throw new CommandException("&c引数が不正です！");
     }
-    
+
     @Override
     public void executeQueue(QueuedCommand queued) {
         List<Object> queueArgs = queued.getArgs();

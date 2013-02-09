@@ -27,16 +27,17 @@ public class TpCommand extends BaseCommand{
         argLength = 1;
         usage = "[player] <- tp ";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         final Player target = Bukkit.getPlayer(args.get(0));
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
         final SakuraPlayer sp = PlayerManager.getPlayer(target);
-        
+
         player.teleport(target, TeleportCause.COMMAND);
-        
+
         Util.message(sender, "&aプレイヤー " + sp.getName() + "&a にテレポートしました！");
     }
 }

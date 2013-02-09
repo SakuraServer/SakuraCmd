@@ -24,7 +24,8 @@ public class RatioCommand extends BaseCommand{
         argLength = 1;
         usage = "[player] <- check players mined ratio";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         if (HawkEyeSearcher.isUsing()){
             throw new CommandException("&c現在別の検索タスクが稼働中です。しばらくお待ちください。");

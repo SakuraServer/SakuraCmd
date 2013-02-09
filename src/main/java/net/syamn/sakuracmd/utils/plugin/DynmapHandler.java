@@ -35,15 +35,15 @@ public class DynmapHandler {
     public static void createInstance(){
         instance = new DynmapHandler();
     }
-    
+
     private final SakuraCmd plugin;
-    
+
     private Plugin dynmap;
     private DynmapAPI api;
     private MarkerAPI markerapi;
-    
+
     private boolean activated = false;
-    
+
     /**
      * コンストラクタ
      */
@@ -51,7 +51,7 @@ public class DynmapHandler {
         this.plugin = SakuraCmd.getInstance();
         init();
     }
-    
+
     /**
      * 初期化
      */
@@ -61,39 +61,39 @@ public class DynmapHandler {
             listenerActivated = true;
             plugin.getServer().getPluginManager().registerEvents(new DynmapPluginListener(), plugin);
         }
-        
+
         activate();
     }
-    
+
     /**
      * 有効化
      */
     public void activate(){
         if (activated) return;
-        
+
         // get dynmap
         PluginManager pm = plugin.getServer().getPluginManager();
         dynmap = pm.getPlugin("dynmap");
         if (dynmap == null){
             LogUtil.warning("Cannot find dynmap!");
         }
-        
+
         if (!dynmap.isEnabled()){
             LogUtil.warning("Dynmap is not enabled!");
         }
-        
+
         // get api
         api = (DynmapAPI) dynmap;
-        
+
         // get marker API
         markerapi = api.getMarkerAPI();
         if (markerapi == null){
             Log.warning("Cannot loading Dynmap marker API!");
             return;
         }
-        
+
         // TODO do stuff..
-        
+
         // Activated!
         activated = true;
         LogUtil.info("Hooked to dynmap!");
@@ -108,10 +108,10 @@ public class DynmapHandler {
         dynmap = null;
         api = null;
         markerapi = null;
-        
+
         activated = false;
     }
-    
+
     /**
      * dynmap上でのプレイヤー表示/非表示を切り変える
      * @param player
@@ -122,7 +122,7 @@ public class DynmapHandler {
             api.setPlayerVisiblity(player, visible);
         }
     }
-    
+
     /**
      * 有効かどうかを返す
      * @return
@@ -130,7 +130,7 @@ public class DynmapHandler {
     public boolean isActivated(){
         return activated;
     }
-    
+
     /**
      * Dynmapの有効を検出するリスナー
      * DynmapPluginListener (DynmapHandler.java)

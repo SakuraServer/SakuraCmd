@@ -42,7 +42,7 @@ public class SakuraCmd extends JavaPlugin{
 
     // ** Commands **
     private CommandHandler commandHandler;
-    
+
     // ** Managers **
     private ServerManager serverMan;
 
@@ -54,7 +54,7 @@ public class SakuraCmd extends JavaPlugin{
 
     // ** Instance **
     private static SakuraCmd instance;
-    
+
     /**
      * プラグイン起動処理
      */
@@ -62,13 +62,13 @@ public class SakuraCmd extends JavaPlugin{
     public void onEnable() {
         instance = this;
         LogUtil.init(this);
-        
+
         worker = SCHelper.getInstance();
         worker.setMainPlugin(this);
-        
+
         // Managers
         serverMan = new ServerManager(this);
-        
+
         // Regist Listeners
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PlayerListener(this), this);
@@ -77,7 +77,7 @@ public class SakuraCmd extends JavaPlugin{
         pm.registerEvents(new InventoryListener(this), this);
         pm.registerEvents(new CreativeListener(this), this);
         pm.registerEvents(new EndListener(this), this);
-        
+
         // features
         pm.registerEvents(new PassengerListener(this), this);
         pm.registerEvents(new BackLocationListener(), this);
@@ -102,31 +102,31 @@ public class SakuraCmd extends JavaPlugin{
     @Override
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
-        
+
         // call disableAll, dispose all components
         worker.disableAll();
-        
+
         // dispose main worker
         SCHelper.dispose();
-        
+
         // Save player profiles
         PlayerManager.saveAll();
-        
+
         // メッセージ表示
         PluginDescriptionFile pdfFile = this.getDescription();
         LogUtil.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is disabled!");
     }
-    
+
     @Override
     public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
         return commandHandler.onCommand(sender, command, label, args);
     }
-    
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         return commandHandler.onTabComplete(sender, command, alias, args);
     }
-    
+
     /**
      * サーバマネージャを返す
      * @return

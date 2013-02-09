@@ -27,26 +27,27 @@ public class RepairItemCommand extends BaseCommand{
         argLength = 0;
         usage = "[player] <- repair your item";
     }
-    
+
+    @Override
     public void execute() throws CommandException{
         if (args.size() == 0 && !isPlayer){
             throw new CommandException("&cプレイヤー名を指定してください！");
         }
-        
+
         final Player target = (args.size() > 0) ? Bukkit.getPlayer(args.get(0)) : player;
         if (target == null || !target.isOnline()){
             throw new CommandException("&cプレイヤーが見つかりません！");
         }
-        
+
         final ItemStack item = target.getItemInHand();
         final String iname = (item == null) ? "null" : item.getType().name();
-        
+
         if (item != null && ItemUtil.repairable(item.getTypeId())){
             item.setDurability((short) 0);
         }else{
             throw new CommandException("&cアイテム " + iname + " は修復できません！");
         }
-        
+
         if (!sender.equals(target)){
             Util.message(sender, "&a" + PlayerManager.getPlayer(target).getName() + " &aのアイテム " + iname + " が修復されました");
         }

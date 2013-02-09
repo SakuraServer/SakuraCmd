@@ -24,11 +24,11 @@ import org.bukkit.command.TabExecutor;
 public class CommandHandler implements TabExecutor{
     private final SakuraCmd plugin;
     private Map<String, BaseCommand> commands = new HashMap<String, BaseCommand>();
-    
+
     public CommandHandler(final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args){
         final String commandName = command.getName().toLowerCase(Locale.ENGLISH);
@@ -37,13 +37,13 @@ public class CommandHandler implements TabExecutor{
             Util.message(sender, "&cCommand not found!");
             return true;
         }
-        
+
         // run command
         cmd.run(plugin, sender, commandLabel, args);
-        
+
         return true;
     }
-    
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String commandLabel, String[] args){
         final String commandName = command.getName().toLowerCase(Locale.ENGLISH);
@@ -51,16 +51,16 @@ public class CommandHandler implements TabExecutor{
         if (cmd == null){
             return null;
         }
-        
+
         // check perms
         if (sender != null && !cmd.permission(sender)){
             return null;
         }
-        
+
         // get tab complete
         return cmd.tabComplete(plugin, sender, commandLabel, args);
     }
-    
+
     public void registerCommand(final BaseCommand bc){
         if (bc.name != null){
             commands.put(bc.name, bc);
