@@ -47,7 +47,16 @@ public class EndResetCommand extends BaseCommand {
         }
 
         if (args.size() == 0){
-            resetCurrentWorld();
+            if (!(sender instanceof Player)){
+                throw new CommandException("&c有効なアクションではありません (timer/force/ignore/list)");
+            }
+
+            final World world = player.getWorld();
+            if (world.getEnvironment() != Environment.THE_END){
+                throw new CommandException("&cここはエンドワールドではありません！");
+            }
+
+            runResetTask(world);
             return;
         }
 
@@ -130,22 +139,9 @@ public class EndResetCommand extends BaseCommand {
             return;
         }
         else{
-            throw new CommandException("&c有効なアクションではありません (timer/ignore/list)");
+            throw new CommandException("&c有効なアクションではありません (timer/force/ignore/list)");
         }
         worker.updateSaveFlag();
-    }
-
-    private void resetCurrentWorld() throws CommandException{
-        if (!(sender instanceof Player)){
-            throw new CommandException("&cコンソールからは実行できません");
-        }
-
-        final World world = player.getWorld();
-        if (world.getEnvironment() != Environment.THE_END){
-            throw new CommandException("&cここはエンドワールドではありません！");
-        }
-
-        runResetTask(world);
     }
 
     private void runResetTask(final World world){
