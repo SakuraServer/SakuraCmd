@@ -11,10 +11,12 @@ import net.syamn.sakuracmd.worker.EndResetWorker;
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 
@@ -36,6 +38,24 @@ public class EndResetListener implements Listener{
     public static EndResetListener getInstance(){
         return instance;
     }
+    
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onEntityDeath(final EntityDeathEvent event) {
+        if (!(event.getEntity() instanceof EnderDragon)) return;
+        final Entity entity = event.getEntity();
+        
+        final World world = entity.getWorld();
+        if (world.getEnvironment() != Environment.THE_END) return;
+        
+        final String wname = world.getName();
+        EndResetWorker worker = EndResetWorker.getInstance();
+        if (worker == null) return;
+        
+        if (worker.worldData.containsKey(wname)){
+            worker.worldData.get(wname).updateLastReset();
+            worker.updateSaveFlag();
+        }
+    }
         
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChunkLoad(final ChunkLoadEvent event) {
@@ -48,17 +68,18 @@ public class EndResetListener implements Listener{
         final String wname = world.getName();
         HashMap<String, Long> worldMap;
         
-        if (worker.resetchunks.containsKey(wname)){
-            worldMap = worker.resetchunks.get(wname);
+        if (worker.resetChunks.containsKey(wname)){
+            worldMap = worker.resetChunks.get(wname);
         } else {
             worldMap = new HashMap<String, Long>();
-            worker.resetchunks.put(wname, worldMap);
+            worker.resetChunks.put(wname, worldMap);
         }
 
-        Chunk chunk = event.getChunk();
-        int x = chunk.getX();
-        int z = chunk.getZ();
-        String hash = x + "/" + z;
+        final Chunk chunk = event.getChunk();
+        final int x = chunk.getX();
+        final int z = chunk.getZ();
+        final String hash = x + "/" + z;
+        
         long cv = worker.cvs.get(wname);
 
         if (worldMap.containsKey(hash)) {
@@ -69,7 +90,7 @@ public class EndResetListener implements Listener{
                 
                 world.regenerateChunk(x, z);
                 worldMap.put(hash, cv);
-                worker.save = true;
+                worker.updateSaveFlag();
             }
         } else{
             worldMap.put(hash, cv);
@@ -87,7 +108,7 @@ public class EndResetListener implements Listener{
         String worldName = world.getName();
         if (!worker.cvs.containsKey(worldName)) {
             worker.cvs.put(worldName, Long.MIN_VALUE);
-            worker.save = true;
+            worker.updateSaveFlag();
         }
     }
 }

@@ -4,20 +4,21 @@
  */
 package net.syamn.sakuracmd.commands.other;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.serial.endreset.EndResetWorld;
 import net.syamn.sakuracmd.worker.EndResetWorker;
-import net.syamn.sakuracmd.worker.EndResetWorker.RegenThread;
 import net.syamn.utils.StrUtil;
+import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.command.CommandSender;
@@ -52,71 +53,87 @@ public class EndResetCommand extends BaseCommand {
         }
         
         String action = args.get(0).toLowerCase(Locale.ENGLISH);
-        if (action.equals("force")){
+        if (action.equals("timer")){
             if (args.size() < 3){
-                throw new CommandException("&c引数が足りません！ /endreset force add/remove world_name");
+                throw new CommandException("&c引数が足りません！ /endreset timer set/disable world_name");
             }
             String sub = args.get(1).toLowerCase(Locale.ENGLISH);
-            if (sub.equals("add")){
+            if (sub.equals("set")){
                 if (args.size() < 4){
-                    throw new CommandException("&c引数が足りません！ /endreset force add world_name hours");
+                    throw new CommandException("&c引数が足りません！ /endreset timer set world_name hours");
+                }
+                World world = Bukkit.getWorld(args.get(2));
+                if (world == null){
+                    throw new CommandException("&cそのワールドが見つかりません！");
+                }
+                if (world.getEnvironment() != Environment.THE_END){
+                    throw new CommandException("&cそのワールドはエンドではありません！");
                 }
                 if (!StrUtil.isInteger(args.get(3))){
                     throw new CommandException("&c数値ではありません: " + args.get(3));
                 }
-                worker.forceReset.put(args.get(2), new EndResetWorld(Integer.parseInt(args.get(3))));
-                Util.message(sender, "&aワールド " + args.get(2) + " は" + args.get(3) + "時間毎にリセットされます");
+                worker.worldData.put(world.getName(), new EndResetWorld(Integer.parseInt(args.get(3))));
+                Util.message(sender, "&aワールド " + world.getName() + " は" + args.get(3) + "時間毎にリセットされます");
             }
-            else if (sub.equals("remove")){
-                if (!worker.forceReset.containsKey(args.get(2))){
+            else if (sub.equals("disable")){
+                if (!worker.worldData.containsKey(args.get(2))){
                     throw new CommandException("&c" + args.get(2) + " がリストに見つかりません");
                 }
-                worker.forceReset.remove(args.get(2));
-                Util.message(sender, "&aワールド " + args.get(2) + " は指定された間隔でリセットされなくなりました");
+                worker.worldData.remove(args.get(2));
+                Util.message(sender, "&aワールド " + args.get(2) + " は自動でリセットされなくなりました");
             }
             else{
-                throw new CommandException("&c不正なサブコマンドです /endreset add/remove");
+                throw new CommandException("&c不正なサブコマンドです /endreset timer set/disable");
             }
         }
-        else if (action.equals("ignore")){
+        else if (action.equals("force")){
             if (args.size() < 2){
-                throw new CommandException("&c引数が足りません！ /endreset ignore world_name");
+                throw new CommandException("&c引数が足りません！ /endreset force world_name");
             }
-            String wname = args.get(1);
-            if (worker.dontHandle.contains(wname)){
-                worker.dontHandle.remove(wname);
-                Util.message(sender, "&aワールド " + wname + " を除外リストから削除しました");
-            }else{
-                worker.dontHandle.add(wname);
-                Util.message(sender, "&aワールド " + wname + " を除外リストに追加しました");
+            World world = Bukkit.getWorld(args.get(1));
+            if (world == null){
+                throw new CommandException("&cそのワールドが見つかりません！");
             }
-        }
-        else if (action.equals("list")){
-            List<World> worlds = Bukkit.getServer().getWorlds();
-            if (worlds.isEmpty()){
-                throw new CommandException("&cワールドが見つかりません！");
+            if (world.getEnvironment() != Environment.THE_END){
+                throw new CommandException("&cそのワールドはエンドではありません！");
             }
             
-            StringBuilder sb = new StringBuilder();
-            World world;
-            boolean first = true;
-            for (int i = 1; i < worlds.size(); i++){
-                world = worlds.get(i);
-                if (world != null && world.getEnvironment() == Environment.THE_END){
-                    if (!first) sb.append(' ');
-                    else first = false;
-                    
-                    sb.append(world.getName());
+            runResetTask(world);
+        }
+        else if (action.equals("list")){
+            // All end worlds
+            List<String> endWorlds = new ArrayList<String>();
+            for (final World w : Bukkit.getWorlds()){
+                if (w != null && w.getEnvironment() == Environment.THE_END){
+                    endWorlds.add(w.getName());
                 }
             }
-            sb.insert(0, ChatColor.LIGHT_PURPLE);
-            Util.message(sender, sb.toString());
+            if (endWorlds.isEmpty()){
+                Util.message(sender, "&cエンドワールドが見つかりません");
+            }else{
+                Util.message(sender, "&6エンドワールドリスト: &d" + StrUtil.join(endWorlds, "&7, &d"));
+            }
+            
+            // Auto reset worlds
+            if (worker.worldData.isEmpty()){
+                Util.message(sender, "&c自動リセットが有効になっているワールドはありません");
+            }
+            else{       
+                Util.message(sender, "&d 自動リセットが有効になっているワールドリスト: ");
+                for (Entry<String, EndResetWorld> entry : worker.worldData.entrySet()){
+                    EndResetWorld data = entry.getValue();
+                    int interval = data.getInterval();
+                    String next = TimeUtil.getReadableTime(TimeUtil.getDateByUnixSeconds(data.getNextReset()));
+                    
+                    Util.message(sender, "&e - &d" + entry.getKey() + "&7: &6次回リセット &3" + next + "以降 &6(" + interval +"時間毎)");
+                }
+            }
             return;
         }
         else{
-            throw new CommandException("&c有効なアクションではありません (force/ignore/list)");
+            throw new CommandException("&c有効なアクションではありません (timer/ignore/list)");
         }
-        worker.save = true;
+        worker.updateSaveFlag();
     }
     
     private void resetCurrentWorld() throws CommandException{
@@ -124,23 +141,23 @@ public class EndResetCommand extends BaseCommand {
             throw new CommandException("&cコンソールからは実行できません");
         }
         
-        World world = player.getWorld();
+        final World world = player.getWorld();
         if (world.getEnvironment() != Environment.THE_END){
             throw new CommandException("&cここはエンドワールドではありません！");
         }
         
+        runResetTask(world);
+    }
+    
+    private void runResetTask(final World world){
         String wname = world.getName();
         Util.broadcastMessage("&dワールド '&6" + wname + "&d' をリセットしています... (" + sender.getName() + ")");
         
-        for (final Player p : world.getPlayers()){
-            player.teleport(Bukkit.getServer().getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
-            Util.message(p, "&d このワールドはリセットされます！");
-        }
-        
-        long toRun = 1L;
-        RegenThread regenThread = worker.new RegenThread(wname, world.getFullTime() + toRun);
-        worker.pids.put(wname, Bukkit.getScheduler().runTaskLater(plugin, regenThread, toRun).getTaskId());
-        worker.threads.put(wname, regenThread);
+        Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+            @Override public void run(){
+                worker.regen(world);
+            }
+        }, 1L);
     }
     
     @Override

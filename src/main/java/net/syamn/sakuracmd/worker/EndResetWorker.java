@@ -24,6 +24,8 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -32,6 +34,7 @@ import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.listener.feature.EndResetListener;
 import net.syamn.sakuracmd.serial.endreset.EndResetWorld;
 import net.syamn.utils.LogUtil;
+import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 
 /**
@@ -59,19 +62,17 @@ public class EndResetWorker{
     private List<Integer> tasks = new ArrayList<Integer>();
     
     // data start
-    public final HashMap<String, HashMap<String, Long>> resetchunks = new HashMap<String, HashMap<String, Long>>();
+    public final HashMap<String, HashMap<String, Long>> resetChunks = new HashMap<String, HashMap<String, Long>>();
     public final HashMap<String, Long> cvs = new HashMap<String, Long>();
-    public final HashMap<String, Integer> pids = new HashMap<String, Integer>();
-    public final HashSet<String> dontHandle = new HashSet<String>();
-    public final HashMap<String, EndResetWorld> forceReset = new HashMap<String, EndResetWorld>();
-    public final HashMap<String, RegenThread> threads = new HashMap<String, RegenThread>();
+    public final HashMap<String, EndResetWorld> worldData = new HashMap<String, EndResetWorld>();
     
-    public boolean save = false;
+    private boolean save = false;
     private final AtomicBoolean saveLock = new AtomicBoolean(false);
     // data end
     
+    @SuppressWarnings("unchecked")
     private void init(){
-        endResetData = new File(plugin.getDataFolder(), "endResetData.sav");
+        endResetData = new File(plugin.getDataFolder(), "endResetData.dat");
         
         if (!endResetData.exists()){
             // file not exists, check directory
@@ -82,6 +83,7 @@ public class EndResetWorker{
             try{
                 in = new ObjectInputStream(new FileInputStream(endResetData));;
                 
+                /* dropped version structure
                 int fileVersion;
                 Object[] sa = null;
                 try {
@@ -95,23 +97,17 @@ public class EndResetWorker{
                 } catch (OptionalDataException ex) {
                     fileVersion = in.readInt();
                 }
+                */
                 
                 // load data
-                RegenThread regenThread;
-                World world;
-                long tr;
-                
                 for (Entry<String, HashMap<String, Long>> e : ((HashMap<String, HashMap<String, Long>>) in.readObject()).entrySet()){
-                    resetchunks.put(e.getKey(), e.getValue());
+                    resetChunks.put(e.getKey(), e.getValue());
                 }
                 for (Entry<String, Long> e : ((HashMap<String, Long>) in.readObject()).entrySet()){
                     cvs.put(e.getKey(), e.getValue());
                 }
-                for (String dh : (HashSet<String>) in.readObject()){
-                    dontHandle.add(dh);
-                }
                 for (Entry<String, EndResetWorld> e : ((HashMap<String, EndResetWorld>) in.readObject()).entrySet()){
-                    forceReset.put(e.getKey(), e.getValue());
+                    worldData.put(e.getKey(), e.getValue());
                 }
             }
             catch(Exception ex){
@@ -123,8 +119,8 @@ public class EndResetWorker{
             }
             
             BukkitScheduler scheduler = Bukkit.getScheduler();
-            tasks.add(scheduler.runTaskTimer(plugin, new SaveThread(), 36000L, 36000L).getTaskId()); // 30分毎
-            tasks.add(scheduler.runTaskTimer(plugin, new ForceThread(), 20L, 72000L).getTaskId()); // 1時間毎
+            tasks.add(scheduler.runTaskTimer(plugin, new CheckThread(), 100L, 24000L).getTaskId()); // 20分毎
+            tasks.add(scheduler.runTaskTimer(plugin, new SaveThread(), 48000L, 48000L).getTaskId()); // 40分毎
         }
     }
     
@@ -146,7 +142,16 @@ public class EndResetWorker{
         }
     }
     
-    private void regen(World world){
+    public void regen(World world){
+        if (world == null || world.getEnvironment() != Environment.THE_END){
+            throw new IllegalArgumentException("world must be end world");
+        }
+        
+        for (final Player p : world.getPlayers()){
+            p.teleport(Bukkit.getServer().getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
+            Util.message(p, "&d このワールドはリセットされます！");
+        }
+        
         String worldName = world.getName();
         
         long cv = cvs.get(worldName) + 1;
@@ -176,45 +181,21 @@ public class EndResetWorker{
         Util.broadcastMessage("&c[SakuraServer] &dエンドワールド'&6" + worldName + "&d'はリセットされました！");
     }
     
-    public class RegenThread implements Runnable{
-        private final String worldName;
-        private final long toRun;
-
-        public RegenThread(String worldName, long toRun) {
-            this.worldName = worldName;
-            this.toRun = toRun;
-        }
-
+    private class CheckThread implements Runnable {
         @Override
         public void run() {
-            if (!pids.containsKey(worldName)) return;
-            World world = Bukkit.getServer().getWorld(worldName);
-            if (world != null) regen(world);
-            pids.remove(worldName);
-            threads.remove(this);
-        }
-
-        long getRemainingDelay() {
-            World world = Bukkit.getServer().getWorld(worldName);
-            if (world == null) return -1;
-            return toRun - world.getFullTime();
-        }
-    }
-    
-    private class ForceThread implements Runnable {
-        @Override
-        public void run() {
-            if (forceReset.isEmpty()) return;
+            if (worldData.isEmpty()) return;
             
-            long now = System.currentTimeMillis() * 1000;
-            EndResetWorld resetWorld;
+            final long now = TimeUtil.getCurrentUnixSec();
             Server server = Bukkit.getServer();
-            for (Entry<String, EndResetWorld> entry : forceReset.entrySet()) {
+            EndResetWorld resetWorld;
+            
+            for (Entry<String, EndResetWorld> entry : worldData.entrySet()) {
                 resetWorld = entry.getValue();
-                if (resetWorld.lastReset + resetWorld.hours >= now) {
+                if (resetWorld.getNextReset() <= now) {
                     World world = server.getWorld(entry.getKey());
                     if (world != null) regen(world);
-                    resetWorld.lastReset = now;
+                    resetWorld.updateLastReset();
                     save = true;
                 }
             }
@@ -235,11 +216,10 @@ public class EndResetWorker{
                 if (!endResetData.exists()) endResetData.createNewFile();
                 ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(endResetData));
 
-                out.writeInt(0); // file version
-                out.writeObject(resetchunks);
+                //out.writeInt(0); // file version -- dropped
+                out.writeObject(resetChunks);
                 out.writeObject(cvs);
-                out.writeObject(dontHandle);
-                out.writeObject(forceReset);
+                out.writeObject(worldData);
 
                 Bukkit.getServer().getScheduler().runTaskAsynchronously(plugin, new AsyncSaveThread(out));
             } catch (Exception ex) {
@@ -249,7 +229,6 @@ public class EndResetWorker{
             }
         }
     }
-    
     private class AsyncSaveThread implements Runnable {
         private final ObjectOutputStream out;
 
@@ -270,6 +249,9 @@ public class EndResetWorker{
             }
         }
     }
-    
-    
+
+    /* getter / setter */
+    public void updateSaveFlag(){
+        this.save = true;
+    }
 }
