@@ -16,6 +16,7 @@ import net.syamn.sakuracmd.storage.ServerData;
 import net.syamn.sakuracmd.utils.plugin.DynmapHandler;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.AFKWorker;
+import net.syamn.sakuracmd.worker.EndResetWorker;
 import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.LogUtil;
@@ -88,6 +89,8 @@ public class SCHelper {
         flymodeTaskID = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(
                 this.plugin, FlymodeWorker.getInstance().getTask(), 0, 20).getTaskId();
         InvisibleWorker.createInstance(); // Invisible worker
+        
+        EndResetWorker.createInstance(plugin); // EndReset worker
        
         PermissionManager.setupPermissions(plugin); // init permission
         
@@ -155,6 +158,7 @@ public class SCHelper {
         InvisibleWorker.dispose();
         FlymodeWorker.dispose();
         HawkEyeSearcher.dispose();
+        EndResetWorker.dispose();
         
         if (DynmapHandler.getInstance() != null){
             DynmapHandler.getInstance().deactivate();
