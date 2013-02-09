@@ -18,6 +18,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.events.EndResetEvent;
+import net.syamn.sakuracmd.events.EndResettingEvent;
 import net.syamn.sakuracmd.listener.feature.EndResetListener;
 import net.syamn.sakuracmd.serial.EndResetWorldData;
 import net.syamn.utils.LogUtil;
@@ -146,14 +148,27 @@ public class EndResetWorker{
         if (world == null || world.getEnvironment() != Environment.THE_END){
             throw new IllegalArgumentException("world must be end world");
         }
-
+        final String worldName = world.getName();
+        
+        short dragonAmount = 1;
+        String message = "&c[SakuraServer] &dエンドワールド'&6" + worldName + "&d'はリセットされました！";
+        
+        // call event
+        EndResettingEvent resettingEvent = new EndResettingEvent(world, dragonAmount, message);
+        plugin.getServer().getPluginManager().callEvent(resettingEvent);
+        if (resettingEvent.isCancelled()){
+            return;
+        }
+        dragonAmount = resettingEvent.getDragonAmount();
+        if (dragonAmount < 1) dragonAmount = 1;
+        message = resettingEvent.getCompleteMessage();
+        
+        // reset
         for (final Player p : world.getPlayers()){
             p.teleport(Bukkit.getServer().getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
             Util.message(p, "&d このワールドはリセットされます！");
         }
-
-        String worldName = world.getName();
-
+        
         long cv = cvs.get(worldName) + 1;
         if (cv == Long.MAX_VALUE) cv = Long.MIN_VALUE;
         cvs.put(worldName, cv);
@@ -167,18 +182,22 @@ public class EndResetWorker{
             listener.onChunkLoad(new ChunkLoadEvent(chunk, false));
         }
 
-        short amount = 1;
-        if (amount > 1) {
-            amount--;
+        if (dragonAmount > 1) {
+            dragonAmount--;
             Location loc = world.getSpawnLocation();
             loc.setY(world.getMaxHeight() - 1);
-            for (short i = 0; i < amount; i++){
+            for (short i = 0; i < dragonAmount; i++){
                 world.spawnEntity(loc, EntityType.ENDER_DRAGON);
             }
         }
 
         save = true;
-        Util.broadcastMessage("&c[SakuraServer] &dエンドワールド'&6" + worldName + "&d'はリセットされました！");
+        if (message != null){
+            Util.broadcastMessage(message);
+        }
+        
+        // Call complete event
+        plugin.getServer().getPluginManager().callEvent(new EndResetEvent(world, dragonAmount, message));
     }
 
     private class CheckThread implements Runnable {
