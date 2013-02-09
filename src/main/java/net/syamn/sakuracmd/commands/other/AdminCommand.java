@@ -38,7 +38,6 @@ public class AdminCommand extends BaseCommand {
 
         // bcast
         if (sub.equals("bcast") && args.size() > 0) {
-            args.remove(0);
             Util.broadcastMessage(StrUtil.join(args, " "));
             return;
         }
