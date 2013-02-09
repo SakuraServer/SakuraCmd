@@ -58,6 +58,7 @@ public enum Perms {
 
     // Other / Admin Commands
     RATIO ("admin.ratio"),
+    END_RESET ("admin.endreset"),
     ADMIN ("admin.admin"),
     SAKURACMD ("admin.sakuracmd"),
     

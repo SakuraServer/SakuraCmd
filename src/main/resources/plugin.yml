@@ -110,6 +110,9 @@ commands:
     ratio:
       usage: /ratio - to see the help
       description: To see the plugin help.
+    endreset:
+      usage: /endreset - to see the help
+      description: To see the plugin help.
 permissions:
     sakuracmd.admin:
         default: op

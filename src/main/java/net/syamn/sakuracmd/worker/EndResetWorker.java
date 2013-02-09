@@ -67,17 +67,17 @@ public class EndResetWorker{
 
     public final HashSet<String> reg = new HashSet<String>();
 
-    private final HashMap<String, Integer> pids = new HashMap<String, Integer>();
-    private long inactiveMin = 1200;
+    public final HashMap<String, Integer> pids = new HashMap<String, Integer>();
+    public long inactiveMin = 1200;
     public boolean save = false;
     private final AtomicBoolean saveLock = new AtomicBoolean(false);
 
     public final HashSet<String> dontHandle = new HashSet<String>();
-    private final HashMap<String, EndResetWorld> forceReset = new HashMap<String, EndResetWorld>();
-    private final HashMap<String, Short> dragonAmount = new HashMap<String, Short>();
+    public final HashMap<String, EndResetWorld> forceReset = new HashMap<String, EndResetWorld>();
+    public final HashMap<String, Short> dragonAmount = new HashMap<String, Short>();
 
-    private final HashMap<String, RegenThread> threads = new HashMap<String, RegenThread>();
-    private final HashMap<String, Long> suspendedTasks = new HashMap<String, Long>();
+    public final HashMap<String, RegenThread> threads = new HashMap<String, RegenThread>();
+    public final HashMap<String, Long> suspendedTasks = new HashMap<String, Long>();
     // data end
     
     private void init(){
@@ -242,11 +242,11 @@ public class EndResetWorker{
         }
     }
     
-    private class RegenThread implements Runnable{
+    public class RegenThread implements Runnable{
         private final String worldName;
         private final long toRun;
 
-        private RegenThread(String worldName, long toRun) {
+        public RegenThread(String worldName, long toRun) {
             this.worldName = worldName;
             this.toRun = toRun;
         }
