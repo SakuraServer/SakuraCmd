@@ -24,6 +24,7 @@ public class EndResettingEvent extends Event implements Cancellable{
     public EndResettingEvent(World world, short dragonAmount, String message){
         this.world = world;
         this.dragonAmount = dragonAmount;
+        this.message = message;
     }
     
     public World getWorld(){
