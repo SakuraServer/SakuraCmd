@@ -8,13 +8,14 @@ import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.utils.Util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -39,7 +40,7 @@ public class EndListener implements Listener{
     public void onEntityDeath(final EntityDeathEvent event) {
         if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null) {
             int normal_end_DragonExp = 8000;
-            int hard_end_DragonExp = 30000;
+            int hard_end_DragonExp = 40000;
 
             if (event.getEntity().getWorld().getName().equals(Worlds.main_end)) {
                 event.setDroppedExp(normal_end_DragonExp);
@@ -50,8 +51,10 @@ public class EndListener implements Listener{
                 event.setDroppedExp(hard_end_DragonExp);
                 Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！", true);
                 
-                for (Entity ent : event.getEntity().getWorld().getEntities()){
-                    if (!(ent instanceof Player)) ent.remove();
+                for (final Entity ent : event.getEntity().getWorld().getEntities()){
+                    if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
+                        ent.remove();
+                    }
                 }
                 
                 //Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
@@ -61,13 +64,15 @@ public class EndListener implements Listener{
         }
     }
     
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event) {
         if (!event.getEntity().getWorld().getName().equals(Worlds.main_end)){
             return;
         }
         
-        event.setDamage(event.getDamage() + 6);
+        if (event.getEntity() instanceof Player){
+            event.setDamage(event.getDamage() + 6);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
