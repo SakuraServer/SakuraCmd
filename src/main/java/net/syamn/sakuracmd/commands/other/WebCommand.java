@@ -36,7 +36,7 @@ public class WebCommand extends BaseCommand {
         String action = args.remove(0);
 
         // web tploc [name] (world) [x] [y] [z] (yaw) (pitch) [message]
-        if (action.equalsIgnoreCase("tploc") && args.size() >= 8){
+        if (action.equalsIgnoreCase("tploc") && args.size() >= 7){
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
                 @Override public void run(){
                     tploc();

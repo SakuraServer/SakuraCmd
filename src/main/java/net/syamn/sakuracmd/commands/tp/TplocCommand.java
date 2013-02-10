@@ -24,7 +24,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
  */
 public class TplocCommand extends BaseCommand{
     public TplocCommand(){
-        bePlayer = true;
+        bePlayer = false;
         name = "tploc";
         perm = Perms.TPLOC;
         argLength = 3;
@@ -33,6 +33,10 @@ public class TplocCommand extends BaseCommand{
 
     @Override
     public void execute() throws CommandException{
+        if (!isPlayer && args.size() < 5){
+            throw new CommandException("&c引数が足りません！");
+        }
+        
         if (!StrUtil.isDouble(args.get(0)) || !StrUtil.isDouble(args.get(1)) || !StrUtil.isDouble(args.get(2))){
             throw new CommandException("&c数値ではない座標情報が含まれています！");
         }
@@ -41,8 +45,13 @@ public class TplocCommand extends BaseCommand{
         final double y = Double.parseDouble(args.remove(0));
         final double z = Double.parseDouble(args.remove(0));
 
-        World world = player.getWorld();
-        Player target = player;
+        World world = null;
+        Player target = null;
+        
+        if (isPlayer){
+            world = player.getWorld();
+            target = player;
+        }
 
         if (args.size() >= 1){
             world = Bukkit.getWorld(args.get(0));
