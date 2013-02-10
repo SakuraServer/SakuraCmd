@@ -185,7 +185,7 @@ public class HardEndListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onProjectileHit(final ProjectileHitEvent event) {
         if (event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
-            if (event.getEntityType() == EntityType.ARROW && (((Arrow) event.getEntity()).getShooter().getType() == EntityType.SKELETON)) {
+            if (EntityType.ARROW.equals(event.getEntityType()) && (((Arrow) event.getEntity()).getShooter().getType() == EntityType.SKELETON)) {
                 event.getEntity().getWorld().createExplosion(event.getEntity().getLocation(), (float) 3.0, true);
                 event.getEntity().remove(); // 規模1.0の炎有りの爆発をスケルトンの弓に与える
             }
