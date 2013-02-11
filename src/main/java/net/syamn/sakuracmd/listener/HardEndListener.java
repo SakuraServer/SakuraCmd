@@ -151,6 +151,26 @@ public class HardEndListener implements Listener{
         final Entity ent = event.getEntity();
         final Entity attacker = event.getDamager();
 
+        //ドラゴンがダメージを受けた
+        if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
+            //飛翔物によるダメージ
+            if(attacker instanceof Projectile){
+                Projectile projectile = (Projectile)attacker;
+                LivingEntity shooter = projectile.getShooter();
+                //プレイヤーが発射したものならそのプレイヤーに雷を落とす
+                if(shooter instanceof Player){
+                    shooter.getWorld().strikeLightning(shooter.getLocation());
+                }
+            }
+            
+            //プレイヤーによる攻撃ならそのプレイヤーに雷を落とす
+            if(attacker instanceof Player){
+                attacker.getWorld().strikeLightning(attacker.getLocation());
+            }
+            
+            return;
+        }
+        
         // エンダークリスタルが矢によってダメージを受けた
         if (ent.getType() == EntityType.ENDER_CRYSTAL) {
             switch(attacker.getType()){
