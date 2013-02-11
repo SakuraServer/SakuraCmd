@@ -56,61 +56,59 @@ public class HardEndListener implements Listener{
     public HardEndListener (final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageEvent event) {
         final Entity ent = event.getEntity();
-        
+
         if (!ent.getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
-        // ドラゴンへのダメージ
-        if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
-            if (event.getCause() == DamageCause.ENTITY_EXPLOSION || event.getCause() == DamageCause.BLOCK_EXPLOSION) {
-                event.setCancelled(true);
-                event.setDamage(0); // 爆発ダメージ無視
-            }else{
-                event.setDamage(event.getDamage() / 3); // ダメージ1/3
-            }
-        }
-        
+
         // ドラゴンがダメージを受けた
-        if (ent.getType() == EntityType.ENDER_DRAGON) {
+        if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
             final Location dragonLocation = ent.getLocation();
-            
+
             final List<Player> inWorldPlayers= new ArrayList<Player>();
             for (final Player p : ent.getWorld().getPlayers()){
                 if (!PlayerManager.getPlayer(p).hasPower(Power.INVISIBLE)){
                     inWorldPlayers.add(p);
                 }
             }
-            
+
+            // ドラゴンが爆発によってダメージを受けた
+            if (event.getCause() == DamageCause.ENTITY_EXPLOSION || event.getCause() == DamageCause.BLOCK_EXPLOSION) {
+                event.setCancelled(true);
+                event.setDamage(0); // 爆発ダメージ無視
+            } else {
+                event.setDamage(event.getDamage() / 3); // ダメージ1/3
+            }
+
             // 毒グモ3匹ランダムターゲットで召還
             for (short i = 0; i < 6; i++) {
                 CaveSpider caveSpider = (CaveSpider) ent.getWorld().spawnEntity(dragonLocation, EntityType.CAVE_SPIDER);
                 caveSpider.setNoDamageTicks(200);
             }
-            
+
             // ガスト3匹ランダムターゲットで召還
             for (short i = 0; i < 4; i++) {
                 Ghast ghast = (Ghast) ent.getWorld().spawnEntity(dragonLocation, EntityType.GHAST);
                 ghast.setNoDamageTicks(200);
             }
-            
+
             // ゾンビ5匹ランダムターゲットで召還
             for (short i = 0; i < 6; i++) {
                 Zombie zombie = (Zombie) ent.getWorld().spawnEntity(dragonLocation, EntityType.ZOMBIE);
                 zombie.setNoDamageTicks(200);
             }
-            
+
             // 帯電クリーパー3匹召還
             for (short i = 0; i < 6; i++) {
                 Creeper creeper = (Creeper) ent.getWorld().spawnEntity(dragonLocation, EntityType.CREEPER);
                 creeper.setNoDamageTicks(200);
                 creeper.setPowered(true);
             }
-            
+
             // ランダムプレイヤーの真上にTNTをスポーン
             for (short i = 0; i < 20; i++) {
                 Random rnd = new Random(); // 乱数宣言
@@ -120,7 +118,7 @@ public class HardEndListener implements Listener{
                 ent.getWorld().spawn(tntloc, TNTPrimed.class);
             }
         }
-        
+
         // TNT -> MOBダメージ無効
         if (ent != null && (event.getCause().equals(DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(DamageCause.BLOCK_EXPLOSION))){
             if ((ent instanceof LivingEntity) && !(ent instanceof Player)){
@@ -129,7 +127,7 @@ public class HardEndListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void voidFireDamageToMonsters(final EntityDamageEvent event) {
         if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
@@ -143,15 +141,35 @@ public class HardEndListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event) {
         if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         final Entity ent = event.getEntity();
         final Entity attacker = event.getDamager();
+
+        //ドラゴンがダメージを受けた
+        if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
+            //飛翔物によるダメージ
+            if(attacker instanceof Projectile){
+                Projectile projectile = (Projectile)attacker;
+                LivingEntity shooter = projectile.getShooter();
+                //プレイヤーが発射したものならそのプレイヤーに雷を落とす
+                if(shooter instanceof Player){
+                    shooter.getWorld().strikeLightning(shooter.getLocation());
+                }
+            }
+            
+            //プレイヤーによる攻撃ならそのプレイヤーに雷を落とす
+            if(attacker instanceof Player){
+                attacker.getWorld().strikeLightning(attacker.getLocation());
+            }
+            
+            return;
+        }
         
         // エンダークリスタルが矢によってダメージを受けた
         if (ent.getType() == EntityType.ENDER_CRYSTAL) {
@@ -162,7 +180,7 @@ public class HardEndListener implements Listener{
                     event.setCancelled(true);
                     break;
             }
-            
+
             if (attacker.getType() == EntityType.ARROW){
                 final Projectile arrow = (Arrow) attacker;
                 if (arrow.getShooter() instanceof Player) {
@@ -171,7 +189,7 @@ public class HardEndListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void addPlayerDamage(final EntityDamageByEntityEvent event) {
         if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
@@ -181,7 +199,7 @@ public class HardEndListener implements Listener{
             event.setDamage(event.getDamage() + 8);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onProjectileHit(final ProjectileHitEvent event) {
         if (event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
@@ -191,7 +209,7 @@ public class HardEndListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent event) {
         if (event.getPlayer().getWorld().getName().equals(Worlds.hard_end)){
@@ -200,7 +218,7 @@ public class HardEndListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onItemSpawn(final ItemSpawnEvent event) {
         final Item item = event.getEntity();
@@ -208,20 +226,20 @@ public class HardEndListener implements Listener{
             event.setCancelled(true); // 負荷対策
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerChangedWorld(final PlayerChangedWorldEvent event) {
         if (event.getPlayer().getWorld().getName().equals(Worlds.hard_end)) {
             event.getPlayer().setNoDamageTicks(200); // ハードエンドに移動したら10秒間無敵
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onExplosionPrime(final ExplosionPrimeEvent event) { // 爆発時の威力を高める
         if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-            
+
         // デフォルト: CREEPER:3.0 / CHARGED_CREEPER:6.0 / PRIMED_TNT:4.0 / FIREBALL:1.0(Fire:true)
         switch (event.getEntityType()) {
             case CREEPER: // クリーパー
@@ -237,16 +255,16 @@ public class HardEndListener implements Listener{
                 break;
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityExplode(final EntityExplodeEvent event) {
         if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         if (EntityType.PRIMED_TNT.equals(event.getEntityType())) {
             final Location baseLoc = event.getLocation().getBlock().getRelative(BlockFace.DOWN, 1).getLocation();
-            
+
             // 基準座標を元に 3x3 まで走査する
             Block block;
             for (int x = baseLoc.getBlockX() - 1; x <= baseLoc.getBlockX() + 1; x++) {
