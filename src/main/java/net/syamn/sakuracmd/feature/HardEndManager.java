@@ -126,6 +126,12 @@ public class HardEndManager {
         return w;
     }
     
+    public void cleanup(){
+        this.status = PartyStatus.WAITING;
+        this.invited.clear();
+        this.members.clear();
+    }
+    
     public void message(final String msg){
         Player p;
         for (final String name : members.keySet()){
@@ -166,6 +172,7 @@ public class HardEndManager {
         if (!isMember(playerName)){
             throw new IllegalStateException("player " + playerName + " must be member!");
         }
+        members.put(playerName.toLowerCase(Locale.ENGLISH), leader);
     }
     
     public Map<String, Boolean> getMembersMap(){

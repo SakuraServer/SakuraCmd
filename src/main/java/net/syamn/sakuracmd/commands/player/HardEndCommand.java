@@ -21,6 +21,9 @@ import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
+import net.syamn.utils.queue.ConfirmQueue;
+import net.syamn.utils.queue.Queueable;
+import net.syamn.utils.queue.QueuedCommand;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -30,7 +33,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
  * HardEndCommand (HardEndCommand.java)
  * @author syam(syamn)
  */
-public class HardEndCommand extends BaseCommand{
+public class HardEndCommand extends BaseCommand implements Queueable{
     public HardEndCommand(){
         bePlayer = true;
         name = "hardend";
@@ -80,8 +83,11 @@ public class HardEndCommand extends BaseCommand{
         else if (action.equals("demote")){
             demote();
         }
+        else if (action.equals("leave")){
+            leave();
+        }
         else{
-            throw new CommandException("&c不正なサブコマンドです: ready / start / join / invite / kick / info");
+            throw new CommandException("&c不正なサブコマンドです: ready / start / join / invite / kick / promote / demote / info");
         }
     }
     
@@ -239,6 +245,22 @@ public class HardEndCommand extends BaseCommand{
         mgr.message(" &6" + sender.getName() + "&c はこのパーティから  &6" + name + "&c を追放しました！");
     }
     
+    private void leave() throws CommandException{
+        if (mgr.getStatus() == PartyStatus.WAITING){
+            throw new CommandException("&c現在パーティは作成されていません");
+        }
+        if (!mgr.isMember(player)){
+            throw new CommandException("&cあなたはパーティメンバーではありません！");
+        }
+        
+        ArrayList<Object> queueArgs = new ArrayList<Object>(1);
+        queueArgs.add("leave");
+        ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 15);
+        Util.message(sender, "&6このハードエンド討伐パーティから離脱しようとしています！");
+        Util.message(sender, "&6開始中のパーティには途中から再参加できません。");
+        Util.message(sender, "&6本当に実行しますか？ &a/confirm&6 コマンドで続行します。");
+    }
+    
     private void promote() throws CommandException{
         if (mgr.getStatus() == PartyStatus.WAITING){
             throw new CommandException("&c現在パーティは作成されていません");
@@ -299,6 +321,41 @@ public class HardEndCommand extends BaseCommand{
         }
         
         mgr.message(" &6" + PlayerManager.getPlayer(player).getName() + "&c が  &6" + name + "&c をパーティリーダーから解任しました");
+    }
+    
+    @Override
+    public void executeQueue(QueuedCommand queued) {
+        List<Object> queueArgs = queued.getArgs();
+        if (queueArgs.size() == 1){
+            if (queueArgs.get(0).equals("leave")){
+                queuedLeave();
+                return;
+            }
+        }
+        throw new IllegalStateException("not handled queued command by " + queued.getSender().getName());
+    }
+    
+    private void queuedLeave(){
+        if (mgr.getStatus() == PartyStatus.WAITING){
+            Util.message(player, "&c現在パーティは作成されていません");
+            return;
+        }
+        if (!mgr.isMember(player)){
+            Util.message(player, "&cあなたはパーティメンバーではありません！");
+            return;
+        }
+        
+        mgr.removeMember(player.getName());
+        if (player.getName().equals(Worlds.hard_end)){
+            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
+        }
+        
+        mgr.message("&aプレイヤー " + PlayerManager.getPlayer(player).getName() + " &aがこのパーティから抜けました！");
+        
+        if (mgr.getMembersMap().size() < 1){
+            mgr.cleanup();
+            Util.broadcastMessage("&aハードエンド討伐パーティはメンバーが居なくなったため、自動で削除されました");
+        }
     }
     
     /*
