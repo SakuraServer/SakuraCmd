@@ -113,6 +113,9 @@ commands:
     endreset:
       usage: /endreset - to see the help
       description: To see the plugin help.
+    hardend:
+      usage: /hardend - to see the help
+      description: To see the plugin help.
 permissions:
     sakuracmd.admin:
         default: op
