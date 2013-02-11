@@ -14,6 +14,7 @@ import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
+import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
@@ -35,6 +36,7 @@ public class HardEndCommand extends BaseCommand{
 
     private HardEndManager mgr = null;
     
+    
     @Override
     public void execute() throws CommandException{
         mgr = HardEndManager.getInstance();
@@ -53,32 +55,11 @@ public class HardEndCommand extends BaseCommand{
         else if (action.equals("join")){
             join();
         }
-        
-        if (args.size() == 0 && !isPlayer){
-            throw new CommandException("&cプレイヤー名を指定してください！");
-        }
-
-        final Player target = (args.size() > 0) ? Bukkit.getPlayer(args.get(0)) : player;
-        if (target == null || !target.isOnline()){
-            throw new CommandException("&cプレイヤーが見つかりません！");
-        }
-        final SakuraPlayer sp = PlayerManager.getPlayer(target);
-
-        if (sp.hasPower(Power.GODMODE)){
-            sp.removePower(Power.GODMODE);
-            if (!sender.equals(target)){
-                Util.message(sender, "&3" + sp.getName() + " &3の無敵モードを解除しました");
-            }
-            Util.message(target, "&3あなたの無敵モードは解除されました");
-            SakuraCmdUtil.sendlog(sender, sp.getName() + "&3 が無敵モードを解除しました");
+        else if (action.equals("invite")){
+            invite();
         }
         else{
-            sp.addPower(Power.GODMODE);
-            if (!sender.equals(target)){
-                Util.message(sender, "&3" + sp.getName() + " &3を無敵モードにしました");
-            }
-            Util.message(target, "&3あなたは無敵モードになりました");
-            SakuraCmdUtil.sendlog(sender, sp.getName() + "&3 が無敵モードになりました");
+            throw new CommandException("&c不正なサブコマンドです！");
         }
     }
     
@@ -106,7 +87,7 @@ public class HardEndCommand extends BaseCommand{
         if (mgr.getStatus() != PartyStatus.OPENING){
             throw new CommandException("&c現在パーティが開始待機中ではありません！");
         }
-        if (mgr.isLeader(player)){
+        if (!mgr.isLeader(player)){
             throw new CommandException("&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
         }
         
@@ -133,10 +114,47 @@ public class HardEndCommand extends BaseCommand{
         if (mgr.isMember(player)){
             throw new CommandException("&cあなたは既にこのパーティに参加しています！");
         }
-        if (!mgr.isOpenParty()){
+        if (!mgr.isOpenParty() && !mgr.invited.contains(player.getName().toLowerCase(Locale.ENGLISH))){
             throw new CommandException("&cクローズパーティのため、パーティリーダーの招待が必要です！");
         }
+        
+        if (!mgr.isOpenParty()){
+            mgr.invited.remove(player.getName().toLowerCase(Locale.ENGLISH));
+        }
+        
         mgr.addMember(player.getName(), false);
         mgr.message(" " + PlayerManager.getPlayer(player).getName() + " &dがこのパーティに参加しました！");
     }
+    
+    private void invite() throws CommandException{
+        if (mgr.getStatus() != PartyStatus.OPENING){
+            throw new CommandException("&c現在パーティが開始待機中ではありません！");
+        }
+        if (!mgr.isLeader(player)){
+            throw new CommandException("&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
+        }
+        
+        if (args.size() < 1){
+            throw new CommandException("&cパーティに招待するプレイヤーを入力してください！");
+        }
+        
+        Player p = Bukkit.getPlayer(args.get(0).trim());
+        if (p == null || !p.isOnline()){
+            throw new CommandException("&cプレイヤー " + args.get(0).trim() + " が見つかりません！");
+        }
+        
+        mgr.invited.add(p.getName().toLowerCase(Locale.ENGLISH));
+        Util.message(p, " " + PlayerManager.getPlayer(player).getName() + " &dがあなたにパーティ招待を送信しました！");
+        Util.message(p, " &6/hardend join &dコマンドで招待を受諾し参加します！");
+        
+        Util.message(sender, " " + PlayerManager.getPlayer(p).getName() + " &dにパーティ招待を送信しました！");
+    }
+    
+    /*
+    private void permCheck() throws CommandException{
+        if (!Perms.HARD_END.has(sender)){
+            throw new CommandException("&c権限がありません！");
+        }
+    }
+    */
 }

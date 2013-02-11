@@ -73,7 +73,9 @@ public class HardEndListener implements Listener{
         
         mgr = HardEndManager.getInstance();
         final Player player = event.getPlayer();
-        if (!(mgr.getStatus() == PartyStatus.STARTING && mgr.isMember(player)) && !Perms.TRUST.has(player)){
+        if ((mgr.getStatus() == PartyStatus.STARTING && mgr.isMember(player)) || Perms.TRUST.has(player)){
+            // nothing to do
+        }else{
             Util.message(player, "&cハードエンドに行くためにはパーティ登録を行う必要があります");
             event.setCancelled(true);
         }

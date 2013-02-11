@@ -7,9 +7,11 @@ package net.syamn.sakuracmd.feature;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import net.syamn.sakuracmd.enums.PartyStatus;
 import net.syamn.sakuracmd.manager.Worlds;
@@ -37,8 +39,9 @@ public class HardEndManager {
     private boolean openParty = false;
     
     private Map<String, Boolean> members = new HashMap<String, Boolean>();
+    public Set<String> invited = new HashSet<String>();
     
-    private int minPlayers = 5;
+    private int minPlayers = 1;
 
     private HardEndManager(){
         //this.afkChecker = new HardEndManager();
@@ -62,6 +65,7 @@ public class HardEndManager {
         
         status = PartyStatus.OPENING;
         openParty = open;
+        invited.clear();
         
         addMember(sender.getName(), true);
         
@@ -88,14 +92,6 @@ public class HardEndManager {
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
         }        
         
-        Player member;
-        for (final String name : members.keySet()){
-            member = Bukkit.getPlayerExact(name);
-            if (member == null || !member.isOnline()){
-                continue;
-            }
-            member.teleport(world.getSpawnLocation(), TeleportCause.PLUGIN);
-        }
         
         List<String> names = new ArrayList<String>(members.size());
         for (final Map.Entry<String, Boolean> entry : members.entrySet()){
@@ -108,8 +104,19 @@ public class HardEndManager {
         
         Util.broadcastMessage(" &dハードエンド討伐チャレンジが開始されました！");
         Util.broadcastMessage(" &dパーティメンバー: " + StrUtil.join(names, "&7, "));
+        
+        status = PartyStatus.STARTING;
+        invited.clear();
+        
+        Player member;
+        for (final String name : members.keySet()){
+            member = Bukkit.getPlayerExact(name);
+            if (member == null || !member.isOnline()){
+                continue;
+            }
+            member.teleport(world.getSpawnLocation(), TeleportCause.PLUGIN);
+        }
     }
-    
     
     private World checkWorld(){
         final World w = Bukkit.getWorld(Worlds.hard_end);
