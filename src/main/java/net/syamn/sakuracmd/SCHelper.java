@@ -5,6 +5,7 @@
 package net.syamn.sakuracmd;
 
 import net.syamn.sakuracmd.feature.GeoIP;
+import net.syamn.sakuracmd.feature.HardEndManager;
 import net.syamn.sakuracmd.feature.HawkEyeSearcher;
 import net.syamn.sakuracmd.listener.feature.MCBansListener;
 import net.syamn.sakuracmd.permission.PermissionManager;
@@ -127,6 +128,8 @@ public class SCHelper {
                 ex.printStackTrace();
             }
         }
+        
+        HardEndManager.createInstance();
 
         // last, restore save data
         saveData.loadRestore();
@@ -159,6 +162,7 @@ public class SCHelper {
         FlymodeWorker.dispose();
         HawkEyeSearcher.dispose();
         EndResetWorker.dispose();
+        HardEndManager.dispose();
 
         if (DynmapHandler.getInstance() != null){
             DynmapHandler.getInstance().deactivate();

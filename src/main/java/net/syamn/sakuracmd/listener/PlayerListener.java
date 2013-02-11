@@ -23,6 +23,7 @@ import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.sakuracmd.worker.InvisibleWorker;
 import net.syamn.utils.ItemUtil;
+import net.syamn.utils.LogUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
@@ -67,6 +68,10 @@ public class PlayerListener implements Listener{
     public void onPlayerInteract(final PlayerInteractEvent event){
         final Player player = event.getPlayer();
         AFKWorker.getInstance().updatePlayer(player);
+        
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.BED_BLOCK) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -143,14 +148,43 @@ public class PlayerListener implements Listener{
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST) // ignoreCancelled = true
+    public void onPlayerRightClickBlock(final PlayerInteractEvent event) {
+        if (event.useItemInHand() == org.bukkit.event.Event.Result.DENY){
+            return; // instead of ignoreCancelled = true
+        }
+        if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) {
+            return; // check action
+        }
+        
+        final Block block = event.getClickedBlock();
+        if (block == null) return;
+        final Player player = event.getPlayer();
+        boolean cancel = false;
+        
+        switch (block.getType()){
+            case COMMAND:
+                if (!player.isOp()){
+                    cancel = true;
+                }
+                break;
+            default:
+                break;
+        }
+        
+        if (cancel){
+            event.setCancelled(true);
+            event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+            event.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+        }
+    }
+    
     @EventHandler(priority = EventPriority.HIGH) // ignoreCancelled = true
     public void onPlayerRightClickWithItem(final PlayerInteractEvent event) {
         if (event.useItemInHand() == org.bukkit.event.Event.Result.DENY){
             return; // instead of ignoreCancelled = true
         }
-        if (!(Action.RIGHT_CLICK_AIR.equals(event.getAction()) || Action.RIGHT_CLICK_BLOCK.equals(event.getAction()))) {
-            return; // return if not right click
-        }
+       
 
         final Player player = event.getPlayer();
         final ItemStack is = player.getItemInHand();

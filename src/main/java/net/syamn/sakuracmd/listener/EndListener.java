@@ -22,8 +22,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 /**
@@ -39,7 +41,7 @@ public class EndListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDeath(final EntityDeathEvent event) {
         if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null) {
-            int normal_end_DragonExp = 8000;
+            int normal_end_DragonExp = 7000;
             int hard_end_DragonExp = 40000;
 
             if (event.getEntity().getWorld().getName().equals(Worlds.main_end)) {
@@ -61,6 +63,15 @@ public class EndListener implements Listener{
             }
 
             //Actions.log("End.log", "Player " + event.getEntity().getKiller().getName() + " killed the EnderDragon at world " + event.getEntity().getWorld().getName());
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntityDamage(final EntityDamageEvent event) {
+        final Entity ent = event.getEntity();
+        
+        if (ent.getWorld().getName().equals(Worlds.main_end) && (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART)) {
+            event.setDamage(event.getDamage() / 2); // ドラゴンHP x2
         }
     }
     
