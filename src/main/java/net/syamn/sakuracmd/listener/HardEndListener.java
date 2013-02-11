@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Random;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.enums.PartyStatus;
+import net.syamn.sakuracmd.feature.HardEndManager;
 import net.syamn.sakuracmd.manager.Worlds;
+import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
-import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.utils.Util;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -30,7 +31,6 @@ import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
@@ -39,13 +39,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
 /**
  * HardEndListener (HardEndListener.java)
@@ -53,8 +54,23 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class HardEndListener implements Listener{
     private SakuraCmd plugin;
+    private HardEndManager mgr;
     public HardEndListener (final SakuraCmd plugin){
         this.plugin = plugin;
+    }
+    
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerTeleport(final PlayerTeleportEvent event) {
+        if (!event.getTo().getWorld().getName().equals(Worlds.hard_end)){
+            return;
+        }
+        
+        mgr = HardEndManager.getInstance();
+        final Player player = event.getPlayer();
+        if (!(mgr.getStatus() == PartyStatus.STARTING && mgr.isMember(player)) && !Perms.TRUST.has(player)){
+            Util.message(player, "&cハードエンドに行くためにはパーティ登録を行う必要があります");
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

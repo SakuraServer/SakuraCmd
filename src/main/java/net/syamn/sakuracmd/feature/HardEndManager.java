@@ -110,6 +110,7 @@ public class HardEndManager {
         Util.broadcastMessage(" &dパーティメンバー: " + StrUtil.join(names, "&7, "));
     }
     
+    
     private World checkWorld(){
         final World w = Bukkit.getWorld(Worlds.hard_end);
         if (w == null){
@@ -118,10 +119,24 @@ public class HardEndManager {
         return w;
     }
     
+    public void message(final String msg){
+        Player p;
+        for (final String name : members.keySet()){
+            p = Bukkit.getPlayerExact(name);
+            if (p != null && p.isOnline()){
+                Util.message(p, msg);
+            }
+        }
+    }
+    
     /* getter/setter */
     public void addMember(final String playerName, final boolean leader){
         members.put(playerName.toLowerCase(Locale.ENGLISH), leader);
     }
+    public void removeMember(final String playerName){
+        members.remove(playerName.toLowerCase(Locale.ENGLISH));
+    }
+    
     public boolean isMember(final Player player){
         return isMember(player.getName());
     }
@@ -129,6 +144,17 @@ public class HardEndManager {
         if (members == null) return false;
         return members.containsKey(playerName.toLowerCase(Locale.ENGLISH));
     }
+    
+    public boolean isLeader(final Player player){
+        return isLeader(player.getName());
+    }
+    public boolean isLeader(final String playerName){
+        if (members == null || !members.containsKey(playerName.toLowerCase(Locale.ENGLISH))) 
+            return false;
+        
+        return members.get(playerName.toLowerCase(Locale.ENGLISH));
+    }
+    
     public Map<String, Boolean> getMembersMap(){
         if (status == PartyStatus.WAITING){
             return null;
@@ -142,5 +168,9 @@ public class HardEndManager {
     
     public boolean isOpenParty(){
         return openParty;
+    }
+    
+    public int getMinPlayers(){
+        return this.minPlayers;
     }
 }

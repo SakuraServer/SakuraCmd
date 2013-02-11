@@ -25,6 +25,7 @@ import net.syamn.sakuracmd.commands.player.FlyCommand;
 import net.syamn.sakuracmd.commands.player.FlymodeCommand;
 import net.syamn.sakuracmd.commands.player.GamemodeCommand;
 import net.syamn.sakuracmd.commands.player.GodCommand;
+import net.syamn.sakuracmd.commands.player.HardEndCommand;
 import net.syamn.sakuracmd.commands.player.InvisibleCommand;
 import net.syamn.sakuracmd.commands.player.NoPickupCommand;
 import net.syamn.sakuracmd.commands.player.OpenEnderCommand;
@@ -73,6 +74,7 @@ public class CommandRegister {
         cmds.add(new OpenEnderCommand());
         cmds.add(new SpecChestCommand());
         cmds.add(new NoPickupCommand());
+        cmds.add(new HardEndCommand());
 
         // World Commands
         cmds.add(new WeatherCommand());
