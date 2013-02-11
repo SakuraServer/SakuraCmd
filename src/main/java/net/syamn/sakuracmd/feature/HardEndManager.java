@@ -162,6 +162,12 @@ public class HardEndManager {
         return members.get(playerName.toLowerCase(Locale.ENGLISH));
     }
     
+    public void setLeader(final String playerName, final boolean leader){
+        if (!isMember(playerName)){
+            throw new IllegalStateException("player " + playerName + " must be member!");
+        }
+    }
+    
     public Map<String, Boolean> getMembersMap(){
         if (status == PartyStatus.WAITING){
             return null;

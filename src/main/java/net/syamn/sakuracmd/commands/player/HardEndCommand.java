@@ -4,11 +4,15 @@
  */
 package net.syamn.sakuracmd.commands.player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.enums.PartyStatus;
 import net.syamn.sakuracmd.feature.HardEndManager;
+import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
@@ -20,6 +24,7 @@ import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
 /**
  * HardEndCommand (HardEndCommand.java)
@@ -30,7 +35,7 @@ public class HardEndCommand extends BaseCommand{
         bePlayer = true;
         name = "hardend";
         perm = Perms.HARD_END;
-        argLength = 1;
+        argLength = 0;
         usage = "[action] <- hard end commands";
     }
 
@@ -44,8 +49,13 @@ public class HardEndCommand extends BaseCommand{
             throw new CommandException("&c現在ハードエンドは利用できません");
         }
         
+        if (args.size() < 1){
+            info();
+            return;
+        }
+        
         final String action = args.remove(0).trim().toLowerCase(Locale.ENGLISH);
-       
+        
         if (action.equals("ready")){
             ready();
         }
@@ -58,9 +68,51 @@ public class HardEndCommand extends BaseCommand{
         else if (action.equals("invite")){
             invite();
         }
-        else{
-            throw new CommandException("&c不正なサブコマンドです！");
+        else if (action.equals("kick")){
+            kick();
         }
+        else if (action.equals("info")){
+            info();
+        }
+        else if (action.equals("promote")){
+            promote();
+        }
+        else if (action.equals("demote")){
+            demote();
+        }
+        else{
+            throw new CommandException("&c不正なサブコマンドです: ready / start / join / invite / kick / info");
+        }
+    }
+    
+    @SuppressWarnings("incomplete-switch")
+    private void info() throws CommandException{
+        if (mgr.getStatus() == PartyStatus.WAITING){
+            Util.message(sender, "&b ステータス: &7パーティ登録受付中");
+            Util.message(sender, "&6 /hardend ready (open|close) &bで登録できます！");
+            return;
+        }
+        
+        String status = null;
+        switch (mgr.getStatus()){
+            case OPENING: status = "&b参加受付中";
+            case STARTING: status = "&6開始中";
+                if (mgr.isOpenParty()) status += " &b[OPEN]";
+                else status += " &c[CLOSE]";
+                break;
+        }
+        
+        List<String> names = new ArrayList<String>(mgr.getMembersMap().size());
+        for (final Map.Entry<String, Boolean> entry : mgr.getMembersMap().entrySet()){
+            if (entry.getValue()){
+                names.add("&6" + entry.getKey());
+            }else{
+                names.add("&3" + entry.getKey());
+            }
+        }
+        
+        Util.message(sender, "&b ステータス: " + status);
+        Util.broadcastMessage(" &bパーティメンバー (" + names.size() + "): " + StrUtil.join(names, "&7, "));
     }
     
     private void ready() throws CommandException{
@@ -138,9 +190,13 @@ public class HardEndCommand extends BaseCommand{
             throw new CommandException("&cパーティに招待するプレイヤーを入力してください！");
         }
         
-        Player p = Bukkit.getPlayer(args.get(0).trim());
+        final Player p = Bukkit.getPlayer(args.get(0).trim());
         if (p == null || !p.isOnline()){
             throw new CommandException("&cプレイヤー " + args.get(0).trim() + " が見つかりません！");
+        }
+        
+        if (sender.equals(p)){
+            throw new CommandException("&c自分に招待を送信できません！");
         }
         
         mgr.invited.add(p.getName().toLowerCase(Locale.ENGLISH));
@@ -148,6 +204,101 @@ public class HardEndCommand extends BaseCommand{
         Util.message(p, " &6/hardend join &dコマンドで招待を受諾し参加します！");
         
         Util.message(sender, " " + PlayerManager.getPlayer(p).getName() + " &dにパーティ招待を送信しました！");
+    }
+    
+    private void kick() throws CommandException{
+        if (mgr.getStatus() == PartyStatus.WAITING){
+            throw new CommandException("&c現在パーティは作成されていません");
+        }
+        if (!mgr.isLeader(player)){
+            throw new CommandException("&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
+        }
+        
+        if (args.size() < 1){
+            throw new CommandException("&cパーティから追放するプレイヤーを入力してください！");
+        }
+        
+        final String name = args.get(0).trim().toLowerCase(Locale.ENGLISH);
+        if (!mgr.isMember(name)){
+            throw new CommandException("&6" + name + " &cはパーティメンバーではありません！");
+        }
+        
+        if (name.equalsIgnoreCase(sender.getName())){
+            throw new CommandException("&c自分を追放することはできません！");
+        }
+        
+        mgr.removeMember(name);
+        Player p = Bukkit.getPlayerExact(name);
+        if (p != null && p.isOnline()){
+            Util.message(p, "&cあなたはパーティから追放されました！");
+            if (p.getWorld().getName().equals(Worlds.hard_end)){
+                p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
+            }
+        }
+        
+        mgr.message(" &6" + sender.getName() + "&c はこのパーティから  &6" + name + "&c を追放しました！");
+    }
+    
+    private void promote() throws CommandException{
+        if (mgr.getStatus() == PartyStatus.WAITING){
+            throw new CommandException("&c現在パーティは作成されていません");
+        }
+        if (!mgr.isLeader(player)){
+            throw new CommandException("&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
+        }
+        if (args.size() < 1){
+            throw new CommandException("&cパーティリーダーに任命するプレイヤーを入力してください！");
+        }
+        
+        final String name = args.get(0).trim().toLowerCase(Locale.ENGLISH);
+        if (!mgr.isMember(name)){
+            throw new CommandException("&6" + name + " &cはパーティメンバーではありません！");
+        }
+        if (name.equalsIgnoreCase(sender.getName())){
+            throw new CommandException("&c自分を変更することはできません！");
+        }
+        if (mgr.isLeader(name)){
+            throw new CommandException("&6" + name + " &cは既にパーティリーダーです！");
+        }
+        
+        mgr.setLeader(name, true);
+        Player p = Bukkit.getPlayerExact(name);
+        if (p != null && p.isOnline()){
+            Util.message(p, "&aあなたはパーティリーダーに任命されました！");
+        }
+        
+        mgr.message(" &6" + PlayerManager.getPlayer(player).getName() + "&a が  &6" + name + "&a をパーティリーダーに任命しました");
+    }
+    
+    private void demote() throws CommandException{
+        if (mgr.getStatus() == PartyStatus.WAITING){
+            throw new CommandException("&c現在パーティは作成されていません");
+        }
+        if (!mgr.isLeader(player)){
+            throw new CommandException("&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
+        }
+        if (args.size() < 1){
+            throw new CommandException("&cパーティリーダーを解任するプレイヤーを入力してください！");
+        }
+        
+        final String name = args.get(0).trim().toLowerCase(Locale.ENGLISH);
+        if (!mgr.isMember(name)){
+            throw new CommandException("&6" + name + " &cはパーティメンバーではありません！");
+        }
+        if (name.equalsIgnoreCase(sender.getName())){
+            throw new CommandException("&c自分を変更することはできません！");
+        }
+        if (!mgr.isLeader(name)){
+            throw new CommandException("&6" + name + " &cはパーティリーダーではありません！");
+        }
+        
+        mgr.setLeader(name, false);
+        Player p = Bukkit.getPlayerExact(name);
+        if (p != null && p.isOnline()){
+            Util.message(p, "&6あなたはパーティリーダーから解任されました！");
+        }
+        
+        mgr.message(" &6" + PlayerManager.getPlayer(player).getName() + "&c が  &6" + name + "&c をパーティリーダーから解任しました");
     }
     
     /*
