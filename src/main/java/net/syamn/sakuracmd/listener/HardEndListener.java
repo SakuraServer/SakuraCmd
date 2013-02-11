@@ -314,6 +314,7 @@ public class HardEndListener implements Listener{
         for (final EnderDragon ed : inWorldDragons) {
             for (short i = 0; i < 6; i++) {
                 Fireball fireball = ed.launchProjectile(Fireball.class);
+                fireball.setShooter(ed);
                 fireball.setBounce(false); //弾き飛ばせないようにする
                 Location targetLoc = inWorldPlayers.get(rnd.nextInt(inWorldPlayers.size())).getLocation(); // ターゲットプレイヤー確定と座標取得
                 Vector fireVec = targetLoc.toVector().subtract(fireball.getLocation().toVector()); //火の玉から見たプレイヤーのベクトルを計算
