@@ -24,8 +24,10 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Creeper;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
@@ -40,6 +42,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
@@ -47,16 +50,19 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.util.Vector;
 
 /**
  * HardEndListener (HardEndListener.java)
  * @author syam(syamn)
  */
 public class HardEndListener implements Listener{
+    private Random rnd;
     private SakuraCmd plugin;
     private HardEndManager mgr;
     public HardEndListener (final SakuraCmd plugin){
         this.plugin = plugin;
+        rnd = new Random();
     }
     
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -127,7 +133,6 @@ public class HardEndListener implements Listener{
 
             // ランダムプレイヤーの真上にTNTをスポーン
             for (short i = 0; i < 20; i++) {
-                Random rnd = new Random(); // 乱数宣言
                 if (inWorldPlayers.size() < 1) return;
                 Location targetLoc = inWorldPlayers.get(rnd.nextInt(inWorldPlayers.size())).getLocation(); // ターゲットプレイヤー確定と座標取得
                 Location tntloc = new Location(targetLoc.getWorld(), targetLoc.getX(), dragonLocation.getY(), targetLoc.getZ());
@@ -292,6 +297,43 @@ public class HardEndListener implements Listener{
                         }
                     }
                 }
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntityDeath(final EntityDeathEvent event) {
+        if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)) {
+            return;
+        }
+        final Entity ent = event.getEntity();
+        
+        final List<Player> inWorldPlayers = new ArrayList<Player>();
+        for (final Player p : ent.getWorld().getPlayers()) {
+            if (!PlayerManager.getPlayer(p).hasPower(Power.INVISIBLE)) {
+                inWorldPlayers.add(p);
+            }
+        }
+        
+        final List<EnderDragon> inWorldDragons = new ArrayList<EnderDragon>();
+        for (final Entity e : ent.getWorld().getEntitiesByClasses(EnderDragon.class)) {
+            if (e instanceof EnderDragon) {
+                inWorldDragons.add((EnderDragon) e);
+            }
+        }
+
+        if (inWorldPlayers.size() < 1) {
+            return;
+        }
+        
+        // ランダムプレイヤーに火の玉発射
+        for (final EnderDragon ed : inWorldDragons) {
+            for (short i = 0; i < 6; i++) {
+                Fireball fireball = ed.launchProjectile(Fireball.class);
+                fireball.setBounce(false); //弾き飛ばせないようにする
+                Location targetLoc = inWorldPlayers.get(rnd.nextInt(inWorldPlayers.size())).getLocation(); // ターゲットプレイヤー確定と座標取得
+                Vector fireVec = targetLoc.toVector().subtract(fireball.getLocation().toVector()); //火の玉から見たプレイヤーのベクトルを計算
+                fireball.setDirection(fireVec);
             }
         }
     }
