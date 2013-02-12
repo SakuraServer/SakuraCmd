@@ -25,37 +25,30 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.CaveSpider;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.Ghast;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
-import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.util.Vector;
 
 /**
  * HardEndListener (HardEndListener.java)
@@ -68,6 +61,24 @@ public class HardEndListener implements Listener{
     public HardEndListener (final SakuraCmd plugin){
         this.plugin = plugin;
         rnd = new Random();
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntityDeath(final EntityDeathEvent event) {
+        if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null &&  event.getEntity().getWorld().getName().equals(Worlds.hard_end)) {
+            final int hard_end_DragonExp = 40000;
+            
+            event.setDroppedExp(hard_end_DragonExp);
+            Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！");
+            
+            for (final Entity ent : event.getEntity().getWorld().getEntities()){
+                if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
+                    ent.remove();
+                }
+            }
+            
+            Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
+        }
     }
     
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -86,13 +97,12 @@ public class HardEndListener implements Listener{
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageEvent event) {
-        final Entity ent = event.getEntity();
-
-        if (!ent.getWorld().getName().equals(Worlds.hard_end)){
+        if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
+        final Entity ent = event.getEntity();
 
         // ドラゴンがダメージを受けた
         if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
@@ -104,41 +114,30 @@ public class HardEndListener implements Listener{
                     inWorldPlayers.add(p);
                 }
             }
-
-            // ドラゴンが爆発によってダメージを受けた
-            if (event.getCause() == DamageCause.ENTITY_EXPLOSION || event.getCause() == DamageCause.BLOCK_EXPLOSION) {
-                event.setCancelled(true);
-                event.setDamage(0); // 爆発ダメージ無視
-            } else {
-                event.setDamage(event.getDamage() / 3); // ダメージ1/3
-            }
-
+            
+            event.setDamage(event.getDamage() / 3); // ダメージ1/3
+            
+            //LivingEntity e;
             // 毒グモ3匹ランダムターゲットで召還
             for (short i = 0; i < 6; i++) {
-                CaveSpider caveSpider = (CaveSpider) ent.getWorld().spawnEntity(dragonLocation, EntityType.CAVE_SPIDER);
-                caveSpider.setNoDamageTicks(200);
+                ent.getWorld().spawnEntity(dragonLocation, EntityType.CAVE_SPIDER);
             }
-
             // ガスト3匹ランダムターゲットで召還
             for (short i = 0; i < 4; i++) {
-                Ghast ghast = (Ghast) ent.getWorld().spawnEntity(dragonLocation, EntityType.GHAST);
-                ghast.setNoDamageTicks(200);
+                ent.getWorld().spawnEntity(dragonLocation, EntityType.GHAST);
             }
-
             // ゾンビ5匹ランダムターゲットで召還
             for (short i = 0; i < 6; i++) {
-                Zombie zombie = (Zombie) ent.getWorld().spawnEntity(dragonLocation, EntityType.ZOMBIE);
-                zombie.setNoDamageTicks(200);
+                ent.getWorld().spawnEntity(dragonLocation, EntityType.ZOMBIE);
             }
 
             // 帯電クリーパー3匹召還
             for (short i = 0; i < 6; i++) {
-                Creeper creeper = (Creeper) ent.getWorld().spawnEntity(dragonLocation, EntityType.CREEPER);
-                creeper.setNoDamageTicks(200);
-                creeper.setPowered(true);
+                ((Creeper) ent.getWorld().spawnEntity(dragonLocation, EntityType.CREEPER)).setPowered(true);
             }
 
             // ランダムプレイヤーの真上にTNTをスポーン
+            
             for (short i = 0; i < 20; i++) {
                 if (inWorldPlayers.size() < 1) return;
                 Location targetLoc = inWorldPlayers.get(rnd.nextInt(inWorldPlayers.size())).getLocation(); // ターゲットプレイヤー確定と座標取得
@@ -146,26 +145,31 @@ public class HardEndListener implements Listener{
                 ent.getWorld().spawn(tntloc, TNTPrimed.class);
             }
         }
-
-        // TNT -> MOBダメージ無効
-        if (ent != null && (event.getCause().equals(DamageCause.ENTITY_EXPLOSION) || event.getCause().equals(DamageCause.BLOCK_EXPLOSION))){
-            if ((ent instanceof LivingEntity) && !(ent instanceof Player)){
-                event.setDamage(0);
-                event.setCancelled(true);
-            }
-        }
     }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void voidFireDamageToMonsters(final EntityDamageEvent event) {
+    
+    @SuppressWarnings("incomplete-switch")
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void disableEnvironmentDamageToMobs(final EntityDamageEvent event) {
         if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
         final Entity ent = event.getEntity();
-        if ((ent instanceof LivingEntity) && !(ent instanceof Player)){
-            if (DamageCause.FIRE.equals(event.getCause()) || DamageCause.FIRE_TICK.equals(event.getCause())){
-                event.setDamage(0);
-                event.setCancelled(true);
+        
+        if (ent != null && (ent instanceof LivingEntity) && !(ent instanceof Player)){
+            switch (event.getCause()){
+                // TNT, fire, drown, lightning, fall, lava, poison
+                case BLOCK_EXPLOSION: 
+                case ENTITY_EXPLOSION:
+                case FIRE:
+                case FIRE_TICK:
+                case DROWNING:
+                case LIGHTNING:
+                case FALL:
+                case LAVA:
+                case POISON:
+                    event.setDamage(0);
+                    event.setCancelled(true);
+                    break;
             }
         }
     }
@@ -179,7 +183,7 @@ public class HardEndListener implements Listener{
         final Entity ent = event.getEntity();
         final Entity attacker = event.getDamager();
 
-        //ドラゴンがダメージを受けた
+        // ドラゴン
         if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
             //飛翔物によるダメージ
             if(attacker instanceof Projectile){
@@ -195,12 +199,9 @@ public class HardEndListener implements Listener{
             if(attacker instanceof Player){
                 attacker.getWorld().strikeLightning(attacker.getLocation());
             }
-            
-            return;
         }
-        
-        // エンダークリスタルが矢によってダメージを受けた
-        if (ent.getType() == EntityType.ENDER_CRYSTAL) {
+        // エンダークリスタル
+        else if (ent.getType() == EntityType.ENDER_CRYSTAL) {
             switch(attacker.getType()){
                 case ARROW:
                 case PRIMED_TNT:
@@ -229,17 +230,7 @@ public class HardEndListener implements Listener{
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onProjectileHit(final ProjectileHitEvent event) {
-        if (event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
-            if (EntityType.ARROW.equals(event.getEntityType()) && (((Arrow) event.getEntity()).getShooter().getType() == EntityType.SKELETON)) {
-                event.getEntity().getWorld().createExplosion(event.getEntity().getLocation(), (float) 3.0, true);
-                event.getEntity().remove(); // 規模1.0の炎有りの爆発をスケルトンの弓に与える
-            }
-        }
-    }
-
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onPlayerInteract(final PlayerInteractEvent event) {
+    public void cancelBedClick(final PlayerInteractEvent event) {
         if (event.getPlayer().getWorld().getName().equals(Worlds.hard_end)){
             if (event.getClickedBlock().getType() == Material.BED_BLOCK && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 event.setCancelled(true);
@@ -248,7 +239,7 @@ public class HardEndListener implements Listener{
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onItemSpawn(final ItemSpawnEvent event) {
+    public void cancelSpawnEnderStone(final ItemSpawnEvent event) {
         final Item item = event.getEntity();
         if (item.getWorld().getName().equals(Worlds.hard_end) && item.getItemStack().getType() == Material.ENDER_STONE) {
             event.setCancelled(true); // 負荷対策
@@ -304,44 +295,6 @@ public class HardEndListener implements Listener{
                         }
                     }
                 }
-            }
-        }
-    }
-    
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void onEntityDeath(final EntityDeathEvent event) {
-        if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)) {
-            return;
-        }
-        final Entity ent = event.getEntity();
-        
-        final List<Player> inWorldPlayers = new ArrayList<Player>();
-        for (final Player p : ent.getWorld().getPlayers()) {
-            if (!PlayerManager.getPlayer(p).hasPower(Power.INVISIBLE)) {
-                inWorldPlayers.add(p);
-            }
-        }
-        
-        final List<EnderDragon> inWorldDragons = new ArrayList<EnderDragon>();
-        for (final Entity e : ent.getWorld().getEntitiesByClasses(EnderDragon.class)) {
-            if (e instanceof EnderDragon) {
-                inWorldDragons.add((EnderDragon) e);
-            }
-        }
-
-        if (inWorldPlayers.size() < 1) {
-            return;
-        }
-        
-        // ランダムプレイヤーに火の玉発射
-        for (final EnderDragon ed : inWorldDragons) {
-            for (short i = 0; i < 6; i++) {
-                Fireball fireball = ed.launchProjectile(Fireball.class);
-                fireball.setShooter(ed);
-                fireball.setBounce(false); //弾き飛ばせないようにする
-                Location targetLoc = inWorldPlayers.get(rnd.nextInt(inWorldPlayers.size())).getLocation(); // ターゲットプレイヤー確定と座標取得
-                Vector fireVec = targetLoc.toVector().subtract(fireball.getLocation().toVector()); //火の玉から見たプレイヤーのベクトルを計算
-                fireball.setDirection(fireVec);
             }
         }
     }

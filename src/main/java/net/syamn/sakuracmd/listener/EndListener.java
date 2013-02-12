@@ -11,11 +11,9 @@ import net.syamn.utils.Util;
 import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -25,7 +23,6 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 /**
@@ -40,27 +37,13 @@ public class EndListener implements Listener{
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDeath(final EntityDeathEvent event) {
-        if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null) {
-            int normal_end_DragonExp = 7000;
-            int hard_end_DragonExp = 40000;
+        if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null && event.getEntity().getWorld().getName().equals(Worlds.main_end)) {
+            final int normal_end_DragonExp = 7000;
 
-            if (event.getEntity().getWorld().getName().equals(Worlds.main_end)) {
-                event.setDroppedExp(normal_end_DragonExp);
-                Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがドラゴンを倒しました！", true);
-                Util.broadcastMessage("&aエンドワールドは6時間後に自動再生成されます！", false);
-                //Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！");
-            } else if (event.getEntity().getWorld().getName().equals("hard_end")) {
-                event.setDroppedExp(hard_end_DragonExp);
-                Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！", true);
-                
-                for (final Entity ent : event.getEntity().getWorld().getEntities()){
-                    if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
-                        ent.remove();
-                    }
-                }
-                
-                //Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
-            }
+            event.setDroppedExp(normal_end_DragonExp);
+            Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがドラゴンを倒しました！");
+            Util.broadcastMessage("&aエンドワールドは6時間後に自動再生成されます！", false);
+            Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！");
 
             //Actions.log("End.log", "Player " + event.getEntity().getKiller().getName() + " killed the EnderDragon at world " + event.getEntity().getWorld().getName());
         }
