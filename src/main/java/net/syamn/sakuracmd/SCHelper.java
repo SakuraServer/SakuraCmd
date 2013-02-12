@@ -129,7 +129,7 @@ public class SCHelper {
             }
         }
         
-        HardEndManager.createInstance();
+        HardEndManager.createInstance(plugin);
 
         // last, restore save data
         saveData.loadRestore();

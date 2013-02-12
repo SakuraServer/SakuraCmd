@@ -141,6 +141,17 @@ public class ConfigurationManager {
     public int getFlymodePlayersLimit(){
         return conf.getInt("Flymode.PlayerLimit", 5);
     }
+    
+    // HardEnd
+    public int getHardendMinPlayers(){
+        return conf.getInt("HardEnd.MinimumPlayers", 5);
+    }
+    public int getHardendMaxPlayers(){
+        return conf.getInt("HardEnd.MaximumPlayers", 15);
+    }
+    public int getHardendTimeLimitHours(){
+        return conf.getInt("HardEnd.TimeLimitHours", 3);
+    }
 
     // GeoIP
     public boolean getUseGeoIP(){

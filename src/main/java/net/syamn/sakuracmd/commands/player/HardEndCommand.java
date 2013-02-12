@@ -18,6 +18,7 @@ import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
 import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
+import net.syamn.sakuracmd.worker.EndResetWorker;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -138,7 +139,18 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             throw new CommandException("&cパーティの種類を open または close で指定してください！");
         }
         
+        final EndResetWorker worker = EndResetWorker.getInstance();
+        if (worker == null){
+            throw new CommandException("&cエンドワールドの初期化に失敗しました！");
+        }
+        
         mgr.openParty(open, player);
+        
+        Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
+            @Override public void run(){
+                worker.regen(Bukkit.getWorld(Worlds.hard_end), true);
+            }
+        }, 1L);
     }
     
     private void start() throws CommandException{
@@ -161,8 +173,16 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (mgr.getMembersMap().size() < mgr.getMinPlayers()){
             throw new CommandException("&c開始可能なパーティメンバー数に達していません！" + mgr.getMinPlayers() + "人必要です！");
         }
+        if (mgr.getMembersMap().size() > mgr.getMinPlayers()){
+            throw new CommandException("&c開始可能なパーティメンバー数を超えています！" + mgr.getMaxPlayers() + "人以下にしてください！");
+        }
         
-        mgr.startParty();
+        ArrayList<Object> queueArgs = new ArrayList<Object>(1);
+        queueArgs.add("start");
+        ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 10);
+        Util.message(sender, "&6ハードエンド討伐を開始しようとしています！");
+        Util.message(sender, "&6討伐中は途中からパーティにメンバーを追加できません。");
+        Util.message(sender, "&6本当に開始しますか？ &a/confirm&6 コマンドで続行します。");
     }
     
     private void join() throws CommandException{
@@ -171,6 +191,9 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         if (mgr.isMember(player)){
             throw new CommandException("&cあなたは既にこのパーティに参加しています！");
+        }
+        if (mgr.getMembersMap().size() >= mgr.getMaxPlayers()){
+            throw new CommandException("&c参加可能なパーティ人数の上限に達しています！");
         }
         if (!mgr.isOpenParty() && !mgr.invited.contains(player.getName().toLowerCase(Locale.ENGLISH))){
             throw new CommandException("&cクローズパーティのため、パーティリーダーの招待が必要です！");
@@ -327,12 +350,41 @@ public class HardEndCommand extends BaseCommand implements Queueable{
     public void executeQueue(QueuedCommand queued) {
         List<Object> queueArgs = queued.getArgs();
         if (queueArgs.size() == 1){
-            if (queueArgs.get(0).equals("leave")){
+            if (queueArgs.get(0).equals("start")){
+                queuedStart();
+                return;
+            }
+            else if (queueArgs.get(0).equals("leave")){
                 queuedLeave();
                 return;
             }
         }
         throw new IllegalStateException("not handled queued command by " + queued.getSender().getName());
+    }
+    
+    private void queuedStart(){
+        if (mgr.getStatus() != PartyStatus.OPENING){
+            Util.message(player, "&c現在パーティが開始待機中ではありません！");
+        }
+        if (!mgr.isLeader(player)){
+            Util.message(player, "&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
+        }
+        
+        Player p;
+        for (final String name : mgr.getMembersMap().keySet()){
+            p = Bukkit.getPlayerExact(name);
+            if (p == null || !p.isOnline()){
+                mgr.removeMember(name);
+                mgr.message("&cプレイヤー &6" + name + " &cはオフラインのため、パーティから自動削除されました");
+            }
+        }
+        
+        if (mgr.getMembersMap().size() < mgr.getMinPlayers()){
+            Util.message(player, "&c開始可能なパーティメンバー数に達していません！" + mgr.getMinPlayers() + "人必要です！");
+            return;
+        }
+        
+        mgr.startParty();
     }
     
     private void queuedLeave(){

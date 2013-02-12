@@ -18,6 +18,14 @@ Flymode:
   Cost: 6000.0
   TimeInMinutes: 20
   PlayerLimit: 5
+  
+#====================#
+#   HardEnd Config   #
+#====================#
+HardEnd:
+  MinimumPlayers: 5
+  MaximumPlayers: 15
+  TimeLimitHours: 3
 
 #==================#
 #   GeoIP Config   #

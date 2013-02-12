@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.PartyStatus;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.player.PlayerManager;
@@ -33,24 +34,23 @@ public class HardEndManager {
     //private final ConcurrentHashMap<Player, Long> afkPlayers = new ConcurrentHashMap<Player, Long>();
 
     //private final HardEndManager afkChecker;
-    private static HardEndManager instance = new HardEndManager();
+    private static HardEndManager instance = null;
     
+    private SakuraCmd plugin;
     private PartyStatus status = PartyStatus.WAITING;
     private boolean openParty = false;
     
     private Map<String, Boolean> members = new HashMap<String, Boolean>();
     public Set<String> invited = new HashSet<String>();
-    
-    private int minPlayers = 1;
 
-    private HardEndManager(){
-        //this.afkChecker = new HardEndManager();
+    private HardEndManager(final SakuraCmd plugin){
+        this.plugin = plugin;
     }
     public static HardEndManager getInstance(){
         return instance;
     }
-    public static HardEndManager createInstance(){
-        instance = new HardEndManager();
+    public static HardEndManager createInstance(final SakuraCmd plugin){
+        instance = new HardEndManager(plugin);
         return instance;
     }
     public static void dispose(){
@@ -82,8 +82,11 @@ public class HardEndManager {
         if (!PartyStatus.OPENING.equals(status)){
             throw new IllegalStateException("Party status must be opening");
         }
-        if (members.size() < minPlayers){
-            throw new IllegalStateException("Too few party members (" + members.size() + "<" + minPlayers + ")");
+        if (members.size() < getMinPlayers()){
+            throw new IllegalStateException("Too few party members (" + members.size() + "<" + getMinPlayers() + ")");
+        }
+        if (members.size() > getMaxPlayers()){
+            throw new IllegalStateException("Too many party members (" + members.size() + ">" + getMaxPlayers() + ")");
         }
         
         final World world = checkWorld();
@@ -191,6 +194,12 @@ public class HardEndManager {
     }
     
     public int getMinPlayers(){
-        return this.minPlayers;
+        return plugin.getWorker().getConfig().getHardendMinPlayers();
+    }
+    public int getMaxPlayers(){
+        return plugin.getWorker().getConfig().getHardendMaxPlayers();
+    }
+    public int getTimeLimitHours(){
+        return plugin.getWorker().getConfig().getHardendTimeLimitHours();
     }
 }

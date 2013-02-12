@@ -143,15 +143,19 @@ public class EndResetWorker{
             new SaveThread().run();
         }
     }
-
+    
     public void regen(World world){
+        regen(world, false);
+    }
+
+    public void regen(World world, boolean silent){
         if (world == null || world.getEnvironment() != Environment.THE_END){
             throw new IllegalArgumentException("world must be end world");
         }
         final String worldName = world.getName();
         
         short dragonAmount = 1;
-        String message = "&c[SakuraServer] &dエンドワールド'&6" + worldName + "&d'はリセットされました！";
+        String message = (silent) ? null : "&c[SakuraServer] &dエンドワールド'&6" + worldName + "&d'はリセットされました！";
         
         // call event
         EndResettingEvent resettingEvent = new EndResettingEvent(world, dragonAmount, message);
@@ -194,6 +198,11 @@ public class EndResetWorker{
         save = true;
         if (message != null){
             Util.broadcastMessage(message);
+        }
+        
+        EndResetWorldData data = worldData.get(world.getName());
+        if(data != null){
+            data.updateLastReset();
         }
         
         // Call complete event

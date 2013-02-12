@@ -10,13 +10,16 @@ import java.util.Random;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.PartyStatus;
+import net.syamn.sakuracmd.events.EndResettingEvent;
 import net.syamn.sakuracmd.feature.HardEndManager;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
+import net.syamn.utils.LogUtil;
 import net.syamn.utils.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -49,7 +52,9 @@ import org.bukkit.event.entity.ItemSpawnEvent;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.Vector;
 
 /**
@@ -338,6 +343,34 @@ public class HardEndListener implements Listener{
                 Vector fireVec = targetLoc.toVector().subtract(fireball.getLocation().toVector()); //火の玉から見たプレイヤーのベクトルを計算
                 fireball.setDirection(fireVec);
             }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onJoinEvent(final PlayerJoinEvent event){
+        if (!event.getPlayer().getWorld().getName().equals(Worlds.hard_end)){
+            return;
+        }
+        
+        final Player player = event.getPlayer();
+        if ((mgr.getStatus() == PartyStatus.STARTING && mgr.isMember(player)) || Perms.TRUST.has(player)){
+            // TODO do stuff..?
+        }else{
+            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEndResetting(final EndResettingEvent event){
+        if (!event.getWorld().getName().equals(Worlds.hard_end)){
+            return;
+        }
+        
+        mgr = HardEndManager.getInstance();
+        
+        if (mgr.getStatus() == PartyStatus.STARTING){
+            event.setCancelled(true);
+            LogUtil.warning("Cancelled world " + Worlds.hard_end + " resetting event due to starting status");
         }
     }
 }
