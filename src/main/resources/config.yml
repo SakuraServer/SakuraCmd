@@ -26,6 +26,7 @@ HardEnd:
   MinimumPlayers: 5
   MaximumPlayers: 15
   TimeLimitHours: 3
+  TimeLimitOpenedMinutes: 15
 
 #==================#
 #   GeoIP Config   #

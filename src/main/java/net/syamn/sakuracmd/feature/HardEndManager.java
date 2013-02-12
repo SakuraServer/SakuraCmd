@@ -12,12 +12,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.PartyStatus;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
+import net.syamn.sakuracmd.worker.FlymodeWorker;
+import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
+import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
@@ -42,9 +47,17 @@ public class HardEndManager {
     
     private Map<String, Boolean> members = new HashMap<String, Boolean>();
     public Set<String> invited = new HashSet<String>();
+    
+    private int timeOpened = -1;
+    private int timeStarted = -1;
+    
+    private TimeCheckTask task;
+    private int taskID = -1;
 
     private HardEndManager(final SakuraCmd plugin){
         this.plugin = plugin;
+        this.task = new TimeCheckTask();
+        this.taskID = this.plugin.getServer().getScheduler().runTaskTimerAsynchronously(this.plugin, this.task, 20, 20).getTaskId();
     }
     public static HardEndManager getInstance(){
         return instance;
@@ -54,7 +67,17 @@ public class HardEndManager {
         return instance;
     }
     public static void dispose(){
+        if (instance != null){
+            instance.onDispose();
+        }
         instance = null;
+    }
+    
+    private void onDispose(){
+        if (taskID != -1){
+            Bukkit.getScheduler().cancelTask(taskID);
+            taskID = -1;
+        }
     }
     
     public void openParty(final boolean open, final Player sender){
@@ -129,10 +152,35 @@ public class HardEndManager {
         return w;
     }
     
+    private void timeup(){
+        if (status == PartyStatus.WAITING){
+            throw new IllegalStateException("status must not be waiting");
+        }
+        
+        if (status == PartyStatus.OPENING){
+            message("&cこのパーティは一定時間以内に開始されなかったため削除されました！");
+            cleanup();
+            Util.broadcastMessage("&cハードエンド討伐パーティは一定時間以内に開始されなかったため削除されました！");
+        }
+        else if (status == PartyStatus.STARTING){
+            message("&c時間切れで討伐に失敗しました");
+            Player p;
+            for (final String name : members.keySet()){
+                p = Bukkit.getPlayerExact(name);
+                if (p != null && p.isOnline() && p.getWorld().getName().equals(Worlds.hard_end)){
+                    p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
+                }
+            }
+            cleanup();
+            Util.broadcastMessage("&cハードエンド討伐は時間切れで失敗しました！");
+        }
+    }
+    
     public void cleanup(){
         this.status = PartyStatus.WAITING;
         this.invited.clear();
         this.members.clear();
+        this.timeStarted = this.timeOpened = -1;
     }
     
     public void message(final String msg){
@@ -199,7 +247,92 @@ public class HardEndManager {
     public int getMaxPlayers(){
         return plugin.getWorker().getConfig().getHardendMaxPlayers();
     }
-    public int getTimeLimitHours(){
+    
+    public int getTimeHours(){
         return plugin.getWorker().getConfig().getHardendTimeLimitHours();
+    }
+    public int getRemainSeconds(){
+        if (status != PartyStatus.STARTING){
+            throw new IllegalStateException("status must be starting");
+        }
+        
+        return (timeStarted + getTimeHours() * 60 * 60) - TimeUtil.getCurrentUnixSec().intValue();
+    }
+    
+    public int getTimeOpenedMinutes(){
+        return plugin.getWorker().getConfig().getHardendTimeLimitHours();
+    }
+    public int getRemainOpenedSeconds(){
+        if (status != PartyStatus.OPENING){
+            throw new IllegalStateException("status must be opening");
+        }
+        
+        return (timeStarted + getTimeOpenedMinutes() * 60) - TimeUtil.getCurrentUnixSec().intValue();
+    }
+    
+    
+    // call async
+    class TimeCheckTask implements Runnable{
+        @Override
+        public void run() {
+            // do nothing when waiting status
+            if (status == PartyStatus.WAITING){
+                return;
+            }
+            
+            if (status == PartyStatus.OPENING){
+                int remain = getRemainOpenedSeconds();
+                
+                if (remain <= 0){
+                    Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+                        @Override public void run(){
+                            timeup();
+                        }
+                    }, 0L);
+                    return;
+                }
+                else if (remain == 30 || remain <= 10){
+                    sendNotify(" &f[&c+&f] &6この討伐パーティはあと " + remain + "秒 で登録取消されます");
+                }
+                else if (remain % 60 == 0){
+                    int min = remain / 60;
+                    if (min == 10 || min <= 5){
+                        sendNotify(" &f[&c+&f] &6この討伐パーティはあと " + min + "分 で登録取消されます");
+                    }
+                }
+            }
+            else if (status == PartyStatus.STARTING){
+                int remain = getRemainSeconds();
+                
+                if (remain <= 0){
+                    Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+                        @Override public void run(){
+                            timeup();
+                        }
+                    }, 0L);
+                    return;
+                }
+                else if (remain == 30 || remain <= 10){
+                    sendNotify(" &f[&c+&f] &6ハードエンド討伐制限時間まであと " + remain + "秒 です");
+                }
+                else if (remain % 60 == 0 && remain <= 3600){ // 60 mins = 3600 secs
+                    int min = remain / 60;
+                    if (min % 10 == 0 || min <= 5){
+                        sendNotify(" &f[&c+&f] &6ハードエンド討伐制限時間まであと " + min + "分 です");
+                    }
+                }
+                else if (remain % 3600 == 0){
+                    sendNotify(" &f[&c+&f] &6ハードエンド討伐制限時間まであと " + (remain / 3600) + "時間 です");
+                }
+            }
+        }
+
+        private void sendNotify(final String msg){
+            Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
+                @Override public void run(){
+                    message(msg);
+                }
+            }, 0L);
+        }
     }
 }
