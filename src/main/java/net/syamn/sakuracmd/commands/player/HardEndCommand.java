@@ -20,6 +20,7 @@ import net.syamn.sakuracmd.player.SakuraPlayer;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.EndResetWorker;
 import net.syamn.utils.StrUtil;
+import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 import net.syamn.utils.queue.ConfirmQueue;
@@ -101,13 +102,20 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         
         String status = null;
+        int remain = -1;
         switch (mgr.getStatus()){
-            case OPENING: status = "&b参加受付中";
-            case STARTING: status = "&6開始中";
-                if (mgr.isOpenParty()) status += " &b[OPEN]";
-                else status += " &c[CLOSE]";
+            case OPENING:
+                status = "&b参加受付中";
+                remain = mgr.getRemainOpenedSeconds();
+                break;
+            case STARTING:
+                status = "&6開始中";
+                remain = mgr.getRemainSeconds();
                 break;
         }
+        
+        if (mgr.isOpenParty()) status += " &b[OPEN]";
+        else status += " &c[CLOSE]";
         
         List<String> names = new ArrayList<String>(mgr.getMembersMap().size());
         for (final Map.Entry<String, Boolean> entry : mgr.getMembersMap().entrySet()){
@@ -119,12 +127,18 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         
         Util.message(sender, "&b ステータス: " + status);
-        Util.broadcastMessage(" &bパーティメンバー (" + names.size() + "): " + StrUtil.join(names, "&7, "));
+        Util.message(sender, " &bパーティメンバー (" + names.size() + "): " + StrUtil.join(names, "&7, "));
+        Util.message(sender, " &b残り時間: " + TimeUtil.getReadableTimeBySecond(remain));
     }
     
     private void ready() throws CommandException{
         if (mgr.getStatus() != PartyStatus.WAITING){
             throw new CommandException("&c現在既にパーティが作成、または開始されています");
+        }
+        
+        final int cooldown = mgr.getRemainCooldownSeconds();
+        if (cooldown > 0){
+            throw new CommandException("&c次のパーティ結成まで あと" + TimeUtil.getReadableTimeBySecond(cooldown) + " 必要です！");
         }
         
         Boolean open = null;
@@ -171,10 +185,10 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         
         if (mgr.getMembersMap().size() < mgr.getMinPlayers()){
-            throw new CommandException("&c開始可能なパーティメンバー数に達していません！" + mgr.getMinPlayers() + "人必要です！");
+            throw new CommandException("&c開始可能なパーティメンバー数に達していません！ " + mgr.getMinPlayers() + "人必要です！");
         }
-        if (mgr.getMembersMap().size() > mgr.getMinPlayers()){
-            throw new CommandException("&c開始可能なパーティメンバー数を超えています！" + mgr.getMaxPlayers() + "人以下にしてください！");
+        if (mgr.getMembersMap().size() > mgr.getMaxPlayers()){
+            throw new CommandException("&c開始可能なパーティメンバー数を超えています！ " + mgr.getMaxPlayers() + "人以下にしてください！");
         }
         
         ArrayList<Object> queueArgs = new ArrayList<Object>(1);

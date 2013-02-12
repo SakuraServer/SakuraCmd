@@ -27,6 +27,7 @@ HardEnd:
   MaximumPlayers: 15
   TimeLimitHours: 3
   TimeLimitOpenedMinutes: 15
+  CooldownHours: 12
 
 #==================#
 #   GeoIP Config   #

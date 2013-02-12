@@ -155,6 +155,9 @@ public class ConfigurationManager {
     public int getHardendTimeLimitOpenedMinutes(){
         return conf.getInt("HardEnd.TimeLimitOpenedMinutes", 3);
     }
+    public int getHardendCooldownHours(){
+        return conf.getInt("HardEnd.CooldownHours", 12);
+    }    
 
     // GeoIP
     public boolean getUseGeoIP(){

@@ -50,6 +50,7 @@ public class HardEndManager {
     
     private int timeOpened = -1;
     private int timeStarted = -1;
+    private int timeUpdate = -1;
     
     private TimeCheckTask task;
     private int taskID = -1;
@@ -87,6 +88,7 @@ public class HardEndManager {
         checkWorld();
         
         status = PartyStatus.OPENING;
+        timeOpened = TimeUtil.getCurrentUnixSec().intValue();
         openParty = open;
         invited.clear();
         
@@ -132,6 +134,7 @@ public class HardEndManager {
         Util.broadcastMessage(" &dパーティメンバー: " + StrUtil.join(names, "&7, "));
         
         status = PartyStatus.STARTING;
+        timeStarted = TimeUtil.getCurrentUnixSec().intValue();
         invited.clear();
         
         Player member;
@@ -142,6 +145,14 @@ public class HardEndManager {
             }
             member.teleport(world.getSpawnLocation(), TeleportCause.PLUGIN);
         }
+    }
+    
+    public void clearParty(){
+        if (!PartyStatus.STARTING.equals(status)){
+            throw new IllegalStateException("Party status must be starting");
+        }
+        
+        this.timeUpdate = TimeUtil.getCurrentUnixSec().intValue();
     }
     
     private World checkWorld(){
@@ -160,7 +171,7 @@ public class HardEndManager {
         if (status == PartyStatus.OPENING){
             message("&cこのパーティは一定時間以内に開始されなかったため削除されました！");
             cleanup();
-            Util.broadcastMessage("&cハードエンド討伐パーティは一定時間以内に開始されなかったため削除されました！");
+            Util.broadcastMessage("&cハードエンド討伐パーティは一定時間以内に開始されなかったため削除されました");
         }
         else if (status == PartyStatus.STARTING){
             message("&c時間切れで討伐に失敗しました");
@@ -172,7 +183,8 @@ public class HardEndManager {
                 }
             }
             cleanup();
-            Util.broadcastMessage("&cハードエンド討伐は時間切れで失敗しました！");
+            Util.broadcastMessage("&cハードエンド討伐は時間切れで失敗しました");
+            this.timeUpdate = TimeUtil.getCurrentUnixSec().intValue();
         }
     }
     
@@ -260,16 +272,29 @@ public class HardEndManager {
     }
     
     public int getTimeOpenedMinutes(){
-        return plugin.getWorker().getConfig().getHardendTimeLimitHours();
+        return plugin.getWorker().getConfig().getHardendTimeLimitOpenedMinutes();
     }
     public int getRemainOpenedSeconds(){
         if (status != PartyStatus.OPENING){
             throw new IllegalStateException("status must be opening");
         }
         
-        return (timeStarted + getTimeOpenedMinutes() * 60) - TimeUtil.getCurrentUnixSec().intValue();
+        return (timeOpened + getTimeOpenedMinutes() * 60) - TimeUtil.getCurrentUnixSec().intValue();
     }
     
+    public int getCooldownHours(){
+        return plugin.getWorker().getConfig().getHardendCooldownHours();
+    }
+    public int getRemainCooldownSeconds(){
+        if (status != PartyStatus.WAITING){
+            throw new IllegalStateException("status must be waiting");
+        }
+        
+        if (this.timeUpdate < 0){
+            return 0;
+        }
+        return (this.timeUpdate + getCooldownHours() * 60 * 60) - TimeUtil.getCurrentUnixSec().intValue();
+    }
     
     // call async
     class TimeCheckTask implements Runnable{

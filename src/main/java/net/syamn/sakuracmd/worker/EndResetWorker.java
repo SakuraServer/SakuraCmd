@@ -167,6 +167,8 @@ public class EndResetWorker{
         if (dragonAmount < 1) dragonAmount = 1;
         message = resettingEvent.getCompleteMessage();
         
+        LogUtil.info("Resetting world " + world.getName() + " ...");
+        
         // reset
         for (final Player p : world.getPlayers()){
             p.teleport(Bukkit.getServer().getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
@@ -194,6 +196,8 @@ public class EndResetWorker{
                 world.spawnEntity(loc, EntityType.ENDER_DRAGON);
             }
         }
+        
+        LogUtil.info("World " + world.getName() + " was reset!");
 
         save = true;
         if (message != null){
