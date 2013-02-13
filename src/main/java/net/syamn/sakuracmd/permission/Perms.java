@@ -79,6 +79,11 @@ public enum Perms {
 
     // Bypass permissions
     BYPASS_CREATIVE_ITEM ("bypass.creativeitem"),
+    
+    // Sign create, use, break parent perms
+    SIGN_CREATE_PARENT ("sign.create"),
+    SIGN_USE_PARENT ("sign.use"),
+    SIGN_BREAK_PARENT ("sign.break"),
 
     // Tab color
     TAB_RED ("tab.red"),
@@ -108,15 +113,28 @@ public enum Perms {
     /**
      * 指定したプレイヤーが権限を持っているか
      *
-     * @param player
-     *            Permissible. Player, CommandSender etc
+     * @param perm Permissible. Player, CommandSender etc
      * @return boolean
      */
     public boolean has(final Permissible perm) {
-        if (perm == null)
+        if (perm == null) {
             return false;
-        //return perm.hasPermission(node); // only support SuperPerms
+        }
         return PermissionManager.hasPerm(perm, this);
+    }
+    
+    /**
+     * 指定したプレイヤーが権限を持っているか
+     *
+     * @param perm Permissible. Player, CommandSender etc
+     * @param subPerm subPermission without head period
+     * @return boolean
+     */
+    public boolean has(final Permissible perm, final String subPerm) {
+        if (perm == null) {
+            return false;
+        }
+        return PermissionManager.hasPerm(perm, this.getNode().concat("." + subPerm));
     }
 
     /**
