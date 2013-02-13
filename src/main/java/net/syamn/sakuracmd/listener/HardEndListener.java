@@ -289,7 +289,7 @@ public class HardEndListener implements Listener{
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityExplode(final EntityExplodeEvent event) {
-        if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
+        if (event.getEntity() == null || !event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
 
