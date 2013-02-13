@@ -2,7 +2,7 @@
  * SakuraCmd - Package: net.syamn.sakuracmd.feature
  * Created: 2013/02/11 4:51:37
  */
-package net.syamn.sakuracmd.feature;
+package net.syamn.sakuracmd.manager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.PartyStatus;
-import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.FlymodeWorker;

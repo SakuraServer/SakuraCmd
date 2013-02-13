@@ -11,7 +11,7 @@ import java.util.Random;
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.PartyStatus;
 import net.syamn.sakuracmd.events.EndResettingEvent;
-import net.syamn.sakuracmd.feature.HardEndManager;
+import net.syamn.sakuracmd.manager.HardEndManager;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;

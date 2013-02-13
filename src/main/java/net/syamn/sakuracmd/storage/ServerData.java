@@ -8,7 +8,7 @@ import java.io.File;
 import java.util.Map;
 
 import net.syamn.sakuracmd.SakuraCmd;
-import net.syamn.sakuracmd.feature.HardEndManager;
+import net.syamn.sakuracmd.manager.HardEndManager;
 import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.file.FileStructure;

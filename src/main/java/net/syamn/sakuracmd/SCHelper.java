@@ -5,9 +5,9 @@
 package net.syamn.sakuracmd;
 
 import net.syamn.sakuracmd.feature.GeoIP;
-import net.syamn.sakuracmd.feature.HardEndManager;
 import net.syamn.sakuracmd.feature.HawkEyeSearcher;
 import net.syamn.sakuracmd.listener.feature.MCBansListener;
+import net.syamn.sakuracmd.manager.HardEndManager;
 import net.syamn.sakuracmd.permission.PermissionManager;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.ConfigurationManager;
