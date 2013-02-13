@@ -5,13 +5,15 @@
 package net.syamn.sakuracmd.enums;
 
 import net.syamn.sakuracmd.signs.BaseSign;
+import net.syamn.sakuracmd.signs.HardEndSign;
 
 /**
  * Signs (Signs.java)
  * @author syam(syamn)
  */
 public enum Signs {
-    //DEBUG(new BaseSign("debug"));
+    HARD_END (new HardEndSign()),
+    ;
     
     private final BaseSign sign;
     
