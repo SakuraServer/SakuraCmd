@@ -110,7 +110,7 @@ public class HardEndManager {
         
         ConfigurationSection cs2 = cs.createSection("Members");
         for (final Map.Entry<String, Boolean> entry : members.entrySet()){
-            cs2.addDefault(entry.getKey(), entry.getValue().booleanValue());
+            cs2.set(entry.getKey(), entry.getValue().booleanValue());
         }
     }
     
@@ -187,11 +187,13 @@ public class HardEndManager {
         }
     }
     
-    public void clearParty(){
+    public void dragonKilled(){
         if (!PartyStatus.STARTING.equals(status)){
             throw new IllegalStateException("Party status must be starting");
         }
         
+        message("&aハードエンドドラゴン討伐おめでとうございます！");
+        cleanup();
         this.timeUpdate = TimeUtil.getCurrentUnixSec().intValue();
     }
     

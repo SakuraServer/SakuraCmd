@@ -71,6 +71,11 @@ public class HardEndListener implements Listener{
             event.setDroppedExp(hard_end_DragonExp);
             Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！");
             
+            mgr = HardEndManager.getInstance();
+            if (mgr != null){
+                mgr.dragonKilled();
+            }
+            
             for (final Entity ent : event.getEntity().getWorld().getEntities()){
                 if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
                     ent.remove();
