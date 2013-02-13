@@ -223,6 +223,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         
         mgr.addMember(player.getName(), false);
+        Util.broadcastMessage("&aハードエンド討伐パーティに" + PlayerManager.getPlayer(player).getName() + "が参加しました");
         mgr.message(" " + PlayerManager.getPlayer(player).getName() + " &dがこのパーティに参加しました！");
     }
     
@@ -247,7 +248,9 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             throw new CommandException("&c自分に招待を送信できません！");
         }
         
-        mgr.invited.add(p.getName().toLowerCase(Locale.ENGLISH));
+        if (!mgr.isOpenParty()){
+            mgr.invited.add(p.getName().toLowerCase(Locale.ENGLISH));
+        }
         Util.message(p, " " + PlayerManager.getPlayer(player).getName() + " &dがあなたにパーティ招待を送信しました！");
         Util.message(p, " &6/hardend join &dコマンドで招待を受諾し参加します！");
         
@@ -390,16 +393,30 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         
         Player p;
+        boolean changed = false;
         for (final String name : mgr.getMembersMap().keySet()){
             p = Bukkit.getPlayerExact(name);
             if (p == null || !p.isOnline()){
                 mgr.removeMember(name);
                 mgr.message("&cプレイヤー &6" + name + " &cはオフラインのため、パーティから自動削除されました");
+                changed = true;
             }
+        }
+        if (changed){
+            ArrayList<Object> queueArgs = new ArrayList<Object>(1);
+            queueArgs.add("start");
+            ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 10);
+            Util.message(sender, " &6パーティメンバーに変動がありました。このまま続行してよろしいですか？");
+            Util.message(sender, " &6&a/confirm&6 コマンドで続行します。");
+            return;
         }
         
         if (mgr.getMembersMap().size() < mgr.getMinPlayers()){
             Util.message(player, "&c開始可能なパーティメンバー数に達していません！" + mgr.getMinPlayers() + "人必要です！");
+            return;
+        }
+        if (mgr.getMembersMap().size() > mgr.getMaxPlayers()){
+            Util.message(player, "&c開始可能なパーティメンバー数を超えています！ " + mgr.getMaxPlayers() + "人以下にしてください！");
             return;
         }
         
@@ -415,6 +432,16 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             Util.message(player, "&cあなたはパーティメンバーではありません！");
             return;
         }
+        if (mgr.isLeader(player) && mgr.getMembersMap().size() >= 2){
+            int count = 0;
+            for (final Boolean leader : mgr.getMembersMap().values()){
+                if (leader.booleanValue()) count++;
+            }
+            if (count == 1){
+                Util.message(player, "&c脱退する前に、最低一人以上のメンバーをリーダーにする必要があります");
+                return;
+            }
+        }
         
         mgr.removeMember(player.getName());
         if (player.getName().equals(Worlds.hard_end)){
@@ -422,10 +449,11 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         
         mgr.message("&aプレイヤー " + PlayerManager.getPlayer(player).getName() + " &aがこのパーティから抜けました！");
+        Util.broadcastMessage("&aハードエンド討伐パーティから " + PlayerManager.getPlayer(player).getName() + " &aが脱退しました");
         
         if (mgr.getMembersMap().size() < 1){
             mgr.cleanup();
-            Util.broadcastMessage("&aハードエンド討伐パーティはメンバーが居なくなったため、自動で削除されました");
+            Util.broadcastMessage("&a今回の討伐パーティはメンバーが居なくなったため、自動で削除されました");
         }
     }
     
