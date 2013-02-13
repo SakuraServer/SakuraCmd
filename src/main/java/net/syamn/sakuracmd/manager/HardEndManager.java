@@ -25,7 +25,11 @@ import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -131,7 +135,7 @@ public class HardEndManager {
         openParty = open;
         invited.clear();
         
-        this.members.clear();
+        members.clear();
         addMember(sender.getName(), true);
         
         String typemsg = (open) ? "&bオープンパーティ" : "&cクローズパーティ";
@@ -155,12 +159,11 @@ public class HardEndManager {
         }
         
         final World world = checkWorld();
-        
         for (final Player player : world.getPlayers()){
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
-        }        
+        }
         
-        
+        // announce
         List<String> names = new ArrayList<String>(members.size());
         for (final Map.Entry<String, Boolean> entry : members.entrySet()){
             if (entry.getValue()){
@@ -169,14 +172,26 @@ public class HardEndManager {
                 names.add("&3" + entry.getKey());
             }
         }
-        
         Util.broadcastMessage(" &dハードエンド討伐チャレンジが開始されました！");
         Util.broadcastMessage(" &dパーティメンバー: " + StrUtil.join(names, "&7, "));
         
+        // update status
         status = PartyStatus.STARTING;
         timeStarted = TimeUtil.getCurrentUnixSec().intValue();
         invited.clear();
         
+        // teleport players
+        final Location to = world.getSpawnLocation().clone();
+        final Block baseBlock = to.getBlock().getRelative(BlockFace.DOWN, 1);
+        Block block; // check ground
+        for (int x = baseBlock.getX() - 1; x <= baseBlock.getX() + 1; x++) {
+            for (int z = baseBlock.getZ() - 1; z <= baseBlock.getZ() + 1; z++) {
+                block = baseBlock.getWorld().getBlockAt(x, baseBlock.getY(), z);
+                if (block.getType() != Material.OBSIDIAN) {
+                    block.setType(Material.OBSIDIAN);
+                }
+            }
+        }
         Player member;
         for (final String name : members.keySet()){
             member = Bukkit.getPlayerExact(name);

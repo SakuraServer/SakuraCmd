@@ -10,6 +10,7 @@ import java.util.Random;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.PartyStatus;
+import net.syamn.sakuracmd.events.EndResetEvent;
 import net.syamn.sakuracmd.events.EndResettingEvent;
 import net.syamn.sakuracmd.manager.HardEndManager;
 import net.syamn.sakuracmd.manager.Worlds;
@@ -17,11 +18,13 @@ import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.player.Power;
 import net.syamn.utils.LogUtil;
+import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Arrow;
@@ -38,6 +41,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -76,13 +81,16 @@ public class HardEndListener implements Listener{
                 mgr.dragonKilled();
             }
             
-            for (final Entity ent : event.getEntity().getWorld().getEntities()){
-                if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
-                    ent.remove();
-                }
-            }
-            
             Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
+            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
+                @Override public void run(){
+                    for (final Entity ent : event.getEntity().getWorld().getEntities()){
+                        if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
+                            ent.remove();
+                        }
+                    }
+                }
+            }, 10L);
         }
     }
     
@@ -323,6 +331,23 @@ public class HardEndListener implements Listener{
     }
     
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onCreatureSpawn(final CreatureSpawnEvent event){
+        if (!event.getLocation().getWorld().getName().equals(Worlds.hard_end)){
+            return;
+        }
+        
+        mgr = HardEndManager.getInstance();
+        if (mgr != null && mgr.getStatus() == PartyStatus.WAITING){
+            switch (event.getSpawnReason()){
+                case NATURAL:
+                case DEFAULT:
+                    event.setCancelled(true);
+                    break;
+            }
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEndResetting(final EndResettingEvent event){
         if (!event.getWorld().getName().equals(Worlds.hard_end)){
             return;
@@ -334,5 +359,42 @@ public class HardEndListener implements Listener{
             event.setCancelled(true);
             LogUtil.warning("Cancelled world " + Worlds.hard_end + " resetting event due to starting status");
         }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEndReset(final EndResetEvent event){
+        if (!event.getWorld().getName().equals(Worlds.hard_end)){
+            return;
+        }
+        
+        plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
+            @Override public void run(){
+                final World world = event.getWorld();
+                final Location spawnLoc = world.getSpawnLocation();
+                if (!world.loadChunk(spawnLoc.getBlockX(), spawnLoc.getBlockZ(), false)){
+                    return;
+                }
+                
+                Block baseBlock = world.getHighestBlockAt(spawnLoc);
+                if (baseBlock == null) {
+                    return;
+                }
+                baseBlock = baseBlock.getRelative(BlockFace.DOWN, 1);
+                world.setSpawnLocation(baseBlock.getX(), baseBlock.getY() + 1, baseBlock.getZ());
+                
+                // 3x3で足場を作る
+                Block block;
+                for (int x = baseBlock.getX() - 1; x <= baseBlock.getX() + 1; x++) {
+                    for (int z = baseBlock.getZ() - 1; z <= baseBlock.getZ() + 1; z++) {
+                        block = baseBlock.getWorld().getBlockAt(x, baseBlock.getY(), z);
+                        if (block.getType() != Material.OBSIDIAN) {
+                            block.setType(Material.OBSIDIAN);
+                        }
+                    }
+                }
+                
+                LogUtil.info("Update spawn location and create grounds on " + StrUtil.getLocationString(baseBlock));
+            }
+        }, 20L);
     }
 }

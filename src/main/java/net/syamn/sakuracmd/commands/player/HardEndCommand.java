@@ -28,6 +28,10 @@ import net.syamn.utils.queue.Queueable;
 import net.syamn.utils.queue.QueuedCommand;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -87,6 +91,9 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         else if (action.equals("leave")){
             leave();
+        }
+        else if (action.equals("tp")){
+            tp();
         }
         else{
             throw new CommandException("&c不正なサブコマンドです: ready / start / join / leave / invite / kick / promote / demote / info");
@@ -366,6 +373,24 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         
         mgr.message(" &6" + PlayerManager.getPlayer(player).getName() + "&c が  &6" + name + "&c をパーティリーダーから解任しました");
+    }
+    
+    private void tp() throws CommandException{
+        final Location to = Bukkit.getWorld(Worlds.hard_end).getSpawnLocation().clone();
+        
+        // check ground
+        final Block baseBlock = to.getBlock().getRelative(BlockFace.DOWN, 1);
+        Block block;
+        for (int x = baseBlock.getX() - 1; x <= baseBlock.getX() + 1; x++) {
+            for (int z = baseBlock.getZ() - 1; z <= baseBlock.getZ() + 1; z++) {
+                block = baseBlock.getWorld().getBlockAt(x, baseBlock.getY(), z);
+                if (block.getType() != Material.OBSIDIAN) {
+                    block.setType(Material.OBSIDIAN);
+                }
+            }
+        }
+        
+        player.teleport(to.add(0.5D, 0.5D, 0.5D), TeleportCause.PLUGIN);
     }
     
     @Override
