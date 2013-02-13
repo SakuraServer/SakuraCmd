@@ -89,7 +89,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             leave();
         }
         else{
-            throw new CommandException("&c不正なサブコマンドです: ready / start / join / invite / kick / promote / demote / info");
+            throw new CommandException("&c不正なサブコマンドです: ready / start / join / leave / invite / kick / promote / demote / info");
         }
     }
     

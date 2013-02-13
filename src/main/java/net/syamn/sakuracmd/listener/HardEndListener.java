@@ -94,7 +94,7 @@ public class HardEndListener implements Listener{
         
         mgr = HardEndManager.getInstance();
         final Player player = event.getPlayer();
-        if ((mgr.getStatus() == PartyStatus.STARTING && mgr.isMember(player)) || Perms.TRUST.has(player)){
+        if ((mgr.getStatus() != PartyStatus.OPENING && mgr.isMember(player)) || Perms.TRUST.has(player)){
             // nothing to do
         }else{
             Util.message(player, "&cハードエンドに行くためにはパーティ登録を行う必要があります");
@@ -311,10 +311,14 @@ public class HardEndListener implements Listener{
         }
         
         final Player player = event.getPlayer();
-        if ((mgr.getStatus() == PartyStatus.STARTING && mgr.isMember(player)) || Perms.TRUST.has(player)){
+        if ((mgr.getStatus() != PartyStatus.OPENING && mgr.isMember(player)) || Perms.TRUST.has(player)){
             // TODO do stuff..?
         }else{
-            player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
+            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
+                @Override public void run(){
+                    player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
+                }
+            }, 1L);
         }
     }
     

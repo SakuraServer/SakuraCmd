@@ -93,7 +93,7 @@ public class HardEndManager {
         
         this.members.clear();
         for (final String key : cs2.getKeys(false)){
-            this.members.put(key, cs.getBoolean(key, false));
+            this.members.put(key, cs2.getBoolean(key, false));
         }
     }
     public void save(final FileConfiguration conf){
@@ -132,6 +132,7 @@ public class HardEndManager {
         openParty = open;
         invited.clear();
         
+        this.members.clear();
         addMember(sender.getName(), true);
         
         String typemsg = (open) ? "&bオープンパーティ" : "&cクローズパーティ";
@@ -233,7 +234,7 @@ public class HardEndManager {
     public void cleanup(){
         this.status = PartyStatus.WAITING;
         this.invited.clear();
-        this.members.clear();
+        //this.members.clear(); // don't clear membersmap
         this.timeStarted = this.timeOpened = -1;
     }
     
