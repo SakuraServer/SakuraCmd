@@ -12,14 +12,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.PartyStatus;
 import net.syamn.sakuracmd.player.PlayerManager;
-import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
-import net.syamn.sakuracmd.worker.FlymodeWorker;
-import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
@@ -40,10 +36,6 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
  * @author syam(syamn)
  */
 public class HardEndManager {
-    //private final ConcurrentHashMap<Player, Long> playerTimeStamp = new ConcurrentHashMap<Player, Long>();
-    //private final ConcurrentHashMap<Player, Long> afkPlayers = new ConcurrentHashMap<Player, Long>();
-
-    //private final HardEndManager afkChecker;
     private static HardEndManager instance = null;
     
     private SakuraCmd plugin;
