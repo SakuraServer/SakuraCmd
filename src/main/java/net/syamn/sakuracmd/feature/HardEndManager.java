@@ -27,6 +27,8 @@ import net.syamn.utils.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
@@ -72,6 +74,44 @@ public class HardEndManager {
             instance.onDispose();
         }
         instance = null;
+    }
+    
+    public void load(final FileConfiguration conf){
+        ConfigurationSection cs = conf.getConfigurationSection("HardEndData");
+        if (cs == null) return;
+        
+        this.status = StrUtil.isMatches(PartyStatus.values(), cs.getString("Status", "WAITING"));
+        if (this.status == null) this.status = PartyStatus.WAITING;
+        this.openParty = cs.getBoolean("IsOpenParty", false);
+        
+        this.timeOpened = cs.getInt("TimeOpened", -1);
+        this.timeStarted = cs.getInt("TimeStarted", -1);
+        this.timeUpdate = cs.getInt("TimeUpadte", -1);
+        
+        ConfigurationSection cs2 = cs.getConfigurationSection("Members");
+        if (cs2 == null) return;
+        
+        this.members.clear();
+        for (final String key : cs2.getKeys(false)){
+            this.members.put(key, cs.getBoolean(key, false));
+        }
+    }
+    public void save(final FileConfiguration conf){
+        ConfigurationSection cs = conf.createSection("HardEndData");
+        
+        cs.set("Status", this.status.name());
+        cs.set("IsOpenParty", this.openParty);
+        
+        cs.set("TimeOpened", this.timeOpened);
+        cs.set("TimeStarted", this.timeStarted);
+        cs.set("TimeUpadte", this.timeUpdate);
+        
+        if (this.members.isEmpty()) return;
+        
+        ConfigurationSection cs2 = cs.createSection("Members");
+        for (final Map.Entry<String, Boolean> entry : members.entrySet()){
+            cs2.addDefault(entry.getKey(), entry.getValue().booleanValue());
+        }
     }
     
     private void onDispose(){

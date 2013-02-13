@@ -96,8 +96,13 @@ public class HardEndCommand extends BaseCommand implements Queueable{
     @SuppressWarnings("incomplete-switch")
     private void info() throws CommandException{
         if (mgr.getStatus() == PartyStatus.WAITING){
-            Util.message(sender, "&b ステータス: &7パーティ登録受付中");
-            Util.message(sender, "&6 /hardend ready (open|close) &bで登録できます！");
+            int cooldown = mgr.getRemainCooldownSeconds();
+            if (cooldown > 0){
+                Util.message(sender, "&b ステータス: &cクールダウン中 (あと" + TimeUtil.getReadableTimeBySecond(cooldown) + ")");
+            }else{
+                Util.message(sender, "&b ステータス: &7パーティ登録受付中");
+                Util.message(sender, "&6 /hardend ready (open|close) &bで登録できます！");
+            }
             return;
         }
         
@@ -114,8 +119,8 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 break;
         }
         
-        if (mgr.isOpenParty()) status += " &b[OPEN]";
-        else status += " &c[CLOSE]";
+        if (mgr.isOpenParty()) status += " &b[OPEN Party]";
+        else status += " &c[CLOSE Party]";
         
         List<String> names = new ArrayList<String>(mgr.getMembersMap().size());
         for (final Map.Entry<String, Boolean> entry : mgr.getMembersMap().entrySet()){

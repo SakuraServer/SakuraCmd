@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.Map;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.feature.HardEndManager;
 import net.syamn.sakuracmd.worker.FlymodeWorker;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.file.FileStructure;
@@ -67,6 +68,7 @@ public class ServerData {
 
     private void restoreData(){
         restoreFlymode();
+        restoreHardEndData();
     }
     private void restoreFlymode(){
         final Object obj = conf.get("FlymodeMap");
@@ -86,6 +88,12 @@ public class ServerData {
         }
         FlymodeWorker.getInstance().onPluginEnabled();
         LogUtil.info("Restored " + i + " player(s) flying mode data!");
+    }
+    private void restoreHardEndData(){
+        HardEndManager mgr = HardEndManager.getInstance();
+        if (mgr == null) return;
+        
+        mgr.load(conf);
     }
 
 
@@ -108,6 +116,7 @@ public class ServerData {
     }
     private void buildSaveData(){
         buildFlymode();
+        buildHardEndData();
     }
     private void buildFlymode(){
         final Map<String, Integer> players = FlymodeWorker.getInstance().getFlymodePlayers();
@@ -121,5 +130,11 @@ public class ServerData {
 
             LogUtil.info("Saved " + i + " player(s) flying mode data!");
         }
+    }
+    private void buildHardEndData(){
+        HardEndManager mgr = HardEndManager.getInstance();
+        if (mgr == null) return;
+        
+        mgr.save(conf);
     }
 }
