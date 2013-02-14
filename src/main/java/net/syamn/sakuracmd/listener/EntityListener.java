@@ -14,8 +14,10 @@ import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
 import org.bukkit.Material;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -28,7 +30,9 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
+import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -96,7 +100,16 @@ public class EntityListener implements Listener{
         }
     }
 
-
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onEntityExplode(final EntityExplodeEvent event){
+        if (event.getEntity() != null && event.getEntity().getType() == EntityType.ENDER_CRYSTAL){
+            final Entity ent = event.getEntity();
+            if (ent.getWorld().getEnvironment() == Environment.THE_END){
+                return;
+            }
+            event.blockList().clear();
+        }
+    }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerFallDamage(final EntityDamageEvent event){
