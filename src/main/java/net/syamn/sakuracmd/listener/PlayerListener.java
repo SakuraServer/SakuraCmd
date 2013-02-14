@@ -7,6 +7,7 @@ package net.syamn.sakuracmd.listener;
 import static net.syamn.sakuracmd.storage.I18n._;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import net.syamn.sakuracmd.SCHelper;
 import net.syamn.sakuracmd.SakuraCmd;
@@ -59,6 +60,8 @@ import org.bukkit.util.Vector;
  * @author syam(syamn)
  */
 public class PlayerListener implements Listener{
+    private final static String hangulRegex = "[\\x{1100}-\\x{11f9}\\x{3131}-\\x{318e}\\x{ac00}-\\x{d7a3}]";// 発言禁止正規表現
+    
     private SakuraCmd plugin;
     public PlayerListener (final SakuraCmd plugin){
         this.plugin = plugin;
@@ -117,6 +120,22 @@ public class PlayerListener implements Listener{
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
+        final String message = event.getMessage();
+        
+        // check contains hangul chars
+        if (Pattern.compile(hangulRegex).matcher(message).find()){
+            final Player player = event.getPlayer();
+            if (Perms.TRUST.has(player)) {
+                return;
+            }
+            
+            Util.message(player, "&4[Warning] &cCan't send this message, please use english or japanese");
+            SakuraCmdUtil.sendlog(player, "&7(発言キャンセル) " + PlayerManager.getPlayer(player).getName() + "&f: " + message);
+            LogUtil.warning("Player " + player.getName() + " try to send contains hangul chat: " + message);
+            
+            event.setCancelled(true);
+        }
+        
         AFKWorker.getInstance().updatePlayer(event.getPlayer());
     }
 
