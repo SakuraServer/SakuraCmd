@@ -39,7 +39,7 @@ public class CommandHandler implements TabExecutor{
         }
 
         // run command
-        cmd.run(plugin, sender, commandLabel, args);
+        cmd.run(plugin, sender, commandLabel, args, false);
 
         return true;
     }
@@ -67,5 +67,9 @@ public class CommandHandler implements TabExecutor{
         }else{
             LogUtil.warning("Invalid command not registered! " + bc.getClass().getName());
         }
+    }
+    
+    public BaseCommand getCommand(final String commandName){
+        return commands.get(commandName);
     }
 }

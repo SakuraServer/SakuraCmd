@@ -19,22 +19,23 @@ import org.bukkit.entity.Player;
  * @author syam(syamn)
  */
 public abstract class BaseCommand {
-    public SakuraCmd plugin;
+    protected SakuraCmd plugin;
 
     /* コマンド関係 */
-    public CommandSender sender;
-    public List<String> args = new ArrayList<String>();
-    public Player player;
-    public boolean isPlayer = false;
-    public String command;
-
-    public String name;
-    public boolean bePlayer = true;
-    public int argLength = 0;
-    public String usage;
-    public Perms perm = null;
-
-    public boolean run(SakuraCmd plugin, CommandSender sender, String cmd, String[] preArgs) {
+    protected String command;
+    protected CommandSender sender;
+    protected Player player;
+    protected boolean isPlayer;
+    protected List<String> args = new ArrayList<String>();
+    protected int argLength;
+    protected boolean bySign;
+    
+    protected String name;
+    protected boolean bePlayer = true;
+    protected String usage;
+    protected Perms perm = null;
+    
+    public boolean run(SakuraCmd plugin, CommandSender sender, String cmd, String[] preArgs, boolean bySign) {
         if (name == null) {
             Util.message(sender, "&cThis command not loaded properly!");
             return true;
@@ -43,17 +44,14 @@ public abstract class BaseCommand {
         this.plugin = plugin;
         this.sender = sender;
         this.command = cmd;
+        this.bySign = bySign;
 
         // 引数をソート
         args.clear();
-        for (String arg : preArgs)
+        for (String arg : preArgs){
             args.add(arg);
-
-        // 引数からコマンドの部分を取り除く
-        // (コマンド名に含まれる半角スペースをカウント、リストの先頭から順にループで取り除く)
-        // for (int i = 0; i < name.split(" ").length && i < args.size(); i++)
-        // args.remove(0);
-
+        }
+        
         // 引数の長さチェック
         if (argLength > args.size()) {
             sendUsage();

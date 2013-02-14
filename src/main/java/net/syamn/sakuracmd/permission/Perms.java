@@ -48,6 +48,7 @@ public enum Perms {
     NO_PICKUP ("player.nopickup"),
     NO_PICKUP_OTHER ("player.nopickup.other"),
     HARD_END ("player.hardend"),
+    HARD_END_NOSIGN ("player.hardend.nosign"),
     HARD_END_ADMIN ("player.hardend.admin"),
 
     // World Commands

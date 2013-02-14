@@ -34,6 +34,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.mockito.internal.util.Checks;
 
 /**
  * HardEndCommand (HardEndCommand.java)
@@ -96,7 +97,11 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             tp();
         }
         else{
-            throw new CommandException("&c不正なサブコマンドです: ready / start / join / leave / invite / kick / promote / demote / info");
+            if (Perms.HARD_END_NOSIGN.has(sender)){
+                throw new CommandException("&c不正なサブコマンドです: ready / start / join / leave / invite / kick / promote / demote / tp / info");
+            }else{
+                throw new CommandException("&c不正なサブコマンドです: leave / invite / kick / promote / demote / info");
+            }
         }
     }
     
@@ -108,7 +113,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 Util.message(sender, "&b ステータス: &cクールダウン中 (あと" + TimeUtil.getReadableTimeBySecond(cooldown) + ")");
             }else{
                 Util.message(sender, "&b ステータス: &7パーティ登録受付中");
-                Util.message(sender, "&6 /hardend ready (open|close) &bで登録できます！");
+                Util.message(sender, "&6 パーティ受付所から新たなパーティを登録できます！");
             }
             return;
         }
@@ -144,6 +149,8 @@ public class HardEndCommand extends BaseCommand implements Queueable{
     }
     
     private void ready() throws CommandException{
+        checkSign();
+        
         if (mgr.getStatus() != PartyStatus.WAITING){
             throw new CommandException("&c現在既にパーティが作成、または開始されています");
         }
@@ -180,6 +187,8 @@ public class HardEndCommand extends BaseCommand implements Queueable{
     }
     
     private void start() throws CommandException{
+        checkSign();
+        
         if (mgr.getStatus() != PartyStatus.OPENING){
             throw new CommandException("&c現在パーティが開始待機中ではありません！");
         }
@@ -212,6 +221,8 @@ public class HardEndCommand extends BaseCommand implements Queueable{
     }
     
     private void join() throws CommandException{
+        checkSign();
+        
         if (mgr.getStatus() != PartyStatus.OPENING){
             throw new CommandException("&c現在パーティが開始待機中ではありません！");
         }
@@ -259,7 +270,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             mgr.invited.add(p.getName().toLowerCase(Locale.ENGLISH));
         }
         Util.message(p, " " + PlayerManager.getPlayer(player).getName() + " &dがあなたにパーティ招待を送信しました！");
-        Util.message(p, " &6/hardend join &dコマンドで招待を受諾し参加します！");
+        Util.message(p, " &dパーティ受付所からこのパーティに参加することができます！");
         
         Util.message(sender, " " + PlayerManager.getPlayer(p).getName() + " &dにパーティ招待を送信しました！");
     }
@@ -376,6 +387,8 @@ public class HardEndCommand extends BaseCommand implements Queueable{
     }
     
     private void tp() throws CommandException{
+        checkSign();
+        
         final Location to = Bukkit.getWorld(Worlds.hard_end).getSpawnLocation().clone();
         
         // check ground
@@ -479,6 +492,12 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (mgr.getMembersMap().size() < 1){
             mgr.cleanup();
             Util.broadcastMessage("&a今回の討伐パーティはメンバーが居なくなったため、自動で削除されました");
+        }
+    }
+    
+    private void checkSign() throws CommandException{
+        if (isPlayer && !bySign && !Perms.HARD_END_NOSIGN.has(sender)){
+            throw new CommandException("&cこのコマンドは直接実行できません");
         }
     }
     
