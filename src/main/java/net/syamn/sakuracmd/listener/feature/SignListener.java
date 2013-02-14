@@ -8,7 +8,6 @@ import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.Signs;
 import net.syamn.sakuracmd.signs.BaseSign;
 import net.syamn.sakuracmd.utils.plugin.SignUtil;
-import net.syamn.utils.LogUtil;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -35,14 +34,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
  */
 public class SignListener implements Listener{
     private final SakuraCmd plugin;
-    
+
     private final static int WALL_SIGN = Material.WALL_SIGN.getId();
     private final static int SIGN_POST = Material.SIGN_POST.getId();
-    
+
     public SignListener(final SakuraCmd plugin){
         this.plugin = plugin;
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSignChange(final SignChangeEvent event){
         for (final Signs signs : Signs.values()){
@@ -57,18 +56,18 @@ public class SignListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOW)
     public void onPlayerInteract(final PlayerInteractEvent event){
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK){
             return;
         }
-        
+
         final Block block = event.getClickedBlock();
         if (block == null){
             return;
         }
-        
+
         final int id = block.getTypeId();
         if (id == WALL_SIGN || id == SIGN_POST){
             final Sign s = (Sign)block.getState();
@@ -81,17 +80,17 @@ public class SignListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event){
         final int id = event.getBlockAgainst().getTypeId();
-        
+
         if ((id == WALL_SIGN || id == SIGN_POST) && BaseSign.isValidSign(new BaseSign.BlockSign(event.getBlockAgainst()))){
             event.setCancelled(true);
             return;
         }
     }
-    
+
     /* protect */
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -100,21 +99,21 @@ public class SignListener implements Listener{
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBurn(final BlockBurnEvent event){
         if (checkSignProtected(event.getBlock())){
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockIgnite(final BlockIgniteEvent event){
         if (checkSignProtected(event.getBlock())){
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockPistonExtend(final BlockPistonExtendEvent event){
         for (final Block block : event.getBlocks()){
@@ -124,14 +123,14 @@ public class SignListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockPistonRetract(final BlockPistonRetractEvent event){
         if (event.isSticky() && checkSignProtected(event.getBlock())){
             event.setCancelled(true);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityExplode(final EntityExplodeEvent event){
         for (final Block block : event.blockList()){
@@ -141,31 +140,31 @@ public class SignListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityChangeBlock(final EntityChangeBlockEvent event){
         if (checkSignProtected(event.getBlock())){
             event.setCancelled(true);
         }
     }
-    
+
     private boolean checkSignProtected(final Block block){
         if (block == null) {
             return false;
         }
-        
+
         final int id = block.getTypeId();
         if (((id == WALL_SIGN || id == SIGN_POST) && BaseSign.isValidSign(new BaseSign.BlockSign(block))) || SignUtil.checkIfBlockBreaksSigns(block)){
             return true;
         }
         return false;
     }
-    
+
     private boolean checkSignProtected(final Block block, final Player player){
         if (SignUtil.checkIfBlockBreaksSigns(block)){
             return true;
         }
-        
+
         final int id = block.getTypeId();
         if (id == SIGN_POST || id == WALL_SIGN){
             final Sign sign = (Sign)block.getState();

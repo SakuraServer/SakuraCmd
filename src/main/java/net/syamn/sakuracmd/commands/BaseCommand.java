@@ -29,12 +29,12 @@ public abstract class BaseCommand {
     protected List<String> args = new ArrayList<String>();
     protected int argLength;
     protected boolean bySign;
-    
+
     protected String name;
     protected boolean bePlayer = true;
     protected String usage;
     protected Perms perm = null;
-    
+
     public boolean run(SakuraCmd plugin, CommandSender sender, String cmd, String[] preArgs, boolean bySign) {
         if (name == null) {
             Util.message(sender, "&cThis command not loaded properly!");
@@ -51,24 +51,26 @@ public abstract class BaseCommand {
         for (String arg : preArgs){
             args.add(arg);
         }
-        
+
         // 引数の長さチェック
         if (argLength > args.size()) {
             sendUsage();
             return true;
         }
 
-        // 実行にプレイヤーであることが必要かチェックする
-        if (bePlayer && !(sender instanceof Player)) {
-            Util.message(sender, "&cThis command cannot run from Console!");
-            return true;
-        }
+        // check sender is player
         if (sender instanceof Player) {
             player = (Player) sender;
             isPlayer = true;
         }else{
             player = null;
             isPlayer = false;
+        }
+
+        // 実行にプレイヤーであることが必要かチェックする
+        if (bePlayer && !isPlayer) {
+            Util.message(sender, "&cThis command cannot run from Console!");
+            return true;
         }
 
         // 権限チェック

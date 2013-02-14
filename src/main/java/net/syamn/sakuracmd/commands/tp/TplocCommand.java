@@ -36,7 +36,7 @@ public class TplocCommand extends BaseCommand{
         if (!isPlayer && args.size() < 5){
             throw new CommandException("&c引数が足りません！");
         }
-        
+
         if (!StrUtil.isDouble(args.get(0)) || !StrUtil.isDouble(args.get(1)) || !StrUtil.isDouble(args.get(2))){
             throw new CommandException("&c数値ではない座標情報が含まれています！");
         }
@@ -47,7 +47,7 @@ public class TplocCommand extends BaseCommand{
 
         World world = null;
         Player target = null;
-        
+
         if (isPlayer){
             world = player.getWorld();
             target = player;

@@ -19,7 +19,7 @@ public class Worlds {
     public static String main_world = "new";
     public static String main_nether = "new_nether";
     public static String main_end = "new_the_end";
-    
+
     public static String hard_end = "hard_end";
 
     public static String skylands = "skylands";

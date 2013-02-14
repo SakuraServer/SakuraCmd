@@ -92,7 +92,7 @@ public class ServerData {
     private void restoreHardEndData(){
         HardEndManager mgr = HardEndManager.getInstance();
         if (mgr == null) return;
-        
+
         mgr.load(conf);
     }
 
@@ -134,7 +134,7 @@ public class ServerData {
     private void buildHardEndData(){
         HardEndManager mgr = HardEndManager.getInstance();
         if (mgr == null) return;
-        
+
         mgr.save(conf);
     }
 }

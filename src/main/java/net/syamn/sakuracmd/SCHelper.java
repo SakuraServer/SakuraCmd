@@ -128,7 +128,7 @@ public class SCHelper {
                 ex.printStackTrace();
             }
         }
-        
+
         HardEndManager.createInstance(plugin);
 
         // last, restore save data

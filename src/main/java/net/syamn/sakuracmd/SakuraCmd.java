@@ -160,7 +160,7 @@ public class SakuraCmd extends JavaPlugin{
     public SCHelper getWorker(){
         return this.worker;
     }
-    
+
     /**
      * CommandHandlerインスタンスを返す
      * @return CommandHandler

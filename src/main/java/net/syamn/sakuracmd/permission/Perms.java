@@ -80,7 +80,7 @@ public enum Perms {
 
     // Bypass permissions
     BYPASS_CREATIVE_ITEM ("bypass.creativeitem"),
-    
+
     // Sign create, use, break parent perms
     SIGN_CREATE_PARENT ("sign.create"),
     SIGN_USE_PARENT ("sign.use"),
@@ -123,7 +123,7 @@ public enum Perms {
         }
         return PermissionManager.hasPerm(perm, this);
     }
-    
+
     /**
      * 指定したプレイヤーが権限を持っているか
      *

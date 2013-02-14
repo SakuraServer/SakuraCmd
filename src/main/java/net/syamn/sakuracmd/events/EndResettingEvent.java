@@ -16,37 +16,37 @@ import org.bukkit.event.HandlerList;
 public class EndResettingEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
     private boolean isCancelled = false;
-    
+
     private World world;
     private short dragonAmount;
     private String message;
-    
+
     public EndResettingEvent(World world, short dragonAmount, String message){
         this.world = world;
         this.dragonAmount = dragonAmount;
         this.message = message;
     }
-    
+
     public World getWorld(){
         return this.world;
     }
-    
+
     public short getDragonAmount(){
         return dragonAmount;
     }
-    
+
     public void setDragonAmount(short amount){
         this.dragonAmount = amount;
     }
-    
+
     public String getCompleteMessage(){
         return this.message;
     }
-    
+
     public void setCompleteMessage(String message){
         this.message = message;
     }
-    
+
     @Override
     public boolean isCancelled() {
         return this.isCancelled;

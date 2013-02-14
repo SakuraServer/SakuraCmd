@@ -68,7 +68,7 @@ public class CommandHandler implements TabExecutor{
             LogUtil.warning("Invalid command not registered! " + bc.getClass().getName());
         }
     }
-    
+
     public BaseCommand getCommand(final String commandName){
         return commands.get(commandName);
     }

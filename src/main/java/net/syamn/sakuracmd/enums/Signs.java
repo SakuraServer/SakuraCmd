@@ -14,17 +14,17 @@ import net.syamn.sakuracmd.signs.HardEndSign;
 public enum Signs {
     HARD_END (new HardEndSign()),
     ;
-    
+
     private final BaseSign sign;
-    
+
     private Signs(final BaseSign sign){
         this.sign = sign;
     }
-    
+
     public BaseSign getSign(){
         return sign;
     }
-    
+
     public String getSignName(){
         return sign.getSignName();
     }

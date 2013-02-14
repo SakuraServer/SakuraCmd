@@ -67,12 +67,12 @@ public class PlayerManager {
     /**
      * プレイヤーデータをすべて保存する
      */
-     public static void saveAll(final boolean force){
-         for (final SakuraPlayer sp : players.values()){
-             sp.getData().save(force);
-         }
-     }
-     public static void saveAll(){
-         saveAll(false);
-     }
+    public static void saveAll(final boolean force){
+        for (final SakuraPlayer sp : players.values()){
+            sp.getData().save(force);
+        }
+    }
+    public static void saveAll(){
+        saveAll(false);
+    }
 }

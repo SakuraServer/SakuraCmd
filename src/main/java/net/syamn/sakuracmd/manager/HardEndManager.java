@@ -37,18 +37,18 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
  */
 public class HardEndManager {
     private static HardEndManager instance = null;
-    
+
     private SakuraCmd plugin;
     private PartyStatus status = PartyStatus.WAITING;
     private boolean openParty = false;
-    
+
     private Map<String, Boolean> members = new HashMap<String, Boolean>();
     public Set<String> invited = new HashSet<String>();
-    
+
     private int timeOpened = -1;
     private int timeStarted = -1;
     private int timeUpdate = -1;
-    
+
     private TimeCheckTask task;
     private int taskID = -1;
 
@@ -70,22 +70,22 @@ public class HardEndManager {
         }
         instance = null;
     }
-    
+
     public void load(final FileConfiguration conf){
         ConfigurationSection cs = conf.getConfigurationSection("HardEndData");
         if (cs == null) return;
-        
+
         this.status = StrUtil.isMatches(PartyStatus.values(), cs.getString("Status", "WAITING"));
         if (this.status == null) this.status = PartyStatus.WAITING;
         this.openParty = cs.getBoolean("IsOpenParty", false);
-        
+
         this.timeOpened = cs.getInt("TimeOpened", -1);
         this.timeStarted = cs.getInt("TimeStarted", -1);
         this.timeUpdate = cs.getInt("TimeUpadte", -1);
-        
+
         ConfigurationSection cs2 = cs.getConfigurationSection("Members");
         if (cs2 == null) return;
-        
+
         this.members.clear();
         for (final String key : cs2.getKeys(false)){
             this.members.put(key, cs2.getBoolean(key, false));
@@ -93,43 +93,43 @@ public class HardEndManager {
     }
     public void save(final FileConfiguration conf){
         ConfigurationSection cs = conf.createSection("HardEndData");
-        
+
         cs.set("Status", this.status.name());
         cs.set("IsOpenParty", this.openParty);
-        
+
         cs.set("TimeOpened", this.timeOpened);
         cs.set("TimeStarted", this.timeStarted);
         cs.set("TimeUpadte", this.timeUpdate);
-        
+
         if (this.members.isEmpty()) return;
-        
+
         ConfigurationSection cs2 = cs.createSection("Members");
         for (final Map.Entry<String, Boolean> entry : members.entrySet()){
             cs2.set(entry.getKey(), entry.getValue().booleanValue());
         }
     }
-    
+
     private void onDispose(){
         if (taskID != -1){
             Bukkit.getScheduler().cancelTask(taskID);
             taskID = -1;
         }
     }
-    
+
     public void openParty(final boolean open, final Player sender){
         if (!PartyStatus.WAITING.equals(status)){
             throw new IllegalStateException("Party status must be waiting");
         }
         checkWorld();
-        
+
         status = PartyStatus.OPENING;
         timeOpened = TimeUtil.getCurrentUnixSec().intValue();
         openParty = open;
         invited.clear();
-        
+
         members.clear();
         addMember(sender.getName(), true);
-        
+
         String typemsg = (open) ? "&bオープンパーティ" : "&cクローズパーティ";
         Util.broadcastMessage(" &7\"&f" + (PlayerManager.getPlayer(sender).getName()) + "&7\" &dがハードエンドの" + typemsg + "&dを開きました！");
         if (open){
@@ -138,7 +138,7 @@ public class HardEndManager {
             Util.broadcastMessage(" &dこの討伐パーティはリーダーからの招待が必要です！");
         }
     }
-    
+
     public void startParty(){
         if (!PartyStatus.OPENING.equals(status)){
             throw new IllegalStateException("Party status must be opening");
@@ -149,12 +149,12 @@ public class HardEndManager {
         if (members.size() > getMaxPlayers()){
             throw new IllegalStateException("Too many party members (" + members.size() + ">" + getMaxPlayers() + ")");
         }
-        
+
         final World world = checkWorld();
         for (final Player player : world.getPlayers()){
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
         }
-        
+
         // announce
         List<String> names = new ArrayList<String>(members.size());
         for (final Map.Entry<String, Boolean> entry : members.entrySet()){
@@ -166,12 +166,12 @@ public class HardEndManager {
         }
         Util.broadcastMessage(" &dハードエンド討伐チャレンジが開始されました！");
         Util.broadcastMessage(" &dパーティメンバー: " + StrUtil.join(names, "&7, "));
-        
+
         // update status
         status = PartyStatus.STARTING;
         timeStarted = TimeUtil.getCurrentUnixSec().intValue();
         invited.clear();
-        
+
         // teleport players
         final Location to = world.getSpawnLocation().clone();
         final Block baseBlock = to.getBlock().getRelative(BlockFace.DOWN, 1);
@@ -193,17 +193,17 @@ public class HardEndManager {
             member.teleport(world.getSpawnLocation(), TeleportCause.PLUGIN);
         }
     }
-    
+
     public void dragonKilled(){
         if (!PartyStatus.STARTING.equals(status)){
             throw new IllegalStateException("Party status must be starting");
         }
-        
+
         message("&aハードエンドドラゴン討伐おめでとうございます！");
         cleanup();
         this.timeUpdate = TimeUtil.getCurrentUnixSec().intValue();
     }
-    
+
     private World checkWorld(){
         final World w = Bukkit.getWorld(Worlds.hard_end);
         if (w == null){
@@ -211,12 +211,12 @@ public class HardEndManager {
         }
         return w;
     }
-    
+
     private void timeup(){
         if (status == PartyStatus.WAITING){
             throw new IllegalStateException("status must not be waiting");
         }
-        
+
         if (status == PartyStatus.OPENING){
             message("&cこのパーティは一定時間以内に開始されなかったため削除されました！");
             cleanup();
@@ -236,14 +236,14 @@ public class HardEndManager {
             this.timeUpdate = TimeUtil.getCurrentUnixSec().intValue();
         }
     }
-    
+
     public void cleanup(){
         this.status = PartyStatus.WAITING;
         this.invited.clear();
         //this.members.clear(); // don't clear membersmap
         this.timeStarted = this.timeOpened = -1;
     }
-    
+
     public void message(final String msg){
         Player p;
         for (final String name : members.keySet()){
@@ -253,7 +253,7 @@ public class HardEndManager {
             }
         }
     }
-    
+
     /* getter/setter */
     public void addMember(final String playerName, final boolean leader){
         members.put(playerName.toLowerCase(Locale.ENGLISH), leader);
@@ -261,7 +261,7 @@ public class HardEndManager {
     public void removeMember(final String playerName){
         members.remove(playerName.toLowerCase(Locale.ENGLISH));
     }
-    
+
     public boolean isMember(final Player player){
         return isMember(player.getName());
     }
@@ -269,46 +269,46 @@ public class HardEndManager {
         if (members == null) return false;
         return members.containsKey(playerName.toLowerCase(Locale.ENGLISH));
     }
-    
+
     public boolean isLeader(final Player player){
         return isLeader(player.getName());
     }
     public boolean isLeader(final String playerName){
-        if (members == null || !members.containsKey(playerName.toLowerCase(Locale.ENGLISH))) 
+        if (members == null || !members.containsKey(playerName.toLowerCase(Locale.ENGLISH)))
             return false;
-        
+
         return members.get(playerName.toLowerCase(Locale.ENGLISH));
     }
-    
+
     public void setLeader(final String playerName, final boolean leader){
         if (!isMember(playerName)){
             throw new IllegalStateException("player " + playerName + " must be member!");
         }
         members.put(playerName.toLowerCase(Locale.ENGLISH), leader);
     }
-    
+
     public Map<String, Boolean> getMembersMap(){
         if (status == PartyStatus.WAITING){
             return null;
         }
         return Collections.unmodifiableMap(this.members);
     }
-    
+
     public PartyStatus getStatus(){
         return this.status;
     }
-    
+
     public boolean isOpenParty(){
         return openParty;
     }
-    
+
     public int getMinPlayers(){
         return plugin.getWorker().getConfig().getHardendMinPlayers();
     }
     public int getMaxPlayers(){
         return plugin.getWorker().getConfig().getHardendMaxPlayers();
     }
-    
+
     public int getTimeHours(){
         return plugin.getWorker().getConfig().getHardendTimeLimitHours();
     }
@@ -316,10 +316,10 @@ public class HardEndManager {
         if (status != PartyStatus.STARTING){
             throw new IllegalStateException("status must be starting");
         }
-        
+
         return (timeStarted + getTimeHours() * 60 * 60) - TimeUtil.getCurrentUnixSec().intValue();
     }
-    
+
     public int getTimeOpenedMinutes(){
         return plugin.getWorker().getConfig().getHardendTimeLimitOpenedMinutes();
     }
@@ -327,10 +327,10 @@ public class HardEndManager {
         if (status != PartyStatus.OPENING){
             throw new IllegalStateException("status must be opening");
         }
-        
+
         return (timeOpened + getTimeOpenedMinutes() * 60) - TimeUtil.getCurrentUnixSec().intValue();
     }
-    
+
     public int getCooldownHours(){
         return plugin.getWorker().getConfig().getHardendCooldownHours();
     }
@@ -338,13 +338,13 @@ public class HardEndManager {
         if (status != PartyStatus.WAITING){
             throw new IllegalStateException("status must be waiting");
         }
-        
+
         if (this.timeUpdate < 0){
             return 0;
         }
         return (this.timeUpdate + getCooldownHours() * 60 * 60) - TimeUtil.getCurrentUnixSec().intValue();
     }
-    
+
     // call async
     class TimeCheckTask implements Runnable{
         @Override
@@ -353,10 +353,10 @@ public class HardEndManager {
             if (status == PartyStatus.WAITING){
                 return;
             }
-            
+
             if (status == PartyStatus.OPENING){
                 int remain = getRemainOpenedSeconds();
-                
+
                 if (remain <= 0){
                     Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
                         @Override public void run(){
@@ -377,7 +377,7 @@ public class HardEndManager {
             }
             else if (status == PartyStatus.STARTING){
                 int remain = getRemainSeconds();
-                
+
                 if (remain <= 0){
                     Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
                         @Override public void run(){

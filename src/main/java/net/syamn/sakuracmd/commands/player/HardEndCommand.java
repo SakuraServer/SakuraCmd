@@ -46,22 +46,22 @@ public class HardEndCommand extends BaseCommand implements Queueable{
     }
 
     private HardEndManager mgr = null;
-    
-    
+
+
     @Override
     public void execute() throws CommandException{
         mgr = HardEndManager.getInstance();
         if (mgr == null){
             throw new CommandException("&c現在ハードエンドは利用できません");
         }
-        
+
         if (args.size() < 1){
             info();
             return;
         }
-        
+
         final String action = args.remove(0).trim().toLowerCase(Locale.ENGLISH);
-        
+
         if (action.equals("ready")){
             ready();
         }
@@ -100,7 +100,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             }
         }
     }
-    
+
     @SuppressWarnings("incomplete-switch")
     private void info() throws CommandException{
         if (mgr.getStatus() == PartyStatus.WAITING){
@@ -113,7 +113,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             }
             return;
         }
-        
+
         String status = null;
         int remain = -1;
         switch (mgr.getStatus()){
@@ -126,10 +126,10 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 remain = mgr.getRemainSeconds();
                 break;
         }
-        
+
         if (mgr.isOpenParty()) status += " &b[OPEN Party]";
         else status += " &c[CLOSE Party]";
-        
+
         List<String> names = new ArrayList<String>(mgr.getMembersMap().size());
         for (final Map.Entry<String, Boolean> entry : mgr.getMembersMap().entrySet()){
             if (entry.getValue()){
@@ -138,24 +138,24 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 names.add("&3" + entry.getKey());
             }
         }
-        
+
         Util.message(sender, "&b ステータス: " + status);
         Util.message(sender, " &bパーティメンバー (" + names.size() + "): " + StrUtil.join(names, "&7, "));
         Util.message(sender, " &b残り時間: " + TimeUtil.getReadableTimeBySecond(remain));
     }
-    
+
     private void ready() throws CommandException{
         checkSign();
-        
+
         if (mgr.getStatus() != PartyStatus.WAITING){
             throw new CommandException("&c現在既にパーティが作成、または開始されています");
         }
-        
+
         final int cooldown = mgr.getRemainCooldownSeconds();
         if (cooldown > 0){
             throw new CommandException("&c次のパーティ結成まで あと" + TimeUtil.getReadableTimeBySecond(cooldown) + " 必要です！");
         }
-        
+
         Boolean open = null;
         if (args.size() > 0){
             if (args.get(0).equalsIgnoreCase("open")){
@@ -167,31 +167,31 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (open == null){
             throw new CommandException("&cパーティの種類を open または close で指定してください！");
         }
-        
+
         final EndResetWorker worker = EndResetWorker.getInstance();
         if (worker == null){
             throw new CommandException("&cエンドワールドの初期化に失敗しました！");
         }
-        
+
         mgr.openParty(open, player);
-        
+
         Bukkit.getScheduler().runTaskLater(plugin, new Runnable(){
             @Override public void run(){
                 worker.regen(Bukkit.getWorld(Worlds.hard_end), true);
             }
         }, 1L);
     }
-    
+
     private void start() throws CommandException{
         checkSign();
-        
+
         if (mgr.getStatus() != PartyStatus.OPENING){
             throw new CommandException("&c現在パーティが開始待機中ではありません！");
         }
         if (!mgr.isLeader(player)){
             throw new CommandException("&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
         }
-        
+
         Player p;
         for (final String name : mgr.getMembersMap().keySet()){
             p = Bukkit.getPlayerExact(name);
@@ -200,14 +200,14 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 mgr.message("&cプレイヤー &6" + name + " &cはオフラインのため、パーティから自動削除されました");
             }
         }
-        
+
         if (mgr.getMembersMap().size() < mgr.getMinPlayers()){
             throw new CommandException("&c開始可能なパーティメンバー数に達していません！ " + mgr.getMinPlayers() + "人必要です！");
         }
         if (mgr.getMembersMap().size() > mgr.getMaxPlayers()){
             throw new CommandException("&c開始可能なパーティメンバー数を超えています！ " + mgr.getMaxPlayers() + "人以下にしてください！");
         }
-        
+
         ArrayList<Object> queueArgs = new ArrayList<Object>(1);
         queueArgs.add("start");
         ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 10);
@@ -215,10 +215,10 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         Util.message(sender, "&6討伐中は途中からパーティにメンバーを追加できません。");
         Util.message(sender, "&6本当に開始しますか？ &a/confirm&6 コマンドで続行します。");
     }
-    
+
     private void join() throws CommandException{
         checkSign();
-        
+
         if (mgr.getStatus() != PartyStatus.OPENING){
             throw new CommandException("&c現在パーティが開始待機中ではありません！");
         }
@@ -231,16 +231,16 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (!mgr.isOpenParty() && !mgr.invited.contains(player.getName().toLowerCase(Locale.ENGLISH))){
             throw new CommandException("&cクローズパーティのため、パーティリーダーの招待が必要です！");
         }
-        
+
         if (!mgr.isOpenParty()){
             mgr.invited.remove(player.getName().toLowerCase(Locale.ENGLISH));
         }
-        
+
         mgr.addMember(player.getName(), false);
         Util.broadcastMessage("&aハードエンド討伐パーティに" + PlayerManager.getPlayer(player).getName() + "が参加しました");
         mgr.message(" " + PlayerManager.getPlayer(player).getName() + " &dがこのパーティに参加しました！");
     }
-    
+
     private void invite() throws CommandException{
         if (mgr.getStatus() != PartyStatus.OPENING){
             throw new CommandException("&c現在パーティが開始待機中ではありません！");
@@ -248,29 +248,29 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (!mgr.isLeader(player)){
             throw new CommandException("&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
         }
-        
+
         if (args.size() < 1){
             throw new CommandException("&cパーティに招待するプレイヤーを入力してください！");
         }
-        
+
         final Player p = Bukkit.getPlayer(args.get(0).trim());
         if (p == null || !p.isOnline()){
             throw new CommandException("&cプレイヤー " + args.get(0).trim() + " が見つかりません！");
         }
-        
+
         if (sender.equals(p)){
             throw new CommandException("&c自分に招待を送信できません！");
         }
-        
+
         if (!mgr.isOpenParty()){
             mgr.invited.add(p.getName().toLowerCase(Locale.ENGLISH));
         }
         Util.message(p, " " + PlayerManager.getPlayer(player).getName() + " &dがあなたにパーティ招待を送信しました！");
         Util.message(p, " &dパーティ受付所からこのパーティに参加することができます！");
-        
+
         Util.message(sender, " " + PlayerManager.getPlayer(p).getName() + " &dにパーティ招待を送信しました！");
     }
-    
+
     private void kick() throws CommandException{
         if (mgr.getStatus() == PartyStatus.WAITING){
             throw new CommandException("&c現在パーティは作成されていません");
@@ -278,20 +278,20 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (!mgr.isLeader(player)){
             throw new CommandException("&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
         }
-        
+
         if (args.size() < 1){
             throw new CommandException("&cパーティから追放するプレイヤーを入力してください！");
         }
-        
+
         final String name = args.get(0).trim().toLowerCase(Locale.ENGLISH);
         if (!mgr.isMember(name)){
             throw new CommandException("&6" + name + " &cはパーティメンバーではありません！");
         }
-        
+
         if (name.equalsIgnoreCase(sender.getName())){
             throw new CommandException("&c自分を追放することはできません！");
         }
-        
+
         mgr.removeMember(name);
         Player p = Bukkit.getPlayerExact(name);
         if (p != null && p.isOnline()){
@@ -300,10 +300,10 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
             }
         }
-        
+
         mgr.message(" &6" + sender.getName() + "&c はこのパーティから  &6" + name + "&c を追放しました！");
     }
-    
+
     private void leave() throws CommandException{
         if (mgr.getStatus() == PartyStatus.WAITING){
             throw new CommandException("&c現在パーティは作成されていません");
@@ -311,7 +311,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (!mgr.isMember(player)){
             throw new CommandException("&cあなたはパーティメンバーではありません！");
         }
-        
+
         ArrayList<Object> queueArgs = new ArrayList<Object>(1);
         queueArgs.add("leave");
         ConfirmQueue.getInstance().addQueue(sender, this, queueArgs, 15);
@@ -319,7 +319,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         Util.message(sender, "&6開始中のパーティには途中から再参加できません。");
         Util.message(sender, "&6本当に実行しますか？ &a/confirm&6 コマンドで続行します。");
     }
-    
+
     private void promote() throws CommandException{
         if (mgr.getStatus() == PartyStatus.WAITING){
             throw new CommandException("&c現在パーティは作成されていません");
@@ -330,7 +330,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (args.size() < 1){
             throw new CommandException("&cパーティリーダーに任命するプレイヤーを入力してください！");
         }
-        
+
         final String name = args.get(0).trim().toLowerCase(Locale.ENGLISH);
         if (!mgr.isMember(name)){
             throw new CommandException("&6" + name + " &cはパーティメンバーではありません！");
@@ -341,16 +341,16 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (mgr.isLeader(name)){
             throw new CommandException("&6" + name + " &cは既にパーティリーダーです！");
         }
-        
+
         mgr.setLeader(name, true);
         Player p = Bukkit.getPlayerExact(name);
         if (p != null && p.isOnline()){
             Util.message(p, "&aあなたはパーティリーダーに任命されました！");
         }
-        
+
         mgr.message(" &6" + PlayerManager.getPlayer(player).getName() + "&a が  &6" + name + "&a をパーティリーダーに任命しました");
     }
-    
+
     private void demote() throws CommandException{
         if (mgr.getStatus() == PartyStatus.WAITING){
             throw new CommandException("&c現在パーティは作成されていません");
@@ -361,7 +361,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (args.size() < 1){
             throw new CommandException("&cパーティリーダーを解任するプレイヤーを入力してください！");
         }
-        
+
         final String name = args.get(0).trim().toLowerCase(Locale.ENGLISH);
         if (!mgr.isMember(name)){
             throw new CommandException("&6" + name + " &cはパーティメンバーではありません！");
@@ -372,21 +372,21 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (!mgr.isLeader(name)){
             throw new CommandException("&6" + name + " &cはパーティリーダーではありません！");
         }
-        
+
         mgr.setLeader(name, false);
         Player p = Bukkit.getPlayerExact(name);
         if (p != null && p.isOnline()){
             Util.message(p, "&6あなたはパーティリーダーから解任されました！");
         }
-        
+
         mgr.message(" &6" + PlayerManager.getPlayer(player).getName() + "&c が  &6" + name + "&c をパーティリーダーから解任しました");
     }
-    
+
     private void tp() throws CommandException{
         checkSign();
-        
+
         final Location to = Bukkit.getWorld(Worlds.hard_end).getSpawnLocation().clone();
-        
+
         // check ground
         final Block baseBlock = to.getBlock().getRelative(BlockFace.DOWN, 1);
         Block block;
@@ -398,10 +398,10 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 }
             }
         }
-        
+
         player.teleport(to.add(0.5D, 0.5D, 0.5D), TeleportCause.PLUGIN);
     }
-    
+
     @Override
     public void executeQueue(QueuedCommand queued) {
         List<Object> queueArgs = queued.getArgs();
@@ -417,7 +417,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
         throw new IllegalStateException("not handled queued command by " + queued.getSender().getName());
     }
-    
+
     private void queuedStart(){
         if (mgr.getStatus() != PartyStatus.OPENING){
             Util.message(player, "&c現在パーティが開始待機中ではありません！");
@@ -425,7 +425,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         if (!mgr.isLeader(player)){
             Util.message(player, "&cあなたはパーティリーダーではありません！リーダーのみが実行できます！");
         }
-        
+
         Player p;
         boolean changed = false;
         for (final String name : mgr.getMembersMap().keySet()){
@@ -444,7 +444,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             Util.message(sender, " &6&a/confirm&6 コマンドで続行します。");
             return;
         }
-        
+
         if (mgr.getMembersMap().size() < mgr.getMinPlayers()){
             Util.message(player, "&c開始可能なパーティメンバー数に達していません！" + mgr.getMinPlayers() + "人必要です！");
             return;
@@ -453,10 +453,10 @@ public class HardEndCommand extends BaseCommand implements Queueable{
             Util.message(player, "&c開始可能なパーティメンバー数を超えています！ " + mgr.getMaxPlayers() + "人以下にしてください！");
             return;
         }
-        
+
         mgr.startParty();
     }
-    
+
     private void queuedLeave(){
         if (mgr.getStatus() == PartyStatus.WAITING){
             Util.message(player, "&c現在パーティは作成されていません");
@@ -476,32 +476,32 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 return;
             }
         }
-        
+
         mgr.removeMember(player.getName());
         if (player.getName().equals(Worlds.hard_end)){
             player.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
         }
-        
+
         mgr.message("&aプレイヤー " + PlayerManager.getPlayer(player).getName() + " &aがこのパーティから抜けました！");
         Util.broadcastMessage("&aハードエンド討伐パーティから " + PlayerManager.getPlayer(player).getName() + " &aが脱退しました");
-        
+
         if (mgr.getMembersMap().size() < 1){
             mgr.cleanup();
             Util.broadcastMessage("&a今回の討伐パーティはメンバーが居なくなったため、自動で削除されました");
         }
     }
-    
+
     private void checkSign() throws CommandException{
         if (isPlayer && !bySign && !Perms.HARD_END_NOSIGN.has(sender)){
             throw new CommandException("&cこのコマンドは直接実行できません");
         }
     }
-    
+
     /*
     private void permCheck() throws CommandException{
         if (!Perms.HARD_END.has(sender)){
             throw new CommandException("&c権限がありません！");
         }
     }
-    */
+     */
 }

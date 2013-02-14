@@ -24,17 +24,17 @@ public class SignUtil {
      */
     public static boolean checkIfBlockBreaksSigns(final Block block) {
         Block check = block.getRelative(BlockFace.UP);
-        if (check.getType() == Material.SIGN_POST && BaseSign.isValidSign(new BlockSign(check))) { 
+        if (check.getType() == Material.SIGN_POST && BaseSign.isValidSign(new BlockSign(check))) {
             return true;
         }
-        
-        final BlockFace[] dirs = new BlockFace[] { 
+
+        final BlockFace[] dirs = new BlockFace[] {
                 BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST
-            };
-        
+        };
+
         for (final BlockFace blockFace : dirs) {
             check = block.getRelative(blockFace);
-            
+
             if (check.getType() == Material.WALL_SIGN) {
                 final org.bukkit.material.Sign signMat = (org.bukkit.material.Sign) check.getState().getData();
                 if (signMat != null && signMat.getFacing() == blockFace && BaseSign.isValidSign(new BlockSign(check))) {
@@ -42,7 +42,7 @@ public class SignUtil {
                 }
             }
         }
-        
+
         return false;
     }
 }

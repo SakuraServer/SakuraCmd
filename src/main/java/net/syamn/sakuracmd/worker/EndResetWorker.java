@@ -143,7 +143,7 @@ public class EndResetWorker{
             new SaveThread().run();
         }
     }
-    
+
     public void regen(World world){
         regen(world, false);
     }
@@ -153,10 +153,10 @@ public class EndResetWorker{
             throw new IllegalArgumentException("world must be end world");
         }
         final String worldName = world.getName();
-        
+
         short dragonAmount = 1;
         String message = (silent) ? null : "&c[SakuraServer] &dエンドワールド'&6" + worldName + "&d'はリセットされました！";
-        
+
         // call event
         EndResettingEvent resettingEvent = new EndResettingEvent(world, dragonAmount, message);
         plugin.getServer().getPluginManager().callEvent(resettingEvent);
@@ -166,15 +166,15 @@ public class EndResetWorker{
         dragonAmount = resettingEvent.getDragonAmount();
         if (dragonAmount < 1) dragonAmount = 1;
         message = resettingEvent.getCompleteMessage();
-        
+
         LogUtil.info("Resetting world " + world.getName() + " ...");
-        
+
         // reset
         for (final Player p : world.getPlayers()){
             p.teleport(Bukkit.getServer().getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
             Util.message(p, "&d このワールドはリセットされます！");
         }
-        
+
         long cv = cvs.get(worldName) + 1;
         if (cv == Long.MAX_VALUE) cv = Long.MIN_VALUE;
         cvs.put(worldName, cv);
@@ -196,19 +196,19 @@ public class EndResetWorker{
                 world.spawnEntity(loc, EntityType.ENDER_DRAGON);
             }
         }
-        
+
         LogUtil.info("World " + world.getName() + " was reset!");
 
         save = true;
         if (message != null){
             Util.broadcastMessage(message);
         }
-        
+
         EndResetWorldData data = worldData.get(world.getName());
         if(data != null){
             data.updateLastReset();
         }
-        
+
         // Call complete event
         plugin.getServer().getPluginManager().callEvent(new EndResetEvent(world, dragonAmount, message));
     }

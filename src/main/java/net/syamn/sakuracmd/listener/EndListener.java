@@ -48,22 +48,22 @@ public class EndListener implements Listener{
             //Actions.log("End.log", "Player " + event.getEntity().getKiller().getName() + " killed the EnderDragon at world " + event.getEntity().getWorld().getName());
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageEvent event) {
         final Entity ent = event.getEntity();
-        
+
         if (ent.getWorld().getName().equals(Worlds.main_end) && (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART)) {
             event.setDamage(event.getDamage() / 2); // ドラゴンHP x2
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDamageByEntity(final EntityDamageByEntityEvent event) {
         if (!event.getEntity().getWorld().getName().equals(Worlds.main_end)){
             return;
         }
-        
+
         if (event.getEntity() instanceof Player){
             event.setDamage(event.getDamage() + 6);
         }
@@ -91,7 +91,7 @@ public class EndListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onItemSpawn(final ItemSpawnEvent event) {
         final Item item = event.getEntity();

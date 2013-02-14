@@ -61,7 +61,7 @@ import org.bukkit.util.Vector;
  */
 public class PlayerListener implements Listener{
     private final static String hangulRegex = "[\\x{1100}-\\x{11f9}\\x{3131}-\\x{318e}\\x{ac00}-\\x{d7a3}]";// 発言禁止正規表現
-    
+
     private SakuraCmd plugin;
     public PlayerListener (final SakuraCmd plugin){
         this.plugin = plugin;
@@ -71,7 +71,7 @@ public class PlayerListener implements Listener{
     public void onPlayerInteract(final PlayerInteractEvent event){
         final Player player = event.getPlayer();
         AFKWorker.getInstance().updatePlayer(player);
-        
+
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.BED_BLOCK) {
             event.setCancelled(true);
         }
@@ -121,21 +121,21 @@ public class PlayerListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onAsyncPlayerChat(final AsyncPlayerChatEvent event) {
         final String message = event.getMessage();
-        
+
         // check contains hangul chars
         if (Pattern.compile(hangulRegex).matcher(message).find()){
             final Player player = event.getPlayer();
             if (Perms.TRUST.has(player)) {
                 return;
             }
-            
+
             Util.message(player, "&4[Warning] &cCan't send this message, please use english or japanese");
             SakuraCmdUtil.sendlog(player, "&7(発言キャンセル) " + PlayerManager.getPlayer(player).getName() + "&f: " + message);
             LogUtil.warning("Player " + player.getName() + " try to send contains hangul chat: " + message);
-            
+
             event.setCancelled(true);
         }
-        
+
         AFKWorker.getInstance().updatePlayer(event.getPlayer());
     }
 
@@ -175,12 +175,12 @@ public class PlayerListener implements Listener{
         if (!Action.RIGHT_CLICK_BLOCK.equals(event.getAction())) {
             return; // check action
         }
-        
+
         final Block block = event.getClickedBlock();
         if (block == null) return;
         final Player player = event.getPlayer();
         boolean cancel = false;
-        
+
         switch (block.getType()){
             case COMMAND:
                 if (!player.isOp()){
@@ -190,20 +190,20 @@ public class PlayerListener implements Listener{
             default:
                 break;
         }
-        
+
         if (cancel){
             event.setCancelled(true);
             event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
             event.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH) // ignoreCancelled = true
     public void onPlayerRightClickWithItem(final PlayerInteractEvent event) {
         if (event.useItemInHand() == org.bukkit.event.Event.Result.DENY){
             return; // instead of ignoreCancelled = true
         }
-       
+
 
         final Player player = event.getPlayer();
         final ItemStack is = player.getItemInHand();

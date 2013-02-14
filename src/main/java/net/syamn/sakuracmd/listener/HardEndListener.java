@@ -66,20 +66,20 @@ public class HardEndListener implements Listener{
         this.plugin = plugin;
         rnd = new Random();
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDeath(final EntityDeathEvent event) {
         if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null &&  event.getEntity().getWorld().getName().equals(Worlds.hard_end)) {
             final int hard_end_DragonExp = 40000;
-            
+
             event.setDroppedExp(hard_end_DragonExp);
             Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！");
-            
+
             mgr = HardEndManager.getInstance();
             if (mgr != null){
                 mgr.dragonKilled();
             }
-            
+
             Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
                 @Override public void run(){
@@ -92,13 +92,13 @@ public class HardEndListener implements Listener{
             }, 10L);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         if (!event.getTo().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         mgr = HardEndManager.getInstance();
         final Player player = event.getPlayer();
         if ((mgr.getStatus() != PartyStatus.OPENING && mgr.isMember(player)) || Perms.TRUST.has(player)){
@@ -126,9 +126,9 @@ public class HardEndListener implements Listener{
                     inWorldPlayers.add(p);
                 }
             }
-            
+
             event.setDamage(event.getDamage() / 3); // ダメージ1/3
-            
+
             //LivingEntity e;
             // 毒グモ3匹ランダムターゲットで召還
             for (short i = 0; i < 6; i++) {
@@ -149,7 +149,7 @@ public class HardEndListener implements Listener{
             }
 
             // ランダムプレイヤーの真上にTNTをスポーン
-            
+
             for (short i = 0; i < 20; i++) {
                 if (inWorldPlayers.size() < 1) return;
                 Location targetLoc = inWorldPlayers.get(rnd.nextInt(inWorldPlayers.size())).getLocation(); // ターゲットプレイヤー確定と座標取得
@@ -158,7 +158,7 @@ public class HardEndListener implements Listener{
             }
         }
     }
-    
+
     @SuppressWarnings("incomplete-switch")
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void disableEnvironmentDamageToMobs(final EntityDamageEvent event) {
@@ -166,11 +166,11 @@ public class HardEndListener implements Listener{
             return;
         }
         final Entity ent = event.getEntity();
-        
+
         if (ent != null && (ent instanceof LivingEntity) && !(ent instanceof Player)){
             switch (event.getCause()){
                 // TNT, fire, drown, lightning, fall, lava, poison
-                case BLOCK_EXPLOSION: 
+                case BLOCK_EXPLOSION:
                 case ENTITY_EXPLOSION:
                 case FIRE:
                 case FIRE_TICK:
@@ -206,7 +206,7 @@ public class HardEndListener implements Listener{
                     shooter.getWorld().strikeLightning(shooter.getLocation());
                 }
             }
-            
+
             //プレイヤーによる攻撃ならそのプレイヤーに雷を落とす
             if(attacker instanceof Player){
                 attacker.getWorld().strikeLightning(attacker.getLocation());
@@ -276,10 +276,10 @@ public class HardEndListener implements Listener{
             case CREEPER: // クリーパー
                 event.setRadius((float) 9.0);
                 break;
-            /*
-             * TODO:Breaking 1.4.2 case FIREBALL: // ガストの火の玉
-             * event.setRadius((float) 3.0); event.setFire(true); break;
-             */
+                /*
+                 * TODO:Breaking 1.4.2 case FIREBALL: // ガストの火の玉
+                 * event.setRadius((float) 3.0); event.setFire(true); break;
+                 */
             case PRIMED_TNT: // TNT
                 event.setRadius((float) 7.0);
                 event.setFire(true);
@@ -316,7 +316,7 @@ public class HardEndListener implements Listener{
         if (!event.getPlayer().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         final Player player = event.getPlayer();
         if ((mgr.getStatus() != PartyStatus.OPENING && mgr.isMember(player)) || Perms.TRUST.has(player)){
             // TODO do stuff..?
@@ -328,13 +328,13 @@ public class HardEndListener implements Listener{
             }, 1L);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event){
         if (!event.getLocation().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         mgr = HardEndManager.getInstance();
         if (mgr != null && mgr.getStatus() == PartyStatus.WAITING){
             switch (event.getSpawnReason()){
@@ -345,27 +345,27 @@ public class HardEndListener implements Listener{
             }
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEndResetting(final EndResettingEvent event){
         if (!event.getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         mgr = HardEndManager.getInstance();
-        
+
         if (mgr.getStatus() == PartyStatus.STARTING){
             event.setCancelled(true);
             LogUtil.warning("Cancelled world " + Worlds.hard_end + " resetting event due to starting status");
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEndReset(final EndResetEvent event){
         if (!event.getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
             @Override public void run(){
                 final World world = event.getWorld();
@@ -373,14 +373,14 @@ public class HardEndListener implements Listener{
                 if (!world.loadChunk(spawnLoc.getBlockX(), spawnLoc.getBlockZ(), false)){
                     return;
                 }
-                
+
                 Block baseBlock = world.getHighestBlockAt(spawnLoc);
                 if (baseBlock == null) {
                     return;
                 }
                 baseBlock = baseBlock.getRelative(BlockFace.DOWN, 1);
                 world.setSpawnLocation(baseBlock.getX(), baseBlock.getY() + 1, baseBlock.getZ());
-                
+
                 // 3x3で足場を作る
                 Block block;
                 for (int x = baseBlock.getX() - 1; x <= baseBlock.getX() + 1; x++) {
@@ -391,7 +391,7 @@ public class HardEndListener implements Listener{
                         }
                     }
                 }
-                
+
                 LogUtil.info("Update spawn location and create grounds on " + StrUtil.getLocationString(baseBlock));
             }
         }, 20L);
