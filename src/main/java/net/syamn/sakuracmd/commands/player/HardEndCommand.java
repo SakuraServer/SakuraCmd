@@ -15,9 +15,6 @@ import net.syamn.sakuracmd.manager.HardEndManager;
 import net.syamn.sakuracmd.manager.Worlds;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
-import net.syamn.sakuracmd.player.Power;
-import net.syamn.sakuracmd.player.SakuraPlayer;
-import net.syamn.sakuracmd.utils.plugin.SakuraCmdUtil;
 import net.syamn.sakuracmd.worker.EndResetWorker;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.TimeUtil;
@@ -34,7 +31,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.mockito.internal.util.Checks;
 
 /**
  * HardEndCommand (HardEndCommand.java)
