@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
+import net.syamn.sakuracmd.feature.SpecialItem;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
@@ -99,7 +100,32 @@ public class AdminCommand extends BaseCommand {
             Util.message(sender, "&aプレイヤーヘッドを " + name + " に変更しました！");
             return;
         }
-
+        
+        // special
+        if (sub.equals("special") && isPlayer && args.size() > 0){
+            ItemStack is = player.getItemInHand();
+            if(is == null || is.getType() == Material.AIR){
+                throw new CommandException("&cアイテムを持っていません！");
+            }
+            
+            final String name = args.remove(0).trim();
+            SpecialItem.Type type = StrUtil.isMatches(SpecialItem.Type.values(), name);
+            if (type == null){
+                throw new CommandException("&c特殊アイテム " + name + " が見つかりません！");
+            }
+            
+            int remain = 0;
+            if (args.size() > 0){
+                if (!StrUtil.isInteger(args.get(0))){
+                    throw new CommandException("&c" + args.get(0) + " は数値ではありません！");
+                }
+                remain = Integer.parseInt(args.get(0));
+            }
+            is = SpecialItem.createSpecialItem(is, type, remain);
+            player.setItemInHand(is);
+            Util.message(sender, "&a特殊アイテム " + name + " を作成しました！");
+            return;
+        }
 
         Util.message(sender, "&cUnknown sub-command!");
     }
