@@ -402,23 +402,33 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         player.teleport(to.add(0.5D, 0.5D, 0.5D), TeleportCause.PLUGIN);
     }
 
+    
     @Override
     public void executeQueue(QueuedCommand queued) {
+        if (!(queued.getSender() instanceof Player)){
+            throw new IllegalStateException("sender must be player");
+        }
+        
+        final Player queuedPlayer = (Player) queued.getSender();
+        if (queuedPlayer == null || !queuedPlayer.isOnline()){
+            return;
+        }
+        
         List<Object> queueArgs = queued.getArgs();
         if (queueArgs.size() == 1){
             if (queueArgs.get(0).equals("start")){
-                queuedStart();
+                queuedStart(queuedPlayer);
                 return;
             }
             else if (queueArgs.get(0).equals("leave")){
-                queuedLeave();
+                queuedLeave(queuedPlayer);
                 return;
             }
         }
         throw new IllegalStateException("not handled queued command by " + queued.getSender().getName());
     }
 
-    private void queuedStart(){
+    private void queuedStart(final Player player){
         if (mgr.getStatus() != PartyStatus.OPENING){
             Util.message(player, "&c現在パーティが開始待機中ではありません！");
         }
@@ -457,7 +467,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         mgr.startParty();
     }
 
-    private void queuedLeave(){
+    private void queuedLeave(final Player player){
         if (mgr.getStatus() == PartyStatus.WAITING){
             Util.message(player, "&c現在パーティは作成されていません");
             return;
