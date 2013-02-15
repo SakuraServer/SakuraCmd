@@ -85,6 +85,9 @@ public enum Perms {
     SIGN_CREATE_PARENT ("sign.create"),
     SIGN_USE_PARENT ("sign.use"),
     SIGN_BREAK_PARENT ("sign.break"),
+    
+    // SpecialItems perimssion
+    SPECITEM_USE_PARENT ("specitem.use"),
 
     // Tab color
     TAB_RED ("tab.red"),

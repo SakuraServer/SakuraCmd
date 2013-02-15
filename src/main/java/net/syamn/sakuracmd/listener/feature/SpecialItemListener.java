@@ -4,7 +4,10 @@
  */
 package net.syamn.sakuracmd.listener.feature;
 
+import java.util.Locale;
+
 import net.syamn.sakuracmd.feature.SpecialItem;
+import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.utils.Util;
 import net.syamn.utils.cb.PacketUtil;
 
@@ -47,6 +50,11 @@ public class SpecialItemListener implements Listener{
         
         final Block block = event.getClickedBlock();
         if (type.isRequireBlockClicked() && (block == null || block.getType() == Material.AIR)){
+            return;
+        }
+        
+        if (!Perms.SPECITEM_USE_PARENT.has(player, type.name().toLowerCase(Locale.ENGLISH))){
+            Util.message(player, "&cこのアイテムを使用する権限がありません！");
             return;
         }
         
