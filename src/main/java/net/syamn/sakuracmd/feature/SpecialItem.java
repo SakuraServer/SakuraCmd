@@ -110,7 +110,9 @@ public class SpecialItem {
             throw new IllegalArgumentException("ItemStack must not be null");
         }
         
-        final List<String> lores = is.getItemMeta().getLore();
+        final ItemMeta meta = is.getItemMeta();
+        final List<String> lores = meta.getLore();
+        
         if (lores == null || lores.size() <= 2){
             throw new IllegalArgumentException("ItemStack lores must not be null or illgeal size (<=2)");
         }
@@ -123,7 +125,8 @@ public class SpecialItem {
                 }else{
                     lores.remove(i);
                 }
-                is.getItemMeta().setLore(lores);
+                meta.setLore(lores);
+                is.setItemMeta(meta);
                 return is;
             }
             i++;
@@ -131,22 +134,30 @@ public class SpecialItem {
         
         // remain counts line not found, add new one
         if (remain != 0){
-            lores.add(lores.size() - 2, remainCount + remain);
+            //lores.add(lores.size() - 2, remainCount + remain);
+            lores.add(1, remainCount + remain);
         }
-        is.getItemMeta().setLore(lores);
+        meta.setLore(lores);
+        is.setItemMeta(meta);
         return is;
     }
     
     public enum Type{
-        CRYSTAL ("&aEnder&bCrystallizer"),
+        CRYSTAL ("&aEnder&bCrystallizer", true),
         ;
         
         private String name;
-        private Type(final String name){
+        private boolean requireBlockClicked;
+        
+        private Type(final String name, final boolean requireBlockClicked){
             this.name = Util.coloring(name);
+            this.requireBlockClicked = requireBlockClicked;
         }
         public String getItemName(){
             return this.name;
+        }
+        public boolean isRequireBlockClicked(){
+            return requireBlockClicked;
         }
     }
 }

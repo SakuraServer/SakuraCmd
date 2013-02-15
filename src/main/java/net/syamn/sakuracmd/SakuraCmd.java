@@ -22,6 +22,7 @@ import net.syamn.sakuracmd.listener.feature.OpenInvListener;
 import net.syamn.sakuracmd.listener.feature.PassengerListener;
 import net.syamn.sakuracmd.listener.feature.PortalEventListener;
 import net.syamn.sakuracmd.listener.feature.SignListener;
+import net.syamn.sakuracmd.listener.feature.SpecialItemListener;
 import net.syamn.sakuracmd.manager.ServerManager;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.LogUtil;
@@ -88,6 +89,7 @@ public class SakuraCmd extends JavaPlugin{
         pm.registerEvents(new PortalEventListener(), this);
         pm.registerEvents(new OpenInvListener(), this);
         pm.registerEvents(new EndResetListener(), this);
+        pm.registerEvents(new SpecialItemListener(), this);
 
         // commands
         commandHandler = new CommandHandler(this);
