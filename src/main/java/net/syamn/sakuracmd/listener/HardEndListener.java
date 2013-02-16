@@ -60,6 +60,8 @@ import org.bukkit.inventory.ItemStack;
  * @author syam(syamn)
  */
 public class HardEndListener implements Listener{
+    private final int maxent = 1500;
+    
     private Random rnd;
     private SakuraCmd plugin;
     private HardEndManager mgr;
@@ -265,10 +267,14 @@ public class HardEndListener implements Listener{
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public void cancelSpawnEnderStone(final ItemSpawnEvent event) {
+    public void onItemSpawn(final ItemSpawnEvent event) {
+        if (!event.getLocation().getWorld().getName().equals(Worlds.hard_end)){
+            return;
+        }
+        
         final Item item = event.getEntity();
-        if (item.getWorld().getName().equals(Worlds.hard_end) && item.getItemStack().getType() == Material.ENDER_STONE) {
-            event.setCancelled(true); // 負荷対策
+        if (item.getItemStack().getType() == Material.ENDER_STONE || item.getWorld().getEntities().size() > maxent) {
+            event.setCancelled(true);
         }
     }
 
@@ -357,6 +363,15 @@ public class HardEndListener implements Listener{
                     event.setCancelled(true);
                     break;
             }
+            return;
+        }
+        
+        final Entity ent = event.getEntity();
+        if (ent instanceof TNTPrimed){
+            return;
+        }
+        if (ent.getWorld().getEntities().size() > maxent){
+            event.setCancelled(true);
         }
     }
 

@@ -56,8 +56,8 @@ public class EntityListener implements Listener{
         
         final Entity ent = event.getEntity();
         final Player player = (Player)event.getDamager();
-        final Block baseBlock = ent.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
-        
+        final Block baseBlock = ent.getLocation().getBlock().getRelative(BlockFace.DOWN, 2);
+        //LogUtil.info(player.getName() + " -> " + baseBlock.getType().name());//debug
         if (baseBlock != null && baseBlock.getType() == Material.OBSIDIAN){
             Util.message(player, "&cこのクリスタルは保護されています！");
             event.setCancelled(true);
