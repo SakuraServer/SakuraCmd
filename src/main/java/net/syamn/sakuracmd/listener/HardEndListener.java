@@ -42,6 +42,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -80,12 +81,13 @@ public class HardEndListener implements Listener{
             Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！");
 
             mgr = HardEndManager.getInstance();
-            List<ItemStack> dropItems = new ArrayList<>();
+            final List<ItemStack> drops = new ArrayList<>();
             if (mgr != null){
                 mgr.dragonKilled();
-                dropItems = mgr.getDropItems();
+                drops.addAll(mgr.getDropItems());
             }
-            event.getDrops().addAll(dropItems);
+            drops.addAll(event.getDrops());
+            event.getDrops().clear();
 
             Util.worldcastMessage(ent.getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
             
@@ -94,6 +96,7 @@ public class HardEndListener implements Listener{
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
                 @Override public void run(){
                     clearEntity(ent.getWorld());
+                    dropItems(ent.getLocation(), drops);
                 }
             }, 10L);
         }
@@ -108,7 +111,26 @@ public class HardEndListener implements Listener{
             }
         }
     }
-
+    private void dropItems(final Location baseLoc, final List<ItemStack> drops){
+        if (drops.size() <= 0) {
+            return;
+        }
+        
+        Random ran = new Random();
+        final World world = baseLoc.getWorld();
+        
+        int x, z;
+        Location loc;
+        for (final ItemStack is : drops){
+            x = ran.nextInt(11) - 5; // -5 - 5
+            z = ran.nextInt(11) - 5;
+            loc = baseLoc.clone().add(x, 0D, z);
+            
+            world.dropItemNaturally(loc, is);
+        }
+        drops.clear();
+    }
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         if (!event.getTo().getWorld().getName().equals(Worlds.hard_end)){
@@ -122,56 +144,6 @@ public class HardEndListener implements Listener{
         }else{
             Util.message(player, "&cハードエンドに行くためにはパーティ登録を行う必要があります");
             event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onEntityDamage(final EntityDamageEvent event) {
-        if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
-            return;
-        }
-        final Entity ent = event.getEntity();
-
-        // ドラゴンがダメージを受けた
-        if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
-            final Location dragonLocation = ent.getLocation();
-
-            final List<Player> inWorldPlayers= new ArrayList<Player>();
-            for (final Player p : ent.getWorld().getPlayers()){
-                if (!PlayerManager.getPlayer(p).hasPower(Power.INVISIBLE)){
-                    inWorldPlayers.add(p);
-                }
-            }
-
-            event.setDamage(event.getDamage() / 3); // ダメージ1/3
-
-            //LivingEntity e;
-            // 毒グモ3匹ランダムターゲットで召還
-            for (short i = 0; i < 6; i++) {
-                ent.getWorld().spawnEntity(dragonLocation, EntityType.CAVE_SPIDER);
-            }
-            // ガスト3匹ランダムターゲットで召還
-            for (short i = 0; i < 4; i++) {
-                ent.getWorld().spawnEntity(dragonLocation, EntityType.GHAST);
-            }
-            // ゾンビ5匹ランダムターゲットで召還
-            for (short i = 0; i < 6; i++) {
-                ent.getWorld().spawnEntity(dragonLocation, EntityType.ZOMBIE);
-            }
-
-            // 帯電クリーパー3匹召還
-            for (short i = 0; i < 6; i++) {
-                ((Creeper) ent.getWorld().spawnEntity(dragonLocation, EntityType.CREEPER)).setPowered(true);
-            }
-
-            // ランダムプレイヤーの真上にTNTをスポーン
-
-            for (short i = 0; i < 20; i++) {
-                if (inWorldPlayers.size() < 1) return;
-                Location targetLoc = inWorldPlayers.get(rnd.nextInt(inWorldPlayers.size())).getLocation(); // ターゲットプレイヤー確定と座標取得
-                Location tntloc = new Location(targetLoc.getWorld(), targetLoc.getX(), dragonLocation.getY(), targetLoc.getZ());
-                ent.getWorld().spawn(tntloc, TNTPrimed.class);
-            }
         }
     }
 
@@ -213,19 +185,24 @@ public class HardEndListener implements Listener{
 
         // ドラゴン
         if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
-            //飛翔物によるダメージ
+            Player attackerPlayer = null;
             if(attacker instanceof Projectile){
-                Projectile projectile = (Projectile)attacker;
-                LivingEntity shooter = projectile.getShooter();
-                //プレイヤーが発射したものならそのプレイヤーに雷を落とす
+                final LivingEntity shooter = ((Projectile)attacker).getShooter();
                 if(shooter instanceof Player){
+                    attackerPlayer = (Player)shooter;
                     shooter.getWorld().strikeLightning(shooter.getLocation());
                 }
+            }else if(attacker instanceof Player){
+                attackerPlayer = (Player)attacker;
             }
-
-            //プレイヤーによる攻撃ならそのプレイヤーに雷を落とす
-            if(attacker instanceof Player){
-                attacker.getWorld().strikeLightning(attacker.getLocation());
+            
+            if (attackerPlayer == null || !attackerPlayer.isOnline()){
+                event.setCancelled(true);
+                event.setDamage(0);
+            }else{
+                attackerPlayer.getWorld().strikeLightning(attackerPlayer.getLocation());
+                event.setDamage(event.getDamage() / 3); // ダメージ1/3
+                spawnMobs(ent);
             }
         }
         // エンダークリスタル
@@ -237,13 +214,62 @@ public class HardEndListener implements Listener{
                     event.setCancelled(true);
                     break;
             }
-
             if (attacker.getType() == EntityType.ARROW){
                 final Projectile arrow = (Arrow) attacker;
                 if (arrow.getShooter() instanceof Player) {
                     Util.message((Player) arrow.getShooter(), "&c矢ではクリスタルを破壊できません！");
                 }
             }
+        }
+    }
+    private void spawnMobs(final Entity ent){
+        final Location dragonLocation = ent.getLocation();
+
+        final List<Player> inWorldPlayers= new ArrayList<Player>();
+        for (final Player p : ent.getWorld().getPlayers()){
+            if (!PlayerManager.getPlayer(p).hasPower(Power.INVISIBLE)){
+                inWorldPlayers.add(p);
+            }
+        }
+
+        //LivingEntity e;
+        // 毒グモ3匹ランダムターゲットで召還
+        for (short i = 0; i < 6; i++) {
+            ent.getWorld().spawnEntity(dragonLocation, EntityType.CAVE_SPIDER);
+        }
+        // ガスト3匹ランダムターゲットで召還
+        for (short i = 0; i < 4; i++) {
+            ent.getWorld().spawnEntity(dragonLocation, EntityType.GHAST);
+        }
+        // ゾンビ5匹ランダムターゲットで召還
+        for (short i = 0; i < 6; i++) {
+            ent.getWorld().spawnEntity(dragonLocation, EntityType.ZOMBIE);
+        }
+
+        // 帯電クリーパー3匹召還
+        for (short i = 0; i < 6; i++) {
+            ((Creeper) ent.getWorld().spawnEntity(dragonLocation, EntityType.CREEPER)).setPowered(true);
+        }
+
+        // ランダムプレイヤーの真上にTNTをスポーン
+
+        for (short i = 0; i < 20; i++) {
+            if (inWorldPlayers.size() < 1) return;
+            Location targetLoc = inWorldPlayers.get(rnd.nextInt(inWorldPlayers.size())).getLocation(); // ターゲットプレイヤー確定と座標取得
+            Location tntloc = new Location(targetLoc.getWorld(), targetLoc.getX(), dragonLocation.getY(), targetLoc.getZ());
+            ent.getWorld().spawn(tntloc, TNTPrimed.class);
+        }
+    }
+    
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onEntityDamageByBlock(final EntityDamageByBlockEvent event){
+        if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
+            return;
+        }
+        
+        if ((event.getEntity() instanceof LivingEntity) && !(event.getEntity() instanceof Player)){
+            event.setCancelled(true);
+            event.setDamage(0);
         }
     }
 
