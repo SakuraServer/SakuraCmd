@@ -4,6 +4,9 @@
  */
 package net.syamn.sakuracmd;
 
+import java.io.File;
+
+import net.syamn.sakuracmd.enums.FileLog;
 import net.syamn.sakuracmd.feature.GeoIP;
 import net.syamn.sakuracmd.feature.HawkEyeSearcher;
 import net.syamn.sakuracmd.listener.feature.MCBansListener;
@@ -81,6 +84,12 @@ public class SCHelper {
         // connect database
         Database db = Database.getInstance(plugin);
         db.createStructure();
+        
+        // check logdir
+        File dir = FileLog.getLogDir();
+        if (!dir.exists()){
+            dir.mkdirs();
+        }
 
         // worker
         AFKWorker.getInstance(); // AFK worker

@@ -37,4 +37,8 @@ public enum FileLog {
     public static void log(final String fileName, final String line){
         LogUtil.writeLog(SakuraCmd.getInstance().getDataFolder() + File.separator + dirName + File.separator + fileName, line);
     }
+    
+    public static File getLogDir(){
+        return new File(SakuraCmd.getInstance().getDataFolder(), dirName);
+    }
 }
