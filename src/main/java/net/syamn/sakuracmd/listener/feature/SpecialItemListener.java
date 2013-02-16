@@ -23,6 +23,7 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,6 +36,9 @@ public class SpecialItemListener implements Listener{
     public void onPlayerRightClickWithItem(final PlayerInteractEvent event) {
         if (event.useItemInHand() == Result.DENY){
             return; // instead of ignoreCancelled = true
+        }
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK){
+            return;
         }
 
         final Player player = event.getPlayer();

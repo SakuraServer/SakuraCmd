@@ -203,7 +203,9 @@ public class PlayerListener implements Listener{
         if (event.useItemInHand() == org.bukkit.event.Event.Result.DENY){
             return; // instead of ignoreCancelled = true
         }
-
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK){
+            return;
+        }
 
         final Player player = event.getPlayer();
         final ItemStack is = player.getItemInHand();
