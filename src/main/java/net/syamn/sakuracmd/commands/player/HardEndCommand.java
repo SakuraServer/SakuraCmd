@@ -122,7 +122,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
                 remain = mgr.getRemainOpenedSeconds();
                 break;
             case STARTING:
-                status = "&6開始中";
+                status = "&6討伐中";
                 remain = mgr.getRemainSeconds();
                 break;
         }

@@ -13,11 +13,11 @@ import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -27,12 +27,12 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
-import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -45,11 +45,26 @@ public class EntityListener implements Listener{
         this.plugin = plugin;
     }
 
-    //@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onPlayerDamage(final EntityDamageEvent event){
-        // check GodMode -> moved to PlayerListener
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onCrystalDamagedByEntity(final EntityDamageByEntityEvent event) {
+        if (event.getEntityType() != EntityType.ENDER_CRYSTAL || event.getEntity().getWorld().getEnvironment() == Environment.THE_END){
+            return;
+        }
+        if (!(event.getDamager() instanceof Player) || event.getDamage() <= 0){
+            return;
+        }
+        
+        final Entity ent = event.getEntity();
+        final Player player = (Player)event.getDamager();
+        final Block baseBlock = ent.getLocation().getBlock().getRelative(BlockFace.DOWN, 1);
+        
+        if (baseBlock != null && baseBlock.getType() == Material.OBSIDIAN){
+            Util.message(player, "&cこのクリスタルは保護されています！");
+            event.setCancelled(true);
+            event.setDamage(0);
+        }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
         // スポナー制限
