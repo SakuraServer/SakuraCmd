@@ -5,6 +5,7 @@
 package net.syamn.sakuracmd.commands.other;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,6 +13,7 @@ import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.feature.SpecialItem;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.utils.StrUtil;
+import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
@@ -119,9 +121,20 @@ public class AdminCommand extends BaseCommand {
                 if (!StrUtil.isInteger(args.get(0))){
                     throw new CommandException("&c" + args.get(0) + " は数値ではありません！");
                 }
-                remain = Integer.parseInt(args.get(0));
+                remain = Integer.parseInt(args.remove(0));
             }
-            is = SpecialItem.createSpecialItem(is, type, remain);
+            
+            int expiration = -1;
+            if (args.size() > 0){
+                String dateStr = StrUtil.join(args, " ");
+                Date date = TimeUtil.parseByFormat(dateStr, SpecialItem.dateFormat);
+                if (date == null){
+                    throw new CommandException("&c" + dateStr + " は有効な日時フォーマットではありません！");
+                }
+                expiration = TimeUtil.getUnixSecByDate(date).intValue();
+            }
+            
+            is = SpecialItem.createSpecialItem(is, type, remain, expiration);
             player.setItemInHand(is);
             Util.message(sender, "&a特殊アイテム " + name + " を作成しました！");
             return;

@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import net.syamn.sakuracmd.feature.SpecialItem;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.cb.PacketUtil;
 
@@ -42,7 +43,7 @@ public class SpecialItemListener implements Listener{
         }
 
         final Player player = event.getPlayer();
-        final ItemStack is = player.getItemInHand();
+        ItemStack is = player.getItemInHand();
         if (is == null || is.getType().equals(Material.AIR) || player.getWorld().getEnvironment().equals(Environment.THE_END)){
             return; // return if player not item in hand, or player on end environment
         }
@@ -62,6 +63,15 @@ public class SpecialItemListener implements Listener{
             return;
         }
         
+        // check expiration
+        int expiration = SpecialItem.getExpiration(is);
+        if (expiration > 0 && expiration <= TimeUtil.getCurrentUnixSec().intValue()){
+            Util.message(player, "&cこのアイテムは使用期限を超過しています！");
+            player.setItemInHand(SpecialItem.markAsExpired(is));
+            return;
+        }
+        
+               
         boolean success = false;
         switch(type){
             case CRYSTAL:
@@ -89,12 +99,10 @@ public class SpecialItemListener implements Listener{
             }
         }
         
-        int remain = SpecialItem.getRemainCount(is) - 1;
-        if (remain > 0){
-            is = SpecialItem.setRemainCount(is, remain);
-            player.setItemInHand(is);
-        }else{
-            player.setItemInHand(null);
+        // use item
+        is = decrementRemainCount(is);
+        player.setItemInHand(is);
+        if (is == null){
             PacketUtil.playSound(player, "random.break", 0.3F, 0.0F);
         }
         
@@ -104,5 +112,15 @@ public class SpecialItemListener implements Listener{
         Util.message(player, "&aエンダークリスタルを設置しました！");
         
         return true;
+    }
+    
+    private ItemStack decrementRemainCount(ItemStack is){
+        final int remain = SpecialItem.getRemainCount(is) - 1;
+        if (remain > 0){
+            is = SpecialItem.setRemainCount(is, remain);
+        }else{
+            is = null;
+        }
+        return is;
     }
 }

@@ -220,7 +220,7 @@ public class HardEndManager {
         for (int i = 0; i <= ran.nextInt(2); i++){ // 0, 1
             ItemStack crystal = new ItemStack(Material.BLAZE_POWDER, 1);
             final int remain = (ran.nextInt(10) >= 7) ? 2 : 0; // 2(30%) or 1(70%)
-            crystal = SpecialItem.createSpecialItem(crystal, SpecialItem.Type.CRYSTAL, remain);
+            crystal = SpecialItem.createSpecialItem(crystal, SpecialItem.Type.CRYSTAL, remain, TimeUtil.getCurrentUnixSec().intValue() + 2592000); // 30days
             ret.add(crystal);
         }
         
