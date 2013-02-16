@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.enums;
 
 import net.syamn.sakuracmd.signs.BaseSign;
 import net.syamn.sakuracmd.signs.HardEndSign;
+import net.syamn.sakuracmd.signs.ProtectSign;
 
 /**
  * Signs (Signs.java)
@@ -13,6 +14,7 @@ import net.syamn.sakuracmd.signs.HardEndSign;
  */
 public enum Signs {
     HARD_END (new HardEndSign()),
+    PROTECT (new ProtectSign()),
     ;
 
     private final BaseSign sign;

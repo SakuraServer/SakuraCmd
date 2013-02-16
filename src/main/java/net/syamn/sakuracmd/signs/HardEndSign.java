@@ -23,7 +23,7 @@ public class HardEndSign extends BaseSign{
     }
 
     private static final String mainCommand = "hardend";
-
+    
     @Override
     protected void onSignInteract(final Player player, final ISign sign, final SakuraCmd plugin) throws SignException{
         final String[] line2 = sign.getLine(1).trim().toLowerCase(Locale.ENGLISH).split(" ");

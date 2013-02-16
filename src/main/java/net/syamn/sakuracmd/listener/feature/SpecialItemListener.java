@@ -90,6 +90,11 @@ public class SpecialItemListener implements Listener{
     }
     
     private boolean useCrystalItem(final Player player, ItemStack is, final Block block){
+        if (block == null || block.getType() != Material.OBSIDIAN){
+            Util.message(player, "&c台座となる黒曜石をクリックしてください！");
+            return false;
+        }
+        
         Block check;
         for (int i = 1; i <= 3; i++){
             check = block.getRelative(BlockFace.UP, i);
