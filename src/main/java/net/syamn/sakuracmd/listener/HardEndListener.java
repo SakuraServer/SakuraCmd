@@ -98,7 +98,10 @@ public class HardEndListener implements Listener{
     }
     private void clearEntity(final World world){
         for (final Entity ent : world.getEntities()){
-            if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
+            if (ent == null || (ent instanceof Player) || (ent instanceof EnderDragon)){
+                continue;
+            }
+            if ((ent instanceof TNTPrimed)|| (ent instanceof LivingEntity)){
                 ent.remove();
             }
         }

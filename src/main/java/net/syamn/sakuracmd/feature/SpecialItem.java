@@ -237,7 +237,7 @@ public class SpecialItem {
         }
         
         final ItemMeta meta = is.getItemMeta();
-        meta.setDisplayName(meta.getDisplayName() + "&c (期限切れ)");
+        meta.setDisplayName(meta.getDisplayName() + "§c (期限切れ)");
         is.setItemMeta(meta);
         
         return is;

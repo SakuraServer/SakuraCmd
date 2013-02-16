@@ -237,7 +237,7 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         }
 
         mgr.addMember(player.getName(), false);
-        Util.broadcastMessage("&aハードエンド討伐パーティに" + PlayerManager.getPlayer(player).getName() + "が参加しました");
+        Util.broadcastMessage("&aハードエンド討伐パーティに" + PlayerManager.getPlayer(player).getName() + "&aが参加しました");
         mgr.message(" " + PlayerManager.getPlayer(player).getName() + " &dがこのパーティに参加しました！");
     }
 
