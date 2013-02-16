@@ -13,7 +13,6 @@ import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
@@ -53,7 +52,7 @@ public class EntityListener implements Listener{
         if (!(event.getDamager() instanceof Player) || event.getDamage() <= 0){
             return;
         }
-        
+
         final Entity ent = event.getEntity();
         final Player player = (Player)event.getDamager();
         final Block baseBlock = ent.getLocation().getBlock().getRelative(BlockFace.DOWN, 2);
@@ -64,7 +63,7 @@ public class EntityListener implements Listener{
             event.setDamage(0);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
         // スポナー制限

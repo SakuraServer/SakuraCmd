@@ -18,7 +18,7 @@ public class ProtectSign extends BaseSign{
     public ProtectSign() {
         super("Protect");
     }
-    
+
 
     @Override
     protected boolean onSignCreate(final Player player, final ISign sign, final SakuraCmd plugin) throws SignException{
@@ -29,14 +29,14 @@ public class ProtectSign extends BaseSign{
         sign.setLine(1, name);
         return true;
     }
-    
+
     @Override
     protected boolean onSignBreak(final Player player, final ISign sign, final SakuraCmd plugin) throws SignException{
         String name = player.getName();
         if (name.length() > 15){
             name = name.substring(0, 15);
         }
-        
+
         if (sign.getLine(1).equals(name)){
             Util.message(player, "&aあなたの保護看板を壊しました！");
             return true;

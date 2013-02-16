@@ -402,18 +402,18 @@ public class HardEndCommand extends BaseCommand implements Queueable{
         player.teleport(to.add(0.5D, 0.5D, 0.5D), TeleportCause.PLUGIN);
     }
 
-    
+
     @Override
     public void executeQueue(QueuedCommand queued) {
         if (!(queued.getSender() instanceof Player)){
             throw new IllegalStateException("sender must be player");
         }
-        
+
         final Player queuedPlayer = (Player) queued.getSender();
         if (queuedPlayer == null || !queuedPlayer.isOnline()){
             return;
         }
-        
+
         List<Object> queueArgs = queued.getArgs();
         if (queueArgs.size() == 1){
             if (queueArgs.get(0).equals("start")){

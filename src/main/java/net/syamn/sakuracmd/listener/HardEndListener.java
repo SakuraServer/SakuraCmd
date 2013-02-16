@@ -63,7 +63,7 @@ import org.bukkit.inventory.ItemStack;
  */
 public class HardEndListener implements Listener{
     private final int maxent = 1500;
-    
+
     private Random rnd;
     private SakuraCmd plugin;
     private HardEndManager mgr;
@@ -92,7 +92,7 @@ public class HardEndListener implements Listener{
             event.getDrops().clear();
 
             Util.worldcastMessage(ent.getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
-            
+
             // clear living entities
             clearEntity(ent.getWorld());
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
@@ -117,27 +117,27 @@ public class HardEndListener implements Listener{
         if (drops.size() <= 0) {
             return;
         }
-        
+
         Random ran = new Random();
         final World world = baseLoc.getWorld();
-        
+
         List<String> names = new ArrayList<>();
-        
+
         int x, z;
         Location loc;
         for (final ItemStack is : drops){
             x = ran.nextInt(11) - 5; // -5 - 5
             z = ran.nextInt(11) - 5;
             loc = baseLoc.clone().add(x, 0D, z);
-            
+
             world.dropItemNaturally(loc, is);
-            names.add(is.getType().name() + " x" + is.getAmount());            
+            names.add(is.getType().name() + " x" + is.getAmount());
         }
         FileLog.HARD_END.log("Dropped items: " + StrUtil.join(names, ", "));
         drops.clear();
         names.clear();
     }
-    
+
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent event) {
         if (!event.getTo().getWorld().getName().equals(Worlds.hard_end)){
@@ -202,7 +202,7 @@ public class HardEndListener implements Listener{
             }else if(attacker instanceof Player){
                 attackerPlayer = (Player)attacker;
             }
-            
+
             if (attackerPlayer == null || !attackerPlayer.isOnline()){
                 event.setCancelled(true);
                 event.setDamage(0);
@@ -267,13 +267,13 @@ public class HardEndListener implements Listener{
             ent.getWorld().spawn(tntloc, TNTPrimed.class);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDamageByBlock(final EntityDamageByBlockEvent event){
         if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         if ((event.getEntity() instanceof LivingEntity) && !(event.getEntity() instanceof Player)){
             event.setCancelled(true);
             event.setDamage(0);
@@ -304,7 +304,7 @@ public class HardEndListener implements Listener{
         if (!event.getLocation().getWorld().getName().equals(Worlds.hard_end)){
             return;
         }
-        
+
         final Item item = event.getEntity();
         if (item.getItemStack().getType() == Material.ENDER_STONE || item.getWorld().getEntities().size() > maxent) {
             event.setCancelled(true);
@@ -398,7 +398,7 @@ public class HardEndListener implements Listener{
             }
             return;
         }
-        
+
         final Entity ent = event.getEntity();
         if (ent instanceof TNTPrimed){
             return;

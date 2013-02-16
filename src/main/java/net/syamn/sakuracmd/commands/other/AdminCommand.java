@@ -102,20 +102,20 @@ public class AdminCommand extends BaseCommand {
             Util.message(sender, "&aプレイヤーヘッドを " + name + " に変更しました！");
             return;
         }
-        
+
         // special
         if (sub.equals("special") && isPlayer && args.size() > 0){
             ItemStack is = player.getItemInHand();
             if(is == null || is.getType() == Material.AIR){
                 throw new CommandException("&cアイテムを持っていません！");
             }
-            
+
             final String name = args.remove(0).trim();
             SpecialItem.Type type = StrUtil.isMatches(SpecialItem.Type.values(), name);
             if (type == null){
                 throw new CommandException("&c特殊アイテム " + name + " が見つかりません！");
             }
-            
+
             int remain = 0;
             if (args.size() > 0){
                 if (!StrUtil.isInteger(args.get(0))){
@@ -123,7 +123,7 @@ public class AdminCommand extends BaseCommand {
                 }
                 remain = Integer.parseInt(args.remove(0));
             }
-            
+
             int expiration = -1;
             if (args.size() > 0){
                 String dateStr = StrUtil.join(args, " ");
@@ -133,7 +133,7 @@ public class AdminCommand extends BaseCommand {
                 }
                 expiration = TimeUtil.getUnixSecByDate(date).intValue();
             }
-            
+
             is = SpecialItem.createSpecialItem(is, type, remain, expiration);
             player.setItemInHand(is);
             Util.message(sender, "&a特殊アイテム " + name + " を作成しました！");

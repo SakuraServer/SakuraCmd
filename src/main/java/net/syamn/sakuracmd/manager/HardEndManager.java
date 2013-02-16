@@ -32,7 +32,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
@@ -217,9 +216,9 @@ public class HardEndManager {
 
     public List<ItemStack> getDropItems(){
         List<ItemStack> ret = new ArrayList<>();
-        
+
         Random ran = new Random();
-        
+
         // ender crystallizer
         for (int i = 0; i <= ran.nextInt(2); i++){ // 0, 1
             ItemStack crystal = new ItemStack(Material.BLAZE_POWDER, 1);
@@ -227,10 +226,10 @@ public class HardEndManager {
             crystal = SpecialItem.createSpecialItem(crystal, SpecialItem.Type.CRYSTAL, remain, TimeUtil.getCurrentUnixSec().intValue() + 2592000); // 30days
             ret.add(crystal);
         }
-        
+
         return ret;
     }
-    
+
     private World checkWorld(){
         final World w = Bukkit.getWorld(Worlds.hard_end);
         if (w == null){

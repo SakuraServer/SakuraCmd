@@ -18,22 +18,22 @@ public enum FileLog {
     SPECITEM ("special_item.log"),
     GENITEM ("generate_item.log"),
     ;
-    
+
     final private static String dirName = "log";
-    
+
     private String file;
     private FileLog(final String file){
         this.file = file;
     }
-    
+
     public String getFileName(){
         return this.file;
     }
-    
+
     public void log(final String line){
         log(this.file, line);
     }
-    
+
     public static void log(final String fileName, final String line){
         LogUtil.writeLog(SakuraCmd.getInstance().getDataFolder() + File.separator + dirName + File.separator + fileName, line);
     }

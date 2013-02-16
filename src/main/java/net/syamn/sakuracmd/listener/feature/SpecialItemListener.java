@@ -49,22 +49,22 @@ public class SpecialItemListener implements Listener{
         if (is == null || is.getType().equals(Material.AIR) || player.getWorld().getEnvironment().equals(Environment.THE_END)){
             return; // return if player not item in hand, or player on end environment
         }
-        
+
         SpecialItem.Type type = SpecialItem.getSpecialItemType(is);
         if (type == null){
             return;
         }
-        
+
         final Block block = event.getClickedBlock();
         if (type.isRequireBlockClicked() && (block == null || block.getType() == Material.AIR)){
             return;
         }
-        
+
         if (!Perms.SPECITEM_USE_PARENT.has(player, type.name().toLowerCase(Locale.ENGLISH))){
             Util.message(player, "&cこのアイテムを使用する権限がありません！");
             return;
         }
-        
+
         // check expiration
         int expiration = SpecialItem.getExpiration(is);
         if (expiration > 0 && expiration <= TimeUtil.getCurrentUnixSec().intValue()){
@@ -72,8 +72,8 @@ public class SpecialItemListener implements Listener{
             player.setItemInHand(SpecialItem.markAsExpired(is));
             return;
         }
-        
-               
+
+
         boolean success = false;
         switch(type){
             case CRYSTAL:
@@ -83,20 +83,20 @@ public class SpecialItemListener implements Listener{
                 Util.message(player, "&cこのアイテムはまだ未実装です！");
                 break;
         }
-        
+
         if (!success){
             event.setCancelled(true);
         }
         event.setUseInteractedBlock(Result.DENY);
-        event.setUseItemInHand(Result.DENY);        
+        event.setUseItemInHand(Result.DENY);
     }
-    
+
     private boolean useCrystalItem(final Player player, ItemStack is, final Block block){
         if (block == null || block.getType() != Material.OBSIDIAN){
             Util.message(player, "&c台座となる黒曜石をクリックしてください！");
             return false;
         }
-        
+
         Block check;
         for (int i = 1; i <= 2; i++){
             check = block.getRelative(BlockFace.UP, i);
@@ -105,23 +105,23 @@ public class SpecialItemListener implements Listener{
                 return false;
             }
         }
-        
+
         // use item
         is = decrementRemainCount(is);
         player.setItemInHand(is);
         if (is == null){
             PacketUtil.playSound(player, "random.break", 0.3F, 0.0F);
         }
-        
+
         final Location spawnLoc = block.getRelative(BlockFace.UP, 1).getLocation().add(0.5D, 0D, 0.5D);
         final Entity spawned  = spawnLoc.getWorld().spawn(spawnLoc, EntityType.ENDER_CRYSTAL.getEntityClass());
-        
+
         Util.message(player, "&aエンダークリスタルを設置しました！");
         FileLog.SPECITEM.log("EnderCrytallizer used by " + player.getName() + " at " + StrUtil.getLocationString(block));
-        
+
         return true;
     }
-    
+
     private ItemStack decrementRemainCount(ItemStack is){
         final int remain = SpecialItem.getRemainCount(is) - 1;
         if (remain > 0){
