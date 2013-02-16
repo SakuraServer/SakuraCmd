@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.enums.FileLog;
 import net.syamn.sakuracmd.enums.PartyStatus;
 import net.syamn.sakuracmd.feature.SpecialItem;
 import net.syamn.sakuracmd.player.PlayerManager;
@@ -142,6 +143,7 @@ public class HardEndManager {
         }else{
             Util.broadcastMessage(" &dこの討伐パーティはリーダーからの招待が必要です！");
         }
+        FileLog.HARD_END.log(((openParty) ? "Open" : "Close") + " party opened by " + sender.getName());
     }
 
     public void startParty(){
@@ -171,6 +173,7 @@ public class HardEndManager {
         }
         Util.broadcastMessage(" &dハードエンド討伐チャレンジが開始されました！");
         Util.broadcastMessage(" &dパーティメンバー: " + StrUtil.join(names, "&7, "));
+        FileLog.HARD_END.log("Party start, members(" + members.size() + "): " + Util.stripColors(StrUtil.join(names, ", ")));
 
         // update status
         status = PartyStatus.STARTING;
@@ -207,6 +210,7 @@ public class HardEndManager {
         }
 
         message("&aハードエンドドラゴン討伐おめでとうございます！");
+        FileLog.HARD_END.log("Dragon killed, party closes");
         cleanup();
         this.timeUpdate = TimeUtil.getCurrentUnixSec().intValue();
     }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.syamn.sakuracmd.enums.FileLog;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
@@ -35,13 +36,15 @@ public class SpecialItem {
         final ItemMeta meta = is.getItemMeta();
         List<String> lores = new ArrayList<>();
         
+        final String expirationStr = (expiration > 0) ? TimeUtil.getReadableTime(TimeUtil.getDateByUnixSeconds(expiration), dateFormat) : null;
+        
         switch (type){
             case CRYSTAL:
                 if (remain != 0){
                     lores.add(remainFormat + remain);
                 }
-                if (expiration > 0){
-                    lores.add(expirationFormat + TimeUtil.getReadableTime(TimeUtil.getDateByUnixSeconds(expiration), dateFormat));
+                if (expirationStr != null){
+                    lores.add(expirationFormat + expirationStr);
                 }
                 lores.add("&a右クリックした地点に");
                 lores.add("&dクリスタル&aが出現させます");
@@ -61,6 +64,9 @@ public class SpecialItem {
         
         meta.setDisplayName(type.getItemName());
         meta.setLore(lores);
+        
+        FileLog.GENITEM.log(type.name + ": (To " + is.getType().name() + " x" + is.getAmount() + ")" +
+        		" remain=" + remain + " expiration=" + ((expirationStr != null) ? expirationStr : "none"));
         
         is.setItemMeta(meta);
         return is;

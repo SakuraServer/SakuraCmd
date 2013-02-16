@@ -6,8 +6,10 @@ package net.syamn.sakuracmd.listener.feature;
 
 import java.util.Locale;
 
+import net.syamn.sakuracmd.enums.FileLog;
 import net.syamn.sakuracmd.feature.SpecialItem;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.utils.StrUtil;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.cb.PacketUtil;
@@ -96,7 +98,7 @@ public class SpecialItemListener implements Listener{
         }
         
         Block check;
-        for (int i = 1; i <= 3; i++){
+        for (int i = 1; i <= 2; i++){
             check = block.getRelative(BlockFace.UP, i);
             if (check != null && check.getType() != Material.AIR){
                 Util.message(player, "&c上に十分なスペースがありません！");
@@ -115,6 +117,7 @@ public class SpecialItemListener implements Listener{
         final Entity spawned  = spawnLoc.getWorld().spawn(spawnLoc, EntityType.ENDER_CRYSTAL.getEntityClass());
         
         Util.message(player, "&aエンダークリスタルを設置しました！");
+        FileLog.SPECITEM.log("EnderCrytallizer used by " + player.getName() + " at " + StrUtil.getLocationString(block));
         
         return true;
     }

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.syamn.sakuracmd.SakuraCmd;
+import net.syamn.sakuracmd.enums.FileLog;
 import net.syamn.sakuracmd.enums.PartyStatus;
 import net.syamn.sakuracmd.events.EndResetEvent;
 import net.syamn.sakuracmd.events.EndResettingEvent;
@@ -79,6 +80,7 @@ public class HardEndListener implements Listener{
 
             event.setDroppedExp(hard_end_DragonExp);
             Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！");
+            FileLog.HARD_END.log("hard ender dragon killed by " + event.getEntity().getKiller().getName() + " (dropped " + hard_end_DragonExp + " exp)");
 
             mgr = HardEndManager.getInstance();
             final List<ItemStack> drops = new ArrayList<>();
@@ -119,6 +121,8 @@ public class HardEndListener implements Listener{
         Random ran = new Random();
         final World world = baseLoc.getWorld();
         
+        List<String> names = new ArrayList<>();
+        
         int x, z;
         Location loc;
         for (final ItemStack is : drops){
@@ -127,8 +131,11 @@ public class HardEndListener implements Listener{
             loc = baseLoc.clone().add(x, 0D, z);
             
             world.dropItemNaturally(loc, is);
+            names.add(is.getType().name() + " x" + is.getAmount());            
         }
+        FileLog.HARD_END.log("Dropped items: " + StrUtil.join(names, ", "));
         drops.clear();
+        names.clear();
     }
     
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
