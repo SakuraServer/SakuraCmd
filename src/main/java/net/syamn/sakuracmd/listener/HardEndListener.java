@@ -53,6 +53,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * HardEndListener (HardEndListener.java)
@@ -70,26 +71,36 @@ public class HardEndListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onEntityDeath(final EntityDeathEvent event) {
         if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null &&  event.getEntity().getWorld().getName().equals(Worlds.hard_end)) {
+            final Entity ent = event.getEntity();
             final int hard_end_DragonExp = 40000;
 
             event.setDroppedExp(hard_end_DragonExp);
             Util.broadcastMessage("&6" + event.getEntity().getKiller().getName() + " &bさんがハードエンドでドラゴンを倒しました！");
 
             mgr = HardEndManager.getInstance();
+            List<ItemStack> dropItems = new ArrayList<>();
             if (mgr != null){
                 mgr.dragonKilled();
+                dropItems = mgr.getDropItems();
             }
+            event.getDrops().addAll(dropItems);
 
-            Util.worldcastMessage(event.getEntity().getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
+            Util.worldcastMessage(ent.getWorld(), "&aメインワールドに戻るには&f /spawn &aコマンドを使ってください！", false);
+            
+            // clear living entities
+            clearEntity(ent.getWorld());
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
                 @Override public void run(){
-                    for (final Entity ent : event.getEntity().getWorld().getEntities()){
-                        if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
-                            ent.remove();
-                        }
-                    }
+                    clearEntity(ent.getWorld());
                 }
             }, 10L);
+        }
+    }
+    private void clearEntity(final World world){
+        for (final Entity ent : world.getEntities()){
+            if ((ent instanceof LivingEntity) && (!(ent instanceof Player) && !(ent instanceof EnderDragon))){
+                ent.remove();
+            }
         }
     }
 

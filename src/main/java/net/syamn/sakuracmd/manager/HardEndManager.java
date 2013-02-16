@@ -11,11 +11,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.PartyStatus;
+import net.syamn.sakuracmd.feature.SpecialItem;
 import net.syamn.sakuracmd.player.PlayerManager;
+import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
@@ -28,8 +31,10 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * HardEndManager (HardEndManager.java)
@@ -196,7 +201,9 @@ public class HardEndManager {
 
     public void dragonKilled(){
         if (!PartyStatus.STARTING.equals(status)){
-            throw new IllegalStateException("Party status must be starting");
+            //throw new IllegalStateException("Party status must be starting");
+            LogUtil.warning("Party status must be starting");
+            return;
         }
 
         message("&aハードエンドドラゴン討伐おめでとうございます！");
@@ -204,6 +211,22 @@ public class HardEndManager {
         this.timeUpdate = TimeUtil.getCurrentUnixSec().intValue();
     }
 
+    public List<ItemStack> getDropItems(){
+        List<ItemStack> ret = new ArrayList<>();
+        
+        Random ran = new Random();
+        
+        // ender crystallizer
+        for (int i = 0; i <= ran.nextInt(2); i++){ // 0, 1
+            ItemStack crystal = new ItemStack(Material.BLAZE_POWDER, 1);
+            final int remain = (ran.nextInt(10) >= 7) ? 2 : 0; // 2(30%) or 1(70%)
+            crystal = SpecialItem.createSpecialItem(crystal, SpecialItem.Type.CRYSTAL, remain);
+            ret.add(crystal);
+        }
+        
+        return ret;
+    }
+    
     private World checkWorld(){
         final World w = Bukkit.getWorld(Worlds.hard_end);
         if (w == null){
