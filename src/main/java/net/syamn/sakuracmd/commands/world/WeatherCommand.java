@@ -23,11 +23,17 @@ public class WeatherCommand extends BaseCommand{
         name = "weather";
         perm = Perms.WEATHER;
         argLength = 0;
-        usage = "[weather] <- modify world weather";
+        usage = "[weather] [secs] <- modify world weather";
     }
 
     @Override
     public void execute() throws CommandException{
+        // check is wclear command or not
+        if (this.command.equalsIgnoreCase("wclear")){
+            onWclear();
+            return;
+        }
+        
         // get world
         World world = null;
         if (!isPlayer){
@@ -61,7 +67,6 @@ public class WeatherCommand extends BaseCommand{
             }
         }
 
-
         // set weather
         if (weather.equals(Weather.CLEAR)){
             world.setStorm(false);
@@ -77,6 +82,28 @@ public class WeatherCommand extends BaseCommand{
         final String wmsg = (!isPlayer || !(world.equals(player.getWorld()))) ? "&aワールド " + world.getName() + " " : "&aこのワールド";
         final String lenmsg = (secs > 0) ? secs + "秒間" : "";
         Util.message(sender, wmsg + "の天候を" + weather.name +"に" + lenmsg + "変更しました！");
+    }
+    
+    private void onWclear() throws CommandException{
+        // get world
+        World world = null;
+        if (!isPlayer){
+            if (args.size() == 0){
+                throw new CommandException("&cワールド名を指定してください！");
+            }
+            final String wname = args.remove(0);
+            world = Bukkit.getWorld(wname);
+            if (world == null){
+                throw new CommandException("&cワールド " + wname + " が見つかりません！");
+            }
+        }else{
+            world = player.getWorld();
+        }
+        
+        world.setStorm(false);
+        
+        final String wmsg = (!isPlayer || !(world.equals(player.getWorld()))) ? "&aワールド " + world.getName() + " " : "&aこのワールド";
+        Util.message(sender, wmsg + "の天候を晴れに変更しました！");
     }
 
     private enum Weather{

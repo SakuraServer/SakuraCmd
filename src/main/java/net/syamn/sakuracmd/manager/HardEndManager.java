@@ -142,7 +142,7 @@ public class HardEndManager {
         }else{
             Util.broadcastMessage(" &dこの討伐パーティはリーダーからの招待が必要です！");
         }
-        FileLog.HARD_END.log(((openParty) ? "Open" : "Close") + " party opened by " + sender.getName());
+        FileLog.HARD_END.log("Opened " + ((openParty) ? "open" : "close") + " party by " + sender.getName());
     }
 
     public void startParty(){

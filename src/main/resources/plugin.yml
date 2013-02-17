@@ -55,6 +55,7 @@ commands:
       description: See plugin help.
     weather:
       usage: /weather - to see the help
+      aliases: [wclear]
       description: See plugin help.
     mail:
       usage: /mail - to see the help
