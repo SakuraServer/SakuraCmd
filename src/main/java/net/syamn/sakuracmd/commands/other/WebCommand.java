@@ -4,6 +4,11 @@
  */
 package net.syamn.sakuracmd.commands.other;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
@@ -14,8 +19,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 /**
  * WebCommand (WebCommand.java)
  * @author syam(syamn)
@@ -42,6 +51,11 @@ public class WebCommand extends BaseCommand {
                     tploc();
                 }
             }, 1L);
+            return;
+        }
+        // web enchgive [name] [itemID] [enchID:lv]...
+        else if(action.equalsIgnoreCase("enchgive") && args.size() >= 3){
+            enchgive();
             return;
         }
 
@@ -91,6 +105,92 @@ public class WebCommand extends BaseCommand {
         LogUtil.info("Teleported player:" + target.getName() + " to " + loc.getWorld().getName() + ":" + loc.getX() + "," + loc.getY() + "," + loc.getZ());
     }
 
+    // Stupid tetaemon...
+    private void enchgive() {
+        final String targetName = args.remove(0);
+
+        Player target = Bukkit.getPlayer(targetName);
+        if (target == null || !target.isOnline()) {
+            LogUtil.warning("Enchgive abrted. Player offline: " + targetName);
+            return;
+        }
+        
+        final String itemData = args.remove(0);
+        String[] datas = itemData.split(":");
+        if (!StrUtil.isInteger(datas[0])){
+            LogUtil.warning("Item is must be integer: " + datas[0]);
+            return;
+        }
+        
+        final int itemID = Integer.parseInt(datas[0]);
+        short dur = -1;
+        if (datas.length >= 2){
+            if (!StrUtil.isShort(datas[1])){
+                LogUtil.warning("Durability must be short: " + datas[1]);
+                return;
+            }
+            dur = Short.parseShort(datas[1]);
+        }
+        
+        HashMap<Enchantment, Integer> map = new HashMap<>();
+        
+        int enchId, enchLv;
+        for (final String ench : args){
+            datas = ench.split(":");
+            if (datas.length != 2){
+                LogUtil.warning("Enchant data must has ID and level: " + ench);
+                return;
+            }
+            
+            if (!StrUtil.isInteger(datas[0]) || !StrUtil.isInteger(datas[1])){
+                LogUtil.warning("Enchant datas must be integer: " + ench);
+                return;
+            }
+            
+            enchId = Integer.parseInt(datas[0]);
+            enchLv = Integer.parseInt(datas[1]);
+            
+            map.put(Enchantment.getById(enchId), enchLv);
+        }
+        
+        ArrayList<String> str = new ArrayList<>();
+        for (final Map.Entry<Enchantment, Integer> entry : map.entrySet()){
+            str.add(entry.getKey().getName() + ":" + entry.getValue());
+        }
+        
+        try{
+            ItemStack is = new ItemStack(itemID);
+            if (dur > 0){
+                is.setDurability(dur);
+            }
+            is.addUnsafeEnchantments(map);
+
+            PlayerInventory inv = target.getInventory();
+            int num = getEmptySlotNum(inv);
+            if (num == 0){
+                LogUtil.warning("Target has not empty inventory slot");
+                return;
+            }
+            
+            inv.addItem(is);
+            LogUtil.info("Give enchanted item " + is.getType().name() + " to " + target.getName() + " (" + StrUtil.join(str, ", ") + ")");
+        }catch (Exception ex){
+            LogUtil.warning("Error occred in enchgive: " + ex.getMessage());
+        }
+    }
+    
+    private int getEmptySlotNum(Inventory inv){
+        Iterator<ItemStack> iter = inv.iterator();
+        int i = 0;
+        
+        while(iter.hasNext()){
+            if(iter.next() == null){
+                i++;
+            }
+        }
+        return i;
+    }
+    
     @Override
     public boolean permission(CommandSender sender) {
         if (sender instanceof Player){
