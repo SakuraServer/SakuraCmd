@@ -4,6 +4,7 @@
  */
 package net.syamn.sakuracmd.commands.player;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 /**
@@ -88,6 +90,11 @@ public class WhoisCommand extends BaseCommand{
 
         // Gamemode
         send("&eCurrent Gamemode&f: &a" + target.getGameMode().name());
+        
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumFractionDigits(3);
+        Location loc = target.getLocation();
+        send("&eLocation&f: &a" + StrUtil.getLocationString(loc, 1) + " &7(yaw=" + nf.format(loc.getYaw()) + ", pitch=" + nf.format(loc.getPitch()) + ")");
     }
 
     private String getTimeStr(long unixMillis){
