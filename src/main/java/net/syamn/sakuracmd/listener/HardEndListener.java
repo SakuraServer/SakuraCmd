@@ -50,6 +50,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -457,5 +458,19 @@ public class HardEndListener implements Listener{
                 LogUtil.info("Update spawn location and create grounds on " + StrUtil.getLocationString(baseBlock));
             }
         }, 20L);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPlayerDeath(final PlayerDeathEvent event) {
+        if (!event.getEntity().getWorld().getName().equals(Worlds.hard_end)){
+            return;
+        }
+        
+        event.setDeathMessage(null);
+        
+        mgr = HardEndManager.getInstance();
+        if (mgr != null && mgr.getStatus() == PartyStatus.STARTING){
+            mgr.message("&f[&c-&f] " + PlayerManager.getPlayer(event.getEntity()).getName() + " &cがハードエンドで死にました！");
+        }
     }
 }

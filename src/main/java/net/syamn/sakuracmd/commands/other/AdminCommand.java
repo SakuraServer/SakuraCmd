@@ -44,7 +44,7 @@ public class AdminCommand extends BaseCommand {
             Util.broadcastMessage(StrUtil.join(args, " "));
             return;
         }
-
+        
         // item
         if (sub.equals("item") && isPlayer && args.size() > 0){
             final String action = args.remove(0).trim().toLowerCase(Locale.ENGLISH);
