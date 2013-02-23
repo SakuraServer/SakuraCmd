@@ -32,7 +32,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 
@@ -250,6 +254,10 @@ public class HardEndManager {
         }
         else if (status == PartyStatus.STARTING){
             message("&c時間切れで討伐に失敗しました");
+            
+            final World world = Bukkit.getWorld(Worlds.hard_end);
+            
+            // move players
             Player p;
             for (final String name : members.keySet()){
                 p = Bukkit.getPlayerExact(name);
@@ -257,6 +265,17 @@ public class HardEndManager {
                     p.teleport(Bukkit.getWorlds().get(0).getSpawnLocation(), TeleportCause.PLUGIN);
                 }
             }
+            
+            // clear mobs
+            for (final Entity ent : world.getEntities()){
+                if (ent == null || (ent instanceof Player)/* || (ent instanceof EnderDragon)*/){ // remove dragon
+                    continue;
+                }
+                if ((ent instanceof TNTPrimed)|| (ent instanceof LivingEntity)){
+                    ent.remove();
+                }
+            }
+            
             cleanup();
             Util.broadcastMessage("&cハードエンド討伐は時間切れで失敗しました");
             this.timeUpdate = TimeUtil.getCurrentUnixSec().intValue();
