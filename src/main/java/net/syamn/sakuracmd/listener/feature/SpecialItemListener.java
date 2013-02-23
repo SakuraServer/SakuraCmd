@@ -105,6 +105,12 @@ public class SpecialItemListener implements Listener{
                 return false;
             }
         }
+        
+        // check isStacking
+        if (is.getAmount() >= 2){
+            Util.message(player, "&cこのアイテムはスタックした状態で使えません！");
+            return false;
+        }
 
         // use item
         is = decrementRemainCount(is);
