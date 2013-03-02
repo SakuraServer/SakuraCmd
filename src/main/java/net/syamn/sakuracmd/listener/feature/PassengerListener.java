@@ -53,6 +53,12 @@ public class PassengerListener implements Listener{
             if (hand.getType() != Material.BONE){
                 return; // return if player inHand item is not bone
             }
+            
+            // only cats
+            if (ent.getType().equals(EntityType.OCELOT)){
+                damager.setPassenger(ent);
+                return;
+            }
 
             // Check player permission
             if (ent.getType().equals(EntityType.PLAYER)){
