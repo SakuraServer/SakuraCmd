@@ -46,19 +46,21 @@ public class EntityListener implements Listener{
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCrystalDamagedByEntity(final EntityDamageByEntityEvent event) {
-        if (event.getEntityType() != EntityType.ENDER_CRYSTAL || event.getEntity().getWorld().getEnvironment() == Environment.THE_END){
+        if (event.getEntityType() != EntityType.ENDER_CRYSTAL || 
+                event.getEntity().getWorld().getEnvironment() == Environment.THE_END ||
+                event.getDamage() <= 0){
             return;
         }
-        if (!(event.getDamager() instanceof Player) || event.getDamage() <= 0){
-            return;
-        }
-
+        
         final Entity ent = event.getEntity();
-        final Player player = (Player)event.getDamager();
+        final Player player = (event.getDamager() instanceof Player) ? (Player)event.getDamager() : null;
+        
         final Block baseBlock = ent.getLocation().getBlock().getRelative(BlockFace.DOWN, 2);
         //LogUtil.info(player.getName() + " -> " + baseBlock.getType().name());//debug
+        
         if (baseBlock != null && baseBlock.getType() == Material.OBSIDIAN){
-            Util.message(player, "&cこのクリスタルは保護されています！");
+            if (player != null) Util.message(player, "&cこのクリスタルは保護されています！");
+            
             event.setCancelled(true);
             event.setDamage(0);
         }

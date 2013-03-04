@@ -9,11 +9,13 @@ import java.util.Locale;
 import net.syamn.sakuracmd.enums.FileLog;
 import net.syamn.sakuracmd.feature.SpecialItem;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.TimeUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.cb.PacketUtil;
 
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
@@ -120,8 +122,17 @@ public class SpecialItemListener implements Listener{
         }
 
         final Location spawnLoc = block.getRelative(BlockFace.UP, 1).getLocation().add(0.5D, 0D, 0.5D);
+        final Location upperLoc = spawnLoc.clone().add(0D, 1.0D, 0D);
         final Entity spawned  = spawnLoc.getWorld().spawn(spawnLoc, EntityType.ENDER_CRYSTAL.getEntityClass());
+        
+        // effect
+        spawnLoc.getWorld().playEffect(spawnLoc, Effect.ENDER_SIGNAL, 0, 10);
+        upperLoc.getWorld().playEffect(upperLoc, Effect.ENDER_SIGNAL, 0, 10);
+        spawnLoc.getWorld().playEffect(spawnLoc, Effect.SMOKE, 4, 2);
+        upperLoc.getWorld().playEffect(upperLoc, Effect.SMOKE, 4, 2);
 
+        // messaging
+        Util.broadcastMessage(PlayerManager.getPlayer(player).getName() + " &aがエンダークリスタルを設置しました！&7(" + StrUtil.getLocationString(block) + ")");
         Util.message(player, "&aエンダークリスタルを設置しました！");
         FileLog.SPECITEM.log("EnderCrytallizer used by " + player.getName() + " at " + StrUtil.getLocationString(block));
 
