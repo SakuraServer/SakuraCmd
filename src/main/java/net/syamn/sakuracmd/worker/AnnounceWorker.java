@@ -91,7 +91,7 @@ public class AnnounceWorker {
     }
     
     private boolean enableTask(CommandSender sender){
-        if (taskID != 1){
+        if (taskID != -1){
             if (sender != null) Util.message(sender, "&cScheduler already running.");
             LogUtil.warning("Announce scheduler already running.");
             return true;
@@ -152,10 +152,11 @@ public class AnnounceWorker {
             try{
                 List<String> lines = getLines();
                 if (lines.isEmpty()){
-                    throw new SakuraCmdException("Empty announce file");
+                    //throw new SakuraCmdException("Empty announce file");
+                    return; // do nothing
                 }
                 
-                if (lines.size() <= nextLine){ // 2 0  
+                if (lines.size() <= nextLine){
                     nextLine = 0;
                 }
                 
@@ -171,7 +172,7 @@ public class AnnounceWorker {
         }
         
         private void announce(final String text){
-            final String[] lines = text.split("\\n");
+            final String[] lines = text.split("\\\\n");
             
             Bukkit.getServer().getScheduler().runTaskLater(plugin, new Runnable(){
                 @Override public void run(){
