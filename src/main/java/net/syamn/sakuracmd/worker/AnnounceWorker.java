@@ -31,6 +31,7 @@ public class AnnounceWorker {
     
     private SakuraCmd plugin;
     private int taskID = -1;
+    private String filePath;
 
     private AnnounceWorker(){
         this.plugin = SakuraCmd.getInstance();
@@ -58,16 +59,36 @@ public class AnnounceWorker {
     }
     
     private void onEnable(){
-        enableTask(null);
+        if (plugin.getWorker().getConfig().getAnnounceEnabled()){
+            enableTask(null);
+        }
     }
     private void onDisable(){
-        disableTask(null);
+        if (isRunning()){
+            disableTask(null);
+        }
         
         this.lock = null;
         this.plugin = null;
     }
     
-    private final static int mins = 10;
+    public void onConfigReload(){
+        if (isRunning()){
+            disableTask(null);
+        }
+        
+        if (plugin.getWorker().getConfig().getAnnounceEnabled()){
+            enableTask(null);
+        }
+    }
+    
+    public boolean setSchedule(final boolean enable, final CommandSender sender){
+        if (enable){
+            return enableTask(sender);
+        }else{
+            return disableTask(sender);
+        }
+    }
     
     private boolean enableTask(CommandSender sender){
         if (taskID != 1){
@@ -75,6 +96,9 @@ public class AnnounceWorker {
             LogUtil.warning("Announce scheduler already running.");
             return true;
         }else{
+            this.filePath = plugin.getWorker().getConfig().getAnnounceFilePath();
+            
+            final int mins = plugin.getWorker().getConfig().getAnnounceIntervalMins();
             final long ticks = 20 * 60 * mins;
             // use async task
             taskID = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(plugin, new AnnounceTask(plugin), ticks, ticks).getTaskId();
@@ -107,7 +131,6 @@ public class AnnounceWorker {
         return (taskID != -1);
     }
 
-    private static String path = "announce.txt";
     private AtomicBoolean lock;
     private int nextLine = 0;
     
@@ -160,7 +183,7 @@ public class AnnounceWorker {
         }
         
         private List<String> getLines() throws IOException, SakuraCmdException{
-            File file = new File(path);
+            File file = new File(filePath);
             if (!file.exists()){
                 throw new SakuraCmdException("Announce file '" + file.getPath() + "' not exist");
             }

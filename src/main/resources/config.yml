@@ -39,6 +39,14 @@ DownloadMissingDB: true
 CountryDB: "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz"
 CityDB: "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz"
 
+#=====================#
+#   Announce Config   #
+#=====================#
+Announce:
+  Enabled: true
+  IntervalMins: 10
+  FilePath: "/announce.txt"
+
 #====================#
 #   Message Config   #
 #====================#

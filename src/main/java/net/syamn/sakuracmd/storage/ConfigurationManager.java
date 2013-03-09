@@ -179,6 +179,17 @@ public class ConfigurationManager {
         return conf.getString("CityDB", "http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz");
     }
 
+    // Announce
+    public boolean getAnnounceEnabled(){
+        return conf.getBoolean("Announce.Enabled", true);
+    }
+    public int getAnnounceIntervalMins(){
+        return conf.getInt("Announce.IntervalMins", 10);
+    }
+    public String getAnnounceFilePath(){
+        return conf.getString("Announce.FilePath", "/announce.txt");
+    }
+    
     // Message
     public String getLanguage(){
         return conf.getString("language", "ja-jp");

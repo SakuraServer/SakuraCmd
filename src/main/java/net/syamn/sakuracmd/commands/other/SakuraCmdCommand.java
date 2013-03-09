@@ -14,6 +14,7 @@ import net.syamn.sakuracmd.migrator.SakuraServerMigrate;
 import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.sakuracmd.player.PlayerManager;
 import net.syamn.sakuracmd.storage.I18n;
+import net.syamn.sakuracmd.worker.AnnounceWorker;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
@@ -52,6 +53,7 @@ public class SakuraCmdCommand extends BaseCommand implements Queueable{
                 try {
                     SCHelper.getInstance().getConfig().loadConfig(false);
                     I18n.setCurrentLanguage(SCHelper.getInstance().getConfig().getLanguage());
+                    AnnounceWorker.getInstance().onConfigReload();
                 } catch (Exception ex) {
                     if (isPlayer){
                         Util.message(sender, "&cError occred while reloading configuration! Check server console!");
