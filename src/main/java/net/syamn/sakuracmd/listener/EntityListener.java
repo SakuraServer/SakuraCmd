@@ -70,7 +70,16 @@ public class EntityListener implements Listener{
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
         // スポナー制限
         if (SpawnReason.SPAWNER.equals(event.getSpawnReason())) {
+            final String wname = event.getLocation().getWorld().getName();
+            
+            // main worlds
             final Entity e = event.getEntity();
+            if (Worlds.main_world.equals(wname) || Worlds.main_nether.equals(wname)){
+                event.setCancelled(true);
+                return;
+            }
+            
+            // all worlds
             switch (e.getType()) {
                 case PIG:
                 case COW:
@@ -81,7 +90,9 @@ public class EntityListener implements Listener{
                 default:
                     break;
             }
-            if (EntityType.SKELETON.equals(e.getType()) && Worlds.isResource(event.getLocation().getWorld().getName())) {
+            
+            // resources
+            if (EntityType.SKELETON.equals(e.getType()) && Worlds.isResource(wname)) {
                 event.setCancelled(true);
             }
         }
