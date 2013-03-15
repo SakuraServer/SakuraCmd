@@ -81,11 +81,13 @@ public class BlockListener implements Listener{
         }
 
         // Skull to air
+        /* // comment out, 3/15
         if (block.getTypeId() == 144){
             event.setCancelled(true);
             block.setType(Material.AIR);
         }
-
+        */
+        
         // call hawkeye searcher
         if (block.getTypeId() == 56 && !GameMode.CREATIVE.equals(player.getGameMode()) && Worlds.getNormalWorlds().contains(block.getWorld().getName())){
             Integer prevTime = HawkEyeSearcher.lookupHistory.get(player.getName());
