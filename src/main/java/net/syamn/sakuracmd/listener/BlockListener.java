@@ -26,6 +26,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
@@ -101,6 +102,17 @@ public class BlockListener implements Listener{
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockPlace(final BlockPlaceEvent event) {
+        final Block block = event.getBlock();
+        final Player player = event.getPlayer();
+        
+        if (block.getType() == Material.SPONGE && Worlds.isNetherResource(player.getLocation().getWorld().getName())){
+            Util.message(player, "&c資源ネザーワールドでスポンジは使用できません");
+            event.setCancelled(true);
+        }
+    }
+    
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPumpkinBreak(final BlockBreakEvent event) {
         final Player player = event.getPlayer();
@@ -150,6 +162,12 @@ public class BlockListener implements Listener{
         }, 4L);
     }
 
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onBlockDispense(final BlockDispenseEvent event) {
+        if (event.getItem() != null && event.getItem().getType() == Material.HOPPER_MINECART){
+            event.setCancelled(true);
+        }
+    }
     /*
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockRedstone(final BlockRedstoneEvent event) {

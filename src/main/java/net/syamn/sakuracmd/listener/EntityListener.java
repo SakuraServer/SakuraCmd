@@ -17,10 +17,7 @@ import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -129,12 +126,18 @@ public class EntityListener implements Listener{
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(final EntityExplodeEvent event){
-        if (event.getEntity() != null && event.getEntity().getType() == EntityType.ENDER_CRYSTAL){
+        if (event.getEntity() != null){
             final Entity ent = event.getEntity();
-            if (ent.getWorld().getEnvironment() == Environment.THE_END){
-                return;
+            switch (ent.getType()){
+                case ENDER_CRYSTAL:
+                case MINECART_TNT:
+                    if (ent.getWorld().getEnvironment() == Environment.THE_END){
+                        return;
+                    }
+                    event.blockList().clear();
+                    break;
+                default: break;
             }
-            event.blockList().clear();
         }
     }
 

@@ -66,18 +66,15 @@ public class SCHelper {
             ex.printStackTrace();
         }
 
+        // Linking plugins
         Plugin test = plugin.getServer().getPluginManager().getPlugin("MCBans");
-        if (test != null && test.isEnabled()){
-            if (!enabledMCBlistener){
-                plugin.getServer().getPluginManager().registerEvents(new MCBansListener(plugin), plugin);
-                LogUtil.info("MCBans integration is enabled!");
-                enabledMCBlistener = true;
-            }
-            enabledMCB = true;
-        }else{
-            enabledMCB = false;
+        enabledMCB = (test != null && test.isEnabled());
+        if (enabledMCB && !enabledMCBlistener){
+            plugin.getServer().getPluginManager().registerEvents(new MCBansListener(plugin), plugin);
+            LogUtil.info("MCBans integration is enabled!");
+            enabledMCBlistener = true;
         }
-
+        
         // connect database
         Database db = Database.getInstance(plugin);
         db.createStructure();
@@ -204,7 +201,7 @@ public class SCHelper {
     public boolean isEnableEcon(){
         return this.isEnableEcon;
     }
-
+    
     /**
      * 設定マネージャを返す
      *

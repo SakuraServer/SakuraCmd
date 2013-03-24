@@ -75,6 +75,15 @@ public class PlayerListener implements Listener{
         if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.BED_BLOCK) {
             event.setCancelled(true);
         }
+        
+        if (event.getAction() == Action.RIGHT_CLICK_AIR || event.getAction() == Action.RIGHT_CLICK_BLOCK){
+            ItemStack is = player.getItemInHand();
+            if (!Perms.ADMIN.has(player) && is != null && (is.getType() == Material.HOPPER_MINECART)){
+                event.setCancelled(true);
+                event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+                event.setUseItemInHand(org.bukkit.event.Event.Result.DENY);
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

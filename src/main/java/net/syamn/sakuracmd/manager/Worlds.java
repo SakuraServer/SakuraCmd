@@ -36,6 +36,10 @@ public class Worlds {
         return (world != null && world.getEnvironment().equals(Environment.NORMAL));
     }
 
+    public static boolean isNetherResource(final String worldName){
+        return worldName.contains("resourcen");
+    }
+
     public static boolean isResource(final String worldName){
         return worldName.contains("resource");
     }
