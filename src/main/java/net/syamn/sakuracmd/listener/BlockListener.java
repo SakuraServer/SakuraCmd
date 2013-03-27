@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -102,6 +103,24 @@ public class BlockListener implements Listener{
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onSpawnerBreak(final BlockBreakEvent event){
+        if (event.getBlock().getType() != Material.MOB_SPAWNER){
+            return; // just want to spawner block events
+        }
+
+        final Player player = event.getPlayer();
+        final Block block = event.getBlock();
+        final ItemStack item = player.getItemInHand();
+        
+        if (item == null || !item.containsEnchantment(Enchantment.SILK_TOUCH)){
+            return; // needs silk enchantment
+        }
+        
+        block.getWorld().dropItemNaturally(block.getLocation(), new ItemStack(Material.MOB_SPAWNER));
+        event.setExpToDrop(0); // prevent exp duping
+    }
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent event) {
         final Block block = event.getBlock();
@@ -110,6 +129,13 @@ public class BlockListener implements Listener{
         if (block.getType() == Material.SPONGE && Worlds.isNetherResource(player.getLocation().getWorld().getName())){
             Util.message(player, "&c資源ネザーワールドでスポンジは使用できません");
             event.setCancelled(true);
+        }
+        
+        if (block.getType() == Material.MOB_SPAWNER && !Worlds.main_world.equals(player.getWorld().getName())){
+            if (!Perms.ADMIN.has(player)){
+                Util.message(player, "&cメインワールド以外でのスポナー設置はできません");
+                event.setCancelled(true);
+            }
         }
     }
     
