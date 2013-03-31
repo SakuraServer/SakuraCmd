@@ -205,6 +205,12 @@ public class PlayerListener implements Listener{
         final Location toLoc = event.getTo();
 
         AFKWorker.getInstance().updatePlayer(player);
+        
+        // check emerald block
+        Block under = toLoc.getBlock().getRelative(BlockFace.DOWN);
+        if (under.getType() == Material.EMERALD_BLOCK){
+            player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 20, 1)); // 1sec
+        }
 
         Location diffLoc = toLoc.clone().subtract(fromLoc);
         Location checkLoc = toLoc.clone().add(diffLoc.clone().multiply(3.0D));
