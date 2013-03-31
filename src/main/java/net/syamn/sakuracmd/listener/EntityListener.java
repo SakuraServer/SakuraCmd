@@ -140,7 +140,7 @@ public class EntityListener implements Listener{
             }
         }
     }
-
+    
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerFallDamage(final EntityDamageEvent event){
         if (!DamageCause.FALL.equals(event.getCause()) || !(event.getEntity() instanceof Player)){
