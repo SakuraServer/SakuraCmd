@@ -16,6 +16,7 @@ import net.syamn.sakuracmd.listener.EntityListener;
 import net.syamn.sakuracmd.listener.HardEndListener;
 import net.syamn.sakuracmd.listener.InventoryListener;
 import net.syamn.sakuracmd.listener.PlayerListener;
+import net.syamn.sakuracmd.listener.feature.AprilFoolsListener;
 import net.syamn.sakuracmd.listener.feature.BackLocationListener;
 import net.syamn.sakuracmd.listener.feature.EndResetListener;
 import net.syamn.sakuracmd.listener.feature.OpenInvListener;
@@ -90,6 +91,8 @@ public class SakuraCmd extends JavaPlugin{
         pm.registerEvents(new OpenInvListener(), this);
         pm.registerEvents(new EndResetListener(), this);
         pm.registerEvents(new SpecialItemListener(), this);
+        
+        //pm.registerEvents(new AprilFoolsListener(), this);
 
         // commands
         commandHandler = new CommandHandler(this);
