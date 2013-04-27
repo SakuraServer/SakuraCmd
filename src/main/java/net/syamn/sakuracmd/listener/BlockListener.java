@@ -131,9 +131,10 @@ public class BlockListener implements Listener{
             event.setCancelled(true);
         }
         
-        if (block.getType() == Material.MOB_SPAWNER && !Worlds.main_world.equals(player.getWorld().getName())){
-            if (!Perms.ADMIN.has(player)){
-                Util.message(player, "&cメインワールド以外でのスポナー設置はできません");
+        if (block.getType() == Material.MOB_SPAWNER && !Perms.ADMIN.has(player)){
+            String tmp = player.getWorld().getName();
+            if (!Worlds.main_world.equals(tmp) && !Worlds.main_nether.equals(tmp) && !Worlds.skylands.equals(tmp)){
+                Util.message(player, "&cこのワールドでスポナーの設置はできません");
                 event.setCancelled(true);
             }
         }
