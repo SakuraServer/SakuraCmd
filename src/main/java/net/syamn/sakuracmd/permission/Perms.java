@@ -64,6 +64,7 @@ public enum Perms {
     END_RESET ("admin.endreset"),
     ADMIN ("admin.admin"),
     SAKURACMD ("admin.sakuracmd"),
+    LIFT_RELOAD ("admin.liftreload"),
 
     // Spec Permissions
     INV_CANSEE ("spec.cansee"),

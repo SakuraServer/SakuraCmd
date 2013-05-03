@@ -72,7 +72,7 @@ public class ConfigurationManager {
                 LogUtil.info("Enabled economy hookup! Using Vault (" + EconomyUtil.getEconomyName() + ") for economy plugin!");
             }else{
                 SCHelper.getInstance().setEnableEcon(false);
-                LogUtil.warning("Could not hook to economy plugin!");
+                
             }
         }else{
             SCHelper.getInstance().setEnableEcon(false);

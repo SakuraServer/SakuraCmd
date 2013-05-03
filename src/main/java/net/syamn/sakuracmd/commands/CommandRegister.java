@@ -16,6 +16,7 @@ import net.syamn.sakuracmd.commands.other.AdminCommand;
 import net.syamn.sakuracmd.commands.other.ColorsCommand;
 import net.syamn.sakuracmd.commands.other.ConfirmCommand;
 import net.syamn.sakuracmd.commands.other.EndResetCommand;
+import net.syamn.sakuracmd.commands.other.LiftreloadCommand;
 import net.syamn.sakuracmd.commands.other.MfmfCommand;
 import net.syamn.sakuracmd.commands.other.RatioCommand;
 import net.syamn.sakuracmd.commands.other.SakuraCmdCommand;
@@ -93,6 +94,7 @@ public class CommandRegister {
         cmds.add(new WebCommand());
         cmds.add(new RatioCommand());
         cmds.add(new EndResetCommand());
+        cmds.add(new LiftreloadCommand());
 
         return cmds;
     }
