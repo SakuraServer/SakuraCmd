@@ -120,6 +120,9 @@ commands:
     liftreload:
       usage: /liftreload - to see the help
       description: To see the plugin help.
+    entity:
+      usage: /entity - to see the help
+      description: To see the plugin help.
 permissions:
     sakuracmd.admin:
         default: op

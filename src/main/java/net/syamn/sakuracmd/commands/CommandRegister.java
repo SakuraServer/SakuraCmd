@@ -39,6 +39,7 @@ import net.syamn.sakuracmd.commands.tp.RideCommand;
 import net.syamn.sakuracmd.commands.tp.TpCommand;
 import net.syamn.sakuracmd.commands.tp.TpHereCommand;
 import net.syamn.sakuracmd.commands.tp.TplocCommand;
+import net.syamn.sakuracmd.commands.world.EntityCommand;
 import net.syamn.sakuracmd.commands.world.WeatherCommand;
 
 /**
@@ -79,6 +80,7 @@ public class CommandRegister {
 
         // World Commands
         cmds.add(new WeatherCommand());
+        cmds.add(new EntityCommand());
 
         // Database Commands
         cmds.add(new RegisterCommand());

@@ -53,6 +53,7 @@ public enum Perms {
 
     // World Commands
     WEATHER ("world.weather"),
+    ENTITY ("world.entity"),
 
     // Database Commands
     REGISTER ("db.register"),
