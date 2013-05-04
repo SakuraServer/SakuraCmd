@@ -9,6 +9,7 @@ import java.util.List;
 
 import net.syamn.sakuracmd.commands.BaseCommand;
 import net.syamn.sakuracmd.permission.Perms;
+import net.syamn.utils.Util;
 import net.syamn.utils.exception.CommandException;
 
 import org.bukkit.World;
@@ -52,10 +53,13 @@ public class EntityCommand extends BaseCommand{
             throw new CommandException("&cエンティティタイプが不正です(item)");
         }
         
+        int removed = 0;
         for (final Entity ent : world.getEntities()){
             if (ent != null && removeType.contains(ent)){
                 ent.remove();
+                removed++;
             }
         }
+        Util.message(sender, "&a" + removed + " つのエンティティを削除しました");
     }
 }
