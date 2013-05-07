@@ -65,6 +65,27 @@ public class EntityListener implements Listener{
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
+        int size = event.getLocation().getWorld().getEntities().size();
+        // 10,000 mobs limit per world
+        if (size >= 10000 && event.getSpawnReason() != null){
+            switch (event.getSpawnReason()){
+                case BUILD_IRONGOLEM:
+                case BUILD_SNOWMAN:
+                case BUILD_WITHER:
+                case SPAWNER_EGG:
+                case CUSTOM:
+                    // special spawns are allows to 20,000
+                    if (size >= 20000){
+                        event.setCancelled(true);
+                        return;
+                    }
+                    break;
+                default:
+                    event.setCancelled(true);
+                    return;       
+            }
+        }
+        
         // スポナー制限
         if (SpawnReason.SPAWNER.equals(event.getSpawnReason())) {
             final String wname = event.getLocation().getWorld().getName();
