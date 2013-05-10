@@ -10,12 +10,14 @@ import net.syamn.sakuracmd.permission.Perms;
 import net.syamn.utils.Util;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemHeldEvent;
@@ -32,6 +34,22 @@ public class CreativeListener implements Listener{
         this.plugin = plugin;
     }
 
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBlockPlaceEvent(final BlockPlaceEvent event) {
+        final Block block = event.getBlock();
+        if (!block.getWorld().getName().equals(Worlds.creative)) {
+            return;
+        }
+        
+        final Player player = event.getPlayer();
+        
+        // クリエイティブでのTNT設置制限
+        if (block.getType() == Material.TNT && !Perms.BYPASS_CREATIVE_TNT.has(player)){
+            Util.message(player, "&cこのワールドでTNTは設置できません");
+            event.setCancelled(true);
+        }
+    }
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
         final Entity ent = event.getEntity();
