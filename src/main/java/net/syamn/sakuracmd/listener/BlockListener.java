@@ -138,6 +138,12 @@ public class BlockListener implements Listener{
                 event.setCancelled(true);
             }
         }
+        
+        // クリエイティブでのTNT設置制限
+        if (block.getType() == Material.TNT && Worlds.creative.equals(block.getWorld().getName()) && !Perms.BYPASS_CREATIVE_TNT.has(player)){
+            Util.message(player, "&cこのワールドでTNTは設置できません");
+            event.setCancelled(true);
+        }
     }
     
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

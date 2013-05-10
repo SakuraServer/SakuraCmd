@@ -82,6 +82,7 @@ public enum Perms {
 
     // Bypass permissions
     BYPASS_CREATIVE_ITEM ("bypass.creativeitem"),
+    BYPASS_CREATIVE_TNT ("bypass.creative.tnt"),
 
     // Sign create, use, break parent perms
     SIGN_CREATE_PARENT ("sign.create"),
