@@ -81,7 +81,7 @@ public enum Perms {
     ICE_TO_WATER ("feature.icetowater"),
 
     // Bypass permissions
-    BYPASS_CREATIVE_ITEM ("bypass.creativeitem"),
+    BYPASS_CREATIVE_ITEM ("bypass.creative.item"),
     BYPASS_CREATIVE_TNT ("bypass.creative.tnt"),
 
     // Sign create, use, break parent perms
