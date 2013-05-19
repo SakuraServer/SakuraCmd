@@ -6,6 +6,7 @@ package net.syamn.sakuracmd.listener;
 
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.manager.Worlds;
+import net.syamn.sakuracmd.worker.AFKWorker;
 import net.syamn.utils.Util;
 
 import org.bukkit.Chunk;
@@ -18,11 +19,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityCreatePortalEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.ItemSpawnEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 
 /**
@@ -96,6 +99,16 @@ public class EndListener implements Listener{
     public void onItemSpawn(final ItemSpawnEvent event) {
         final Item item = event.getEntity();
         if (item.getWorld().getEnvironment().equals(Environment.THE_END) && item.getItemStack().getType() == Material.DRAGON_EGG) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onPlayerInteract(final PlayerInteractEvent event){
+        final Player player = event.getPlayer();
+
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType() == Material.BED_BLOCK && 
+                player.getWorld().getEnvironment().equals(Environment.THE_END)) {
             event.setCancelled(true);
         }
     }
