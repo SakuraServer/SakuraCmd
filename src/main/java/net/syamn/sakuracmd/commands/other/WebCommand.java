@@ -45,14 +45,23 @@ public class WebCommand extends BaseCommand {
         String action = args.remove(0);
 
         // web tploc [name] (world) [x] [y] [z] (yaw) (pitch) [message]
-        if (action.equalsIgnoreCase("tploc") && args.size() >= 7){
+        if (action.equalsIgnoreCase("thorloc") && args.size() >= 4){
+            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
+                @Override public void run(){
+                    thorloc();
+                }
+            }, 1L);
+            return;
+        }
+        // web tploc [name] (world) [x] [y] [z] (yaw) (pitch) [message]
+        else if (action.equalsIgnoreCase("tploc") && args.size() >= 7){
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
                 @Override public void run(){
                     tploc();
                 }
             }, 1L);
             return;
-        }
+        }        
         // web enchgive [name] [itemID] [enchID:lv]...
         else if(action.equalsIgnoreCase("enchgive") && args.size() >= 3){
             enchgive();
@@ -62,6 +71,23 @@ public class WebCommand extends BaseCommand {
         throw new CommandException("&cUndefined command!");
     }
 
+    private void thorloc() {
+        final String worldName = args.remove(0);
+        final World world = Bukkit.getWorld(worldName);
+        if (world == null){
+            LogUtil.warning("ThorLoc aborted. World not found; " + worldName);
+            return;
+        }        
+        double x = Double.parseDouble(args.remove(0)) + 0.5;
+        double y = Double.parseDouble(args.remove(0));
+        double z = Double.parseDouble(args.remove(0)) + 0.5;
+        
+        final Location loc = new Location(world, x, y, z);
+        world.strikeLightning(loc);
+        //world.strikeLightningEffect(loc);
+        LogUtil.info("ThorLoc processed: " + StrUtil.getLocationString(loc, 0));
+    }
+    
     private void tploc() {
         final String targetName = args.remove(0);
 
