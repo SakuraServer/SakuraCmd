@@ -95,6 +95,12 @@ public class PlayerListener implements Listener{
 
         final Player player = (Player) event.getEntity();
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
+        
+        //NPCの場合，当然SakuraPlayer側には存在しない
+        if(sp == null){
+            return;
+        }
+        
         if (sp.hasPower(Power.GODMODE)){
             event.setDamage(0);
             event.setCancelled(true);
