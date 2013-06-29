@@ -94,12 +94,8 @@ public class PlayerListener implements Listener{
         }
 
         final Player player = (Player) event.getEntity();
+        if (player.hasMetadata("NPC")) return;
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
-        
-        //NPCの場合，当然SakuraPlayer側には存在しない
-        if(sp == null){
-            return;
-        }
         
         if (sp.hasPower(Power.GODMODE)){
             event.setDamage(0);
@@ -155,6 +151,8 @@ public class PlayerListener implements Listener{
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerChangedWorld(final PlayerChangedWorldEvent event){
         final Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) return;
+        
         final SakuraPlayer sp = PlayerManager.getPlayer(player);
         final World world = player.getWorld();
 
@@ -186,7 +184,7 @@ public class PlayerListener implements Listener{
         // check contains hangul chars
         if (Pattern.compile(hangulRegex).matcher(message).find()){
             final Player player = event.getPlayer();
-            if (Perms.TRUST.has(player)) {
+            if (Perms.TRUST.has(player) || player.hasMetadata("NPC")) {
                 return;
             }
 
@@ -315,6 +313,7 @@ public class PlayerListener implements Listener{
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerPickupItem(final PlayerPickupItemEvent event){
+        if (event.getPlayer().hasMetadata("NPC")) return;
         final SakuraPlayer sp = PlayerManager.getPlayer(event.getPlayer());
         if (sp.hasPower(Power.NO_PICKUP)){
             event.setCancelled(true);

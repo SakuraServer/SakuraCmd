@@ -89,6 +89,8 @@ public class CreativeListener implements Listener{
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent event) {
         final Player player = event.getPlayer();
+        if (player.hasMetadata("NPC")) return;
+        
         if (!player.getWorld().getName().equals(Worlds.creative) || Perms.BYPASS_CREATIVE_ITEM.has(player)) {
             return;
         }

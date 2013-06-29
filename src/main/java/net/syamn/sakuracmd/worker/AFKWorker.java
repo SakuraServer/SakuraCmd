@@ -87,6 +87,10 @@ public class AFKWorker {
     }
 
     public void updatePlayer(final Player player){
+        if (player == null || player.hasMetadata("NPC")){
+            return;
+        }
+        
         updateTimeStamp(player);
         if (isAfk(player)){
             setOnline(player);

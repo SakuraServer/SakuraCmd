@@ -77,6 +77,8 @@ public class HardEndListener implements Listener{
     public void onEntityDeath(final EntityDeathEvent event) {
         if (event.getEntity().getType() == EntityType.ENDER_DRAGON && event.getEntity().getKiller() != null &&  event.getEntity().getWorld().getName().equals(Worlds.hard_end)) {
             final Entity ent = event.getEntity();
+            if (ent.hasMetadata("NPC")) return;
+            
             final int hard_end_DragonExp = 40000;
 
             event.setDroppedExp(hard_end_DragonExp);
@@ -106,7 +108,7 @@ public class HardEndListener implements Listener{
     }
     private void clearEntity(final World world){
         for (final Entity ent : world.getEntities()){
-            if (ent == null || (ent instanceof Player) || (ent instanceof EnderDragon)){
+            if (ent == null || (ent instanceof Player) || (ent instanceof EnderDragon) || (ent.hasMetadata("NPC"))){
                 continue;
             }
             if ((ent instanceof TNTPrimed)|| (ent instanceof LivingEntity)){

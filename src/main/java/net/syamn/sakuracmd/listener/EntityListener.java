@@ -216,6 +216,8 @@ public class EntityListener implements Listener{
         }
 
         final Entity ent = event.getEntity();
+        if (ent.hasMetadata("NPC")) return;
+        
         final List<Entity> ents = ent.getNearbyEntities(0.75D, 1.75D, 0.75D);
 
         int i = 0;
