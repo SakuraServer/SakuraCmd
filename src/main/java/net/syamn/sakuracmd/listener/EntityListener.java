@@ -30,6 +30,7 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 /**
  * EntityListener (EntityListener.java)
@@ -182,8 +183,7 @@ public class EntityListener implements Listener{
             //Actions.message(null, player, "Shifted down block");//debug
         }
         //Actions.message(null, player, "*: "+check.getType().name());//debug
-        switch (check.getType()){
-            /*
+        switch (check.getType()){            
             case SPONGE:
                 //Vector vect = new Vector(0D, 2.0D, 0D);
                 //player.setVelocity(player.getVelocity().add(vect));
@@ -198,8 +198,7 @@ public class EntityListener implements Listener{
                         }
                     }
                 }, 0L);
-                break;
-             */
+                break;            
             case LEAVES:
                 event.setCancelled(true);
                 event.setDamage(0);
