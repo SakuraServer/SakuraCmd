@@ -247,14 +247,14 @@
       <dependency>
           <groupId>org.bukkit</groupId>
           <artifactId>bukkit</artifactId>
-          <version>1.6.1-R0.1-SNAPSHOT</version>
+          <version>1.6.2-R0.1-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
       <!-- CraftBukkit Dependency -->
       <dependency>
           <groupId>org.bukkit</groupId>
           <artifactId>craftbukkit</artifactId>
-          <version>1.6.1-R0.1-SNAPSHOT</version>
+          <version>1.6.2-R0.1-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
       <!-- Vault Dependency -->
@@ -268,7 +268,7 @@
       <dependency>
           <groupId>net.syamn</groupId>
           <artifactId>SakuraLib</artifactId>
-          <version>1.6.1-0.1</version>
+          <version>1.6.2-0.1</version>
       </dependency>
       
       <!-- PermissionsEx Dependency (lib) -->
