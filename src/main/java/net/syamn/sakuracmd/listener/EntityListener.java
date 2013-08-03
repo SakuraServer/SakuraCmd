@@ -13,7 +13,9 @@ import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -64,6 +66,69 @@ public class EntityListener implements Listener{
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPetDamagedByPlayer(final EntityDamageByEntityEvent event){
+        final Entity ent = event.getEntity();
+        final Entity damager = event.getDamager();
+        
+        // Damager is human?
+        if (!EntityType.PLAYER.equals(damager.getType()) || !(ent instanceof Tameable)){
+            return;
+        }
+        
+        // Entity is tameable? Entity is tamed?
+        if (!(ent instanceof Tameable) || !((Tameable) ent).isTamed()){
+            return;
+        }
+        
+        // Set variables
+        final String mobName = getReadableMobName(ent.getType());        
+        final String tamerStr = ((OfflinePlayer) ((Tameable) ent).getOwner()).getName();
+        final Player tamer = Bukkit.getServer().getPlayerExact(tamerStr);
+        final Player damagerPlayer = (Player) damager;
+        final String locStr = StrUtil.getLocationString(ent.getLocation(), 0);
+        
+        // Tamer is online?
+        if (tamer != null && tamer.isOnline()){
+            if (tamer.equals(damagerPlayer)) return; // has ownership?
+            Util.message(tamer, "&b[情報] &e" + damagerPlayer.getName() + "&cがあなたの" + mobName + "&f(" + locStr + ")&cに攻撃しました！");            
+        }
+        
+        Util.message(damagerPlayer, "&c[注意] &fこれは他人の" + mobName + "です。同意を得ていない殺傷は禁止です。");
+        SakuraCmdUtil.sendlog("&6" + damagerPlayer.getName() + "&fが&6" + tamerStr + "&fの&6" + mobName + "&fに攻撃しました:" + locStr);
+        
+        // TODO: Add records to honeypet table, flatfile.
+    }
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPetKilledByPlayer(final EntityDeathEvent event){
+        final LivingEntity ent = event.getEntity();
+        // 
+        if (ent.getKiller() == null || !(ent instanceof Tameable) || !((Tameable) ent).isTamed()){
+            return;
+        }
+        
+        // has ownership?
+        final Player killer = ent.getKiller();        
+        final OfflinePlayer tamer = (OfflinePlayer) ((Tameable) event.getEntity()).getOwner();        
+        if (killer.equals(tamer)) return;
+        
+        // Set variables
+        final String mobName = getReadableMobName(ent.getType());
+        final String locStr = StrUtil.getLocationString(ent.getLocation(), 0);
+        Util.broadcastMessage("&c[警告] &e" + killer.getName() + "&cが&e" + tamer.getName() + "&cの" + mobName + "を倒しました！");
+        
+        // TODO: Add records to honeypet table, flatfile.
+    }
+    private String getReadableMobName(EntityType type){
+        if(type == null) throw new IllegalArgumentException("EntityType type must not be null.");
+        switch(type){
+            case OCELOT: return "ネコ";
+            case WOLF:   return "オオカミ";
+            case HORSE:  return "馬";
+            default:      return type.name();
+        }
+    }
+    
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCreatureSpawn(final CreatureSpawnEvent event) {
         final int size = event.getLocation().getWorld().getEntities().size();
