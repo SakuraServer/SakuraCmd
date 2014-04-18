@@ -7,7 +7,6 @@ package net.syamn.sakuracmd.listener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
 import net.syamn.sakuracmd.SakuraCmd;
 import net.syamn.sakuracmd.enums.FileLog;
 import net.syamn.sakuracmd.enums.PartyStatus;
@@ -21,7 +20,6 @@ import net.syamn.sakuracmd.player.Power;
 import net.syamn.utils.LogUtil;
 import net.syamn.utils.StrUtil;
 import net.syamn.utils.Util;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,6 +55,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.projectiles.ProjectileSource;
 
 /**
  * HardEndListener (HardEndListener.java)
@@ -197,10 +196,10 @@ public class HardEndListener implements Listener{
         if (ent.getType() == EntityType.ENDER_DRAGON || ent.getType() == EntityType.COMPLEX_PART) {
             Player attackerPlayer = null;
             if(attacker instanceof Projectile){
-                final LivingEntity shooter = ((Projectile)attacker).getShooter();
+                final ProjectileSource shooter = ((Projectile)attacker).getShooter();
                 if(shooter instanceof Player){
                     attackerPlayer = (Player)shooter;
-                    shooter.getWorld().strikeLightning(shooter.getLocation());
+                    attackerPlayer.getWorld().strikeLightning(attackerPlayer.getLocation());
                 }
             }else if(attacker instanceof Player){
                 attackerPlayer = (Player)attacker;
